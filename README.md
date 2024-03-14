@@ -21,4 +21,4 @@ Your team members are:
 
 # Setup the project:
 - Cd /frontend and run `npm run dev` to start the frontend server
-- Cd /server and run `npm run dev` to start the backend server(not setup yet).
+- Cd /backend and run `npm run dev` to start the backend server(not setup yet).
