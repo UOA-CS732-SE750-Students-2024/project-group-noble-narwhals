@@ -6,6 +6,13 @@ import express from "express";
 import cors from "cors";
 import morgan from "morgan";
 
+//import database from "./database/initDB.js";
+import database from "./database/init-DB.js";
+
+
+
+
+
 // Set's our port to the PORT environment variable, or 3000 by default if the env is not configured.
 const PORT = process.env.PORT ?? 3000;
 
