@@ -10,7 +10,8 @@
 - Every component file should be in the `components` folder.
 - IF a component have sub-components, please create a folder for it and put the sub-components in it.
 - For the hooks, please put them in the `hooks` folder.
-
+### For the style
+- Please use variables for colors, etc in the `tailwind.config.js` file.
 ---
 
 # COMPSCI 732 / SOFTENG 750 project - Team Noble Narwhals
