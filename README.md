@@ -12,6 +12,7 @@
 - For the hooks, please put them in the `hooks` folder.
 ### For the style
 - Please use variables for colors, etc in the `tailwind.config.js` file.
+- If you think a style is reusable, edit the `tailwind.config.js` file and add it to the `extend` section.
 ---
 
 # COMPSCI 732 / SOFTENG 750 project - Team Noble Narwhals
