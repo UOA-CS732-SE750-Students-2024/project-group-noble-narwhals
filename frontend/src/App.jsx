@@ -2,9 +2,11 @@ import React from "react";
 import { Route, Routes } from "react-router-dom";
 import HomePage from "./components/HomePage";
 import LoginPage from "./components/LoginPage";
+import GroupInfo from "./components/GroupInfo";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import advandedFormat from "dayjs/plugin/advancedFormat";
+
 
 dayjs.extend(relativeTime);
 dayjs.extend(advandedFormat);
@@ -15,6 +17,7 @@ function App() {
       <Route path="/">
         <Route index element={<HomePage />} />
         <Route path="login" element={<LoginPage />} />
+        <Route path="group/:groupId" element={<GroupInfo />} />
       </Route>
     </Routes>
   );

@@ -4,26 +4,24 @@ dotenv.config();
 import User from './userSchema.js';
 
 // Connect to MongoDB
-mongoose.connect(process.env.MONGODB_CONNECTION_STRING, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => {
-    console.log('Connected to MongoDB Atlas successfully');
+mongoose.connect(process.env.MONGODB_CONNECTION_STRING)
+.then(() => {
+  console.log('Connected to MongoDB Atlas');
+
     
     const newUser = new User({
-      _id: number,  
-      name: "xinran wang",
+      name: "wang xinran",
       email: "xinranwang@example.com",
       password: "password",
       gender: "Non-binary",
       profileTag: ["gaming", "fishing"],
       avatar: "http://example.com/avatar.jpg",
-      myGroup: ["group1", " group2"],
+      myGroup: ["123", " 1234"],
       likedGroup: ["group3", " group4"],
       applyInProgress: ["group5", "group6"],
     });
 
+    
      
 
     newUser.save()
