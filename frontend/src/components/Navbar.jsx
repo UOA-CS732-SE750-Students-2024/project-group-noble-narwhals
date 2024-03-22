@@ -10,7 +10,10 @@ function Navbar() {
           id="nav_content"
           className="flex flex-row justify-between items-center h-full w-full px-4"
         >
-          <Link to="/">left side </Link>
+          <Link to="/" className="flex flex-row gap-4 items-center">
+            <img src="logo.png" alt="logo" className="h-10 rounded-full"  />
+            <div className="text-xl">Hey Mate</div>
+          </Link>
           <div className="flex flex-row gap-4">
             <Button>Login</Button>
             <Button style_type="fill">Sign up</Button>
