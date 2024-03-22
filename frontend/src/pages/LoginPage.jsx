@@ -8,7 +8,6 @@ function LoginPage() {
     
     <Link to="/">Home</Link>
 
-    <Link to="/group/1">GroupInfo</Link>
 </>
     
   );
