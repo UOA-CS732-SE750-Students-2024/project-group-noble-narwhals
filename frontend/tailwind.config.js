@@ -7,6 +7,10 @@ export default {
         primary: "#00467f",
         secondary: "#0080a7",
       },
+      spacing: {
+        main_content: "1280px",
+        nav_height: '60px',
+      }
     },
   },
   plugins: [],
