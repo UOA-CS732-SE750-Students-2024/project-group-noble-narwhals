@@ -1,13 +1,18 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import Navbar from "../components/Navbar";
+import { MdFavoriteBorder } from "react-icons/md";
+
 
 function HomePage() {
   return (
     <>
-      <div className="text-3xl">HomePage</div>
-      <h1 className="text-3xl font-bold underline text-sky-500">HomePage</h1>
-      <Link to="/login">Login</Link>
-      <Link to="/group/1">GroupInfo</Link>
+      <Navbar />
+      <div id="main_content" className="mx-auto max-w-main_content">
+        <div className="text-3xl">HomePage</div>
+        <Link to="/login">Login</Link>
+        <MdFavoriteBorder className="text-2xl fill-pink-600" />
+      </div>
     </>
   );
 }

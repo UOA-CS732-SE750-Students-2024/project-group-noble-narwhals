@@ -1,18 +1,44 @@
 # Dev Notes (look before you start working on the project):
+
 ## Git Workflow:
+
 - Please use the `develop` branch for development work.
 - Create a new branch for each feature or bug fix you work on. Name as `feature/your-feature-name` or `bugfix/your-bug-name`.
 - When you are ready to merge your changes, create a pull request from your feature branch to the `develop` branch.
 - Please use the project board to keep track of your work and progress.
+
 ## Frontend:
+
 ### For the file structure, please follow the rules bellow.
+
 - Every page file should be in the `pages` folder.
 - Every component file should be in the `components` folder.
 - IF a component have sub-components, please create a folder for it and put the sub-components in it.
 - For the hooks, please put them in the `hooks` folder.
+- For the picture and other assets, please put them in the `assets` folder.
+
 ### For the style
+
 - Please use variables for colors, etc in the `tailwind.config.js` file.
 - If you think a style is reusable, edit the `tailwind.config.js` file and add it to the `extend` section.
+
+### For the Icon
+
+- Use react-icons for the icons.
+- You can search for the icon you want to use in the [react-icons website](https://react-icons.github.io/react-icons/).
+- For example, if you want to use the `FaBeer` icon, you can import it like this:
+
+````jsx
+import { FaBeer } from "react-icons/fa";
+
+function Question() {
+ return (
+   <h3>
+     Lets go for a <FaBeer />?
+   </h3>
+ );
+}
+````
 ---
 
 # COMPSCI 732 / SOFTENG 750 project - Team Noble Narwhals
@@ -35,3 +61,4 @@ Your team members are:
 # Setup the project:
 - Cd /frontend and run `npm run dev` to start the frontend server
 - Cd /backend and run `npm run dev` to start the backend server(not setup yet).
+````
