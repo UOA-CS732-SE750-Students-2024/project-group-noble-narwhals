@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom';
 
+
 function LoginPage() {
   return (
 <>
@@ -12,5 +13,7 @@ function LoginPage() {
     
   );
 }
+
+
 
 export default LoginPage
