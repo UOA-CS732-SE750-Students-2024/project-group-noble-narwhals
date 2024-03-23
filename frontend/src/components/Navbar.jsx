@@ -26,7 +26,7 @@ function Navbar({ isLogged = false, user = {} }) {
           id="nav_content"
           className="flex flex-row justify-between items-center h-full w-full"
         >
-          <Link to="/" className="flex flex-row gap-4 items-center">
+          <Link to="/" className="flex flex-row gap-2 items-center">
             <img src="logo.png" alt="logo" className="h-11 rounded-lg" />
             {/* <div className="text-xl">Hey Mate</div> */}
             {darkMode ? (
