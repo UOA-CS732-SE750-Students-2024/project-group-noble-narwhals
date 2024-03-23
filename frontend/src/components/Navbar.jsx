@@ -28,7 +28,13 @@ function Navbar({ isLogged = false, user = {} }) {
         >
           <Link to="/" className="flex flex-row gap-4 items-center">
             <img src="logo.png" alt="logo" className="h-11 rounded-lg" />
-            <div className="text-xl">Hey Mate</div>
+            {/* <div className="text-xl">Hey Mate</div> */}
+            {darkMode ? (
+              <img src="brand_blue.png" alt="logo" className="h-11" />
+            ) : (
+              <img src="brand_white.png" alt="logo" className="h-11" />
+            )}
+            {/* <img src="brand_white.png" alt="logo" className="h-11" /> */}
           </Link>
 
           {!isLogged && (
@@ -95,9 +101,13 @@ function Navbar({ isLogged = false, user = {} }) {
                   className="h-10 rounded-full cursor-pointer "
                 />
                 {showMenu && (
-                  <div className="bg-white absolute top-11 -right-6 w-48 rounded-xl flex flex-col items-center p-1 pb-3 gap-3 shadow-basic">
+                  <div
+                    className={`bg-white absolute top-11 -right-6 w-48 rounded-xl flex flex-col items-center p-1 pb-3 gap-3 shadow-basic ${
+                      darkMode && "text-primary"
+                    }`}
+                  >
                     <div className="flex flex-row justify-around items-center w-full h-10 hover:bg-gray-200 rounded-lg cursor-pointer">
-                      <span> Your profile</span>
+                      <span>Your profile</span>
                       <BsChevronCompactRight className="w-6 h-6 text-lg font-extrabold" />
                     </div>
                     <Button className="border-1 h-9 ">
