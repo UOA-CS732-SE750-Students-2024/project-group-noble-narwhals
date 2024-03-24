@@ -6,6 +6,7 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import advandedFormat from "dayjs/plugin/advancedFormat";
 import SearchPage from "./pages/SearchPage";
+import NotificationPage from "./pages/NotificationPage";
 
 dayjs.extend(relativeTime);
 dayjs.extend(advandedFormat);
@@ -17,6 +18,7 @@ function App() {
         <Route index element={<HomePage />} />
         <Route path="login" element={<LoginPage />} />
         <Route path="search" element={<SearchPage />} />
+        <Route path="notification" element={<NotificationPage />} />
       </Route>
     </Routes>
   );
