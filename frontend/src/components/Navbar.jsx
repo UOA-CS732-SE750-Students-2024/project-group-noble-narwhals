@@ -104,7 +104,7 @@ function Navbar({ isLogged = false, user = {} }) {
                   <div
                     className={`bg-white absolute top-11 -right-6 w-48 rounded-xl flex flex-col items-center p-1 pb-3 gap-3 shadow-basic ${
                       darkMode && "text-primary"
-                    }`}
+                    } z-10`}
                   >
                     <div className="flex flex-row justify-around items-center w-full h-10 hover:bg-gray-200 rounded-lg cursor-pointer">
                       <span>Your profile</span>
