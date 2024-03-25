@@ -30,8 +30,9 @@ function AccountSettingsPage() {
     };
 
     const handleAddTag = () => {
-        if (newTag && !tags.includes(newTag)) {
-            setTags([...tags, newTag]);
+
+        if (newTag.trim() && !tags.includes(newTag)) {
+            setTags([...tags, newTag.trim()]);
             setNewTag(""); // 清空输入框
         }
     };
@@ -147,10 +148,15 @@ function AccountSettingsPage() {
                     <div>
                         <input
                             type="text"
+                            value={newTag}
+                            onChange={(e) => setNewTag(e.target.value)}
                             disabled={!isEditing}
                             className={`border-black border-2 rounded w-1/3 px-2 py-1 ${isEditing ? "border-black text-black" : "border-transparent text-gray-500"}`}
                         />
-                        <Button className="ml-6">Add</Button>
+                        {isEditing && (
+                            <Button className="ml-6" onClick={() => handleAddTag()}>Add</Button>
+                        )}
+                        
                         {/**列表的形式显示用户的tags,当编辑模式激活后，在每行右侧有一个按钮可以删除这个tag */}
                         <div className="max-w-lg mr-4"> {/**user's tags list */}
                             {tags.map((tag, index) => (
