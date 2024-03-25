@@ -1,9 +1,11 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import Button from "./Button";
 
 function LogAndSign({ loginType, switchHandler }) {
-    const type = loginType ? "Log in" : "Sign up";
+  const type = loginType ? "Log in" : "Sign up";
+  const contentBlow = loginType
+    ? "First time with us?"
+    : "Already have an account?";
 
   return (
     <div className="flex flex-col items-center justify-around p-11">
@@ -20,9 +22,12 @@ function LogAndSign({ loginType, switchHandler }) {
         OR
         <button>{type} with Google</button>
       </div>
-      <div>
-        First time with us? <div onClick={switchHandler}>Sign up</div> now
-        <Link to={`${loginType ? "/Signup" : "/login"} "/login"`}>Login</Link>
+      <div className="flex flex-col items-center">
+        {contentBlow}
+        <div>
+          <span className="text-primary cursor-pointer" onClick={switchHandler}>{loginType ? "Sign up" : "log in"}</span>{" "}
+          here
+        </div>
       </div>
     </div>
   );

@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import LogAndSign from "../components/LogAndSign";
+import { useNavigate } from "react-router-dom";
 
 function LoginPage({ ifLogin = true }) {
+  let navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(ifLogin);
 
   const switchLoginAndSign = () => {
+    isLogin ? navigate("/signup") : navigate("/login");
     setIsLogin((preState) => !preState);
   };
 
@@ -20,6 +23,7 @@ function LoginPage({ ifLogin = true }) {
         className={`absolute h-screen w-1/2 bg-primary flex flex-col justify-between p-5 transition-all duration-500 ${
           isLogin ? "left-0 rounded-r-2xl" : "left-1/2 rounded-l-2xl"
         }`}
+        onClick={switchLoginAndSign}
       >
         <div className="font-bungee text-7xl text-white">
           Uplift your mind strengthen your circle
