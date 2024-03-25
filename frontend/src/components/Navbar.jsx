@@ -60,7 +60,7 @@ function Navbar({ isLogged = false, user = {} }) {
           {isLogged && (
             <div className="flex flex-row gap-5 items-center">
               <div
-                className={`flex flex-row items-center border-2 rounded-full pr-1 pl-4 bg-white focus-within:border-primary ${
+                className={`flex flex-row items-center justify-between border-2 rounded-full pr-0.5 pl-4 bg-white focus-within:border-primary ${
                   darkMode &&
                   "border-white focus-within:border-white focus-within:text-primary"
                 }  `}
@@ -71,7 +71,7 @@ function Navbar({ isLogged = false, user = {} }) {
                   className={` w-14 h-8 outline-none focus:w-48 transition-all duration-300 `}
                 />
                 <div
-                  className={` w-8 h-7 rounded-full hover:bg-gray-200 flex items-center justify-center ${
+                  className={` w-7 h-7 rounded-full hover:bg-gray-200 flex items-center justify-center ${
                     darkMode && "text-primary"
                   }`}
                 >
