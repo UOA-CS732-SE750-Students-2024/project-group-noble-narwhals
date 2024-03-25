@@ -3,15 +3,15 @@
 import React from 'react';
 import Navbar from '../components/Navbar.jsx';
 import UserPageSideBar from '../components/UserPageSideBar.jsx';
-import '../index.css';
+
 import { Outlet } from 'react-router-dom';
 
 const UserProfilePage = () => {
     return (
-        <div>
+        <div className="h-screen overflow-y-auto ">
             <Navbar />
-            <div className="flex">
-                <UserPageSideBar /> 
+            <div className="flex ">
+                <UserPageSideBar />
                 <div className="flex-grow">
                     <Outlet />
                 </div>

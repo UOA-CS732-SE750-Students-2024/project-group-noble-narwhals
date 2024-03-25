@@ -1,5 +1,6 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import UserProfilePage from "./pages/UserProfilePage";
@@ -24,7 +25,8 @@ function App() {
         <Route index element={<HomePage />} />
         <Route path="login" element={<LoginPage />} />
         <Route path="userProfile" element={<UserProfilePage />}>
-          <Route path="publicProfile" element={<PublicProfilePage />}/>
+          <Route index element={<Navigate to= "publicProfile" replace/>}/>
+          <Route path="publicProfile" element={<PublicProfilePage />} />
           <Route path="accountSettings" element={<AccountSettingsPage />} />
           <Route path="myGroups"  element={<MyGroupsPage />}/>
           <Route path="applyInProgress" element={<ApplyInProgressPage />} />

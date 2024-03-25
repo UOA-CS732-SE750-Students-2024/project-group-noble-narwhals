@@ -4,15 +4,15 @@ import React from 'react';
 import { useState } from 'react';
 import { IoMdMale } from "react-icons/io";
 import { IoMdFemale } from "react-icons/io";
-import '../index.css';
+
 
 const PublicProfilePage = () => {
     const [gender, setGender] = useState("male"); 
     
     return (
-        <div className="flex">
+        <div className="flex overflow-y-auto"  >
 
-            <div className="pl-10 bg-white flex flex-col flex-grow">
+            <div className="pl-10 pr-10 bg-white flex flex-col flex-grow">
                 <div className="py-8">
                 
                     <div className="flex items-center mb-2">
@@ -42,25 +42,33 @@ const PublicProfilePage = () => {
                 <div className="flex flex-col">
                     <div className="text-3xl mb-8">Groups</div>
                     {/* Groups table */}
-                    <table className="w-full">
-                        <thead>
+                    <table className="w-full border-collapse border-spacing-7 ">
+                        <thead className=" ">
                             <tr>
-                                <th className="border-b border-gray-300 text-left">Group Name</th>
-                                <th className="border-b border-gray-300 text-left">Category</th>
-                                <th className="border-b border-gray-300 text-left">Due</th>
-                                <th className="border-b border-gray-300 text-left">Group Owner</th>
-                                <th className="border-b border-gray-300 text-left">Member</th>
-                                <th className="border-b border-gray-300 text-left">Status</th>
+                                <th className="border-b border-gray-700 text-left py-2 px-3 ">Group Name</th>
+                                <th className="border-b border-gray-700 text-left py-2  px-3">Category</th>
+                                <th className="border-b border-gray-700 text-left py-2  px-3">Due</th>
+                                <th className="border-b border-gray-700 text-left py-2  px-3">Group Owner</th>
+                                <th className="border-b border-gray-700 text-left py-2  px-3">Member</th>
+                                <th className="border-b border-gray-700 text-left py-2 px-3 ">Status</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td className="border-b border-gray-300 text-left">$GROUP_NAME$</td>
-                                <td className="border-b border-gray-300 text-left">$CATEGORY$</td>
-                                <td className="border-b border-gray-300 text-left">$DUE$</td>
-                                <td className="border-b border-gray-300 text-left">$GROUP_OWNER$</td>
-                                <td className="border-b border-gray-300 text-left">$MEMBER$</td>
-                                <td className="border-b border-gray-300 text-left">$STATUS$</td>
+                                <td className="border-b border-gray-700 text-left py-2  px-3 max-w-xs truncate">$GROUP_sadsaadadasdasdsadasdasdsdassppppppppppppppNAME$</td>
+                                <td className="border-b border-gray-700 text-left py-2  px-3 max-w-xs truncate">Project</td>
+                                <td className="border-b border-gray-700 text-left py-2  px-3 max-w-xs truncate">1 day left</td>
+                                <td className="border-b border-gray-700 text-left py-2  px-3 max-w-xs truncate">$GROUP_OWNER$</td>
+                                <td className="border-b border-gray-700 text-left py-2  px-3 max-w-xs truncate">2/4</td>
+                                <td className="border-b border-gray-700 text-left py-2  px-3 max-w-xs truncate">Open</td>
+                            </tr>
+                            <tr>
+                                <td className="border-b border-gray-700 text-left py-2  px-3 max-w-xs truncate">$GROUP_NAME$</td>
+                                <td className="border-b border-gray-700 text-left py-2  px-3 max-w-xs truncate">Activity</td>
+                                <td className="border-b border-gray-700 text-left py-2  px-3 max-w-xs truncate">1 day left</td>
+                                <td className="border-b border-gray-700 text-left py-2  px-3 max-w-xs truncate">$GROUP_OWNER$</td>
+                                <td className="border-b border-gray-700 text-left py-2  px-3 max-w-xs truncate">5/5</td>
+                                <td className="border-b border-gray-700 text-left py-2  px-3 max-w-xs truncate">Close</td>
                             </tr>
                         </tbody>
                     </table>

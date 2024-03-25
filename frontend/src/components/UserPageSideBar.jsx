@@ -17,11 +17,11 @@ function UserPageSideBar(){
     };
 
     return (
-        <div className="w-1/6 bg-primary min-h-screen flex flex-col items-center">
+        <div className="w-1/6 bg-primary min-h-screen flex flex-col items-center ">
             <div>{/*users' avatar and username*/}
                 <div className="flex flex-col items-center justify-center p-8">
                     <img
-                        className="w-16 h-16 rounded-full mb-2"
+                        className="w-24 h-24 rounded-full mb-2"
                         src="https://www.animesenpai.net/wp-content/uploads/2022/12/Bocchi-The-Rock-21-1024x576.webp"
                         alt="User Avatar"
                     />
