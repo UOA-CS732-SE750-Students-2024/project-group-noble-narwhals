@@ -3,7 +3,7 @@ import { Route, Routes } from "react-router-dom";
 import { Navigate } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
-import UserProfilePage from "./pages/UserProfilePage";
+import UserProfilePage from "./pages/UserPage";
 import PublicProfilePage from "./pages/PublicProfilePage";
 import AccountSettingsPage from "./pages/AccountSettingsPage";
 import MyGroupsPage from "./pages/MyGroupsPage";
@@ -24,13 +24,13 @@ function App() {
       <Route path="/">
         <Route index element={<HomePage />} />
         <Route path="login" element={<LoginPage />} />
-        <Route path="userProfile" element={<UserProfilePage />}>
-          <Route index element={<Navigate to= "publicProfile" replace/>}/>
-          <Route path="publicProfile" element={<PublicProfilePage />} />
-          <Route path="accountSettings" element={<AccountSettingsPage />} />
-          <Route path="myGroups"  element={<MyGroupsPage />}/>
-          <Route path="applyInProgress" element={<ApplyInProgressPage />} />
-          <Route path="likedGroups" element={<LikedGroupsPage />} />
+        <Route path="user" element={<UserProfilePage />}>
+          <Route index element={<Navigate to= "profile" replace/>}/>
+          <Route path="profile" element={<PublicProfilePage />} />
+          <Route path="settings" element={<AccountSettingsPage />} />
+          <Route path="my-groups"  element={<MyGroupsPage />}/>
+          <Route path="apply-in-progress" element={<ApplyInProgressPage />} />
+          <Route path="liked" element={<LikedGroupsPage />} />
           <Route path="notification"  />
         </Route>
           

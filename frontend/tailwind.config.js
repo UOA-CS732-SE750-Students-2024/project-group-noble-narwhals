@@ -1,4 +1,5 @@
 /** @type {import('tailwindcss').Config} */
+const { NAV_HEIGHT } = require('./src/utils/constants');
 export default {
   content: ["./index.html", "./src/**/*.{js,jsx}"],
   theme: {
@@ -9,7 +10,7 @@ export default {
       },
       spacing: {
         main_content: "1280px",
-        nav_height: '60px',
+        nav_height: `${NAV_HEIGHT}px`,
       }
     },
   },

@@ -120,8 +120,8 @@ function AccountSettingsPage() {
                     <p className='font-bold text-xl mb-3'>Email</p>
                     <div className="flex flex-row mb-3 items-center">
                         <input
-                            type="text"
-                            value={email}
+                            type="email"
+                            value="xxx@aa.com"
                             onChange={handleEmailChange}
                             disabled={!isEditing}
                             className={`border rounded px-2 py-1 ${isEditing ? "border-black text-black" : "border-transparent text-gray-500"}`}

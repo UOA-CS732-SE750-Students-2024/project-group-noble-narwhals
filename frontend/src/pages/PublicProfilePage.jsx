@@ -2,15 +2,28 @@
 // where they are currently participating
 import React from 'react';
 import { useState } from 'react';
+import { ProfileTags } from '../components/ProfileTags';
+import { GroupTableRow } from '../components/GroupTableRow';
 import { IoMdMale } from "react-icons/io";
 import { IoMdFemale } from "react-icons/io";
 
 
 const PublicProfilePage = () => {
     const [gender, setGender] = useState("male"); 
+
+    const tags = [
+        {tagId: 1, tagName: "tag1"}, 
+        {tagId: 2, tagName: "tag2"}
+   ]; // dummy data for tags
+
+    const groups = [ // dummy data for groups
+        { id: 1, groupName: "Group 1", category: "Project", due: "1 day left", groupOwner: "Owner 1", members: "2/4", status: "Open" },
+        { id: 2, groupName: "Group 2", category: "Activity", due: "1 day left", groupOwner: "Owner 2", members: "5/5", status: "Close" },
+        { id: 3, groupName: "Group 3", category: "Study", due: "1 day left", groupOwner: "Owner 3", members: "3/3", status: "Open" },
+    ];
     
     return (
-        <div className="flex overflow-y-auto"  >
+        <div className="flex min-w-fit overflow-y-auto"  >
 
             <div className="pl-10 pr-10 bg-white flex flex-col flex-grow">
                 <div className="py-8">
@@ -28,9 +41,10 @@ const PublicProfilePage = () => {
                                 {gender === 'female' && <IoMdFemale className='fill-pink-500 text-2xl mt-5'/>}
                             </div>
                             <div className="flex m-5 pt-5">
-                                
-                                <div className="rounded-2xl border-primary border pl-2 pr-2 mr-2">$TAG1$</div>
-                                <div className="rounded-2xl border-primary border pl-2 pr-2  ">$TAG2$</div>
+                                {tags.map((tag) => (
+                                    <ProfileTags key={tag.tagId} tagName={tag.tagName} />
+                                ))    
+                                }
                             </div>         
                         </div>
                         
@@ -54,22 +68,18 @@ const PublicProfilePage = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td className="border-b border-gray-700 text-left py-2  px-3 max-w-xs truncate">$GROUP_sadsaadadasdasdsadasdasdsdassppppppppppppppNAME$</td>
-                                <td className="border-b border-gray-700 text-left py-2  px-3 max-w-xs truncate">Project</td>
-                                <td className="border-b border-gray-700 text-left py-2  px-3 max-w-xs truncate">1 day left</td>
-                                <td className="border-b border-gray-700 text-left py-2  px-3 max-w-xs truncate">$GROUP_OWNER$</td>
-                                <td className="border-b border-gray-700 text-left py-2  px-3 max-w-xs truncate">2/4</td>
-                                <td className="border-b border-gray-700 text-left py-2  px-3 max-w-xs truncate">Open</td>
-                            </tr>
-                            <tr>
-                                <td className="border-b border-gray-700 text-left py-2  px-3 max-w-xs truncate">$GROUP_NAME$</td>
-                                <td className="border-b border-gray-700 text-left py-2  px-3 max-w-xs truncate">Activity</td>
-                                <td className="border-b border-gray-700 text-left py-2  px-3 max-w-xs truncate">1 day left</td>
-                                <td className="border-b border-gray-700 text-left py-2  px-3 max-w-xs truncate">$GROUP_OWNER$</td>
-                                <td className="border-b border-gray-700 text-left py-2  px-3 max-w-xs truncate">5/5</td>
-                                <td className="border-b border-gray-700 text-left py-2  px-3 max-w-xs truncate">Close</td>
-                            </tr>
+                            {groups.map((group) => (
+                                <GroupTableRow
+                                    key={group.id}
+                                    groupName={group.groupName}
+                                    category={group.category}
+                                    due={group.due}
+                                    groupOwner={group.groupOwner}
+                                    members={group.members}
+                                    status={group.status}
+                                />
+                            ))    
+                            }
                         </tbody>
                     </table>
                 </div>
