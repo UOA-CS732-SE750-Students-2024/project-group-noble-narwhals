@@ -113,6 +113,17 @@ function AccountSettingsPage() {
                             />
                             Other
                         </label>
+                        <label>
+                            <input
+                                type="radio"
+                                name="gender"
+                                value="Prefer not to say"
+                                checked={gender === "Prefer not to say"}
+                                onChange={handleGenderChange}
+                                disabled={!isEditing}
+                            />
+                            Prefer not to say
+                        </label>
                     </div>
                 </div>
 
@@ -158,13 +169,13 @@ function AccountSettingsPage() {
                         )}
                         
                         {/**列表的形式显示用户的tags,当编辑模式激活后，在每行右侧有一个按钮可以删除这个tag */}
-                        <div className="max-w-lg mr-4"> {/**user's tags list */}
+                        <div className="max-w-lg mr-4 flex flex-row"> {/**user's tags list */}
                             {tags.map((tag, index) => (
-                            <div key={index} className="mt-2 flex flex-row justify-between">
+                            <div key={index} className={`mt-2 mr-2 pr-1 pl-1 rounded-3xl border-2 ${isEditing ? 'text-black border-black' : 'border-gray-500 text-gray-500'} text-sm flex flex-row justify-between`}>
                                 
-                                <div className="mb-2">{tag}</div>
+                                <div>{tag}</div>
                                 {isEditing && (
-                                    <IoClose onClick={() => handleDeleteTag(index)} size={24} className='cursor-pointer'/>
+                                    <IoClose onClick={() => handleDeleteTag(index)} size={20} className='cursor-pointer'/>
                                 )}
                             
                             </div>
@@ -172,7 +183,7 @@ function AccountSettingsPage() {
                          </div>
                     </div>
                 </div>
-                <Button onClick={isEditing ? handleSubmit : handleEditClick} className="mt-4">
+                <Button onClick={isEditing ? handleSubmit : handleEditClick} className="mt-6">
                     {isEditing ? "Update profile" : "Edit Profile"}
                 </Button>
                 <div>

@@ -9,25 +9,28 @@ import { IoMdFemale } from "react-icons/io";
 
 
 const PublicProfilePage = () => {
-    const [gender, setGender] = useState("male"); 
+    const [gender, setGender] = useState("male");
+
+    const userName = "Rainman96"; // dummy data for user name
+    const email = "tpan501@aucklanduni.ac.nz" // dummy data for email
 
     const tags = [
-        {tagId: 1, tagName: "tag1"}, 
-        {tagId: 2, tagName: "tag2"}
-   ]; // dummy data for tags
+        { tagId: 1, tagName: "tag1" },
+        { tagId: 2, tagName: "tag2" }
+    ]; // dummy data for tags
 
     const groups = [ // dummy data for groups
         { id: 1, groupName: "Group 1", category: "Project", due: "1 day left", groupOwner: "Owner 1", members: "2/4", status: "Open" },
         { id: 2, groupName: "Group 2", category: "Activity", due: "1 day left", groupOwner: "Owner 2", members: "5/5", status: "Close" },
-        { id: 3, groupName: "Group 3", category: "Study", due: "1 day left", groupOwner: "Owner 3", members: "3/3", status: "Open" },
+        { id: 3, groupName: "Group 3", category: "Study", due: "1 day left", groupOwner: "Rainman96", members: "3/3", status: "Open" },
     ];
-    
+
     return (
         <div className="flex min-w-fit overflow-y-auto"  >
 
             <div className="pl-10 pr-10 bg-white flex flex-col flex-grow">
                 <div className="py-8">
-                
+
                     <div className="flex items-center mb-2">
                         <img
                             className="w-40 h-40 rounded-full mr-4"
@@ -36,23 +39,23 @@ const PublicProfilePage = () => {
                         />
                         <div>
                             <div className='flex flex-row'>
-                                <p className="text-xl font-bold m-5">$USERNAME$</p>
-                                {gender === 'male' && <IoMdMale className='fill-sky-500 text-2xl mt-5'/>}
-                                {gender === 'female' && <IoMdFemale className='fill-pink-500 text-2xl mt-5'/>}
+                                <p className="text-xl font-bold m-5">{userName}</p>
+                                {gender === 'male' && <IoMdMale className='fill-sky-500 text-2xl mt-5' />}
+                                {gender === 'female' && <IoMdFemale className='fill-pink-500 text-2xl mt-5' />}
                             </div>
                             <div className="flex m-5 pt-5">
                                 {tags.map((tag) => (
                                     <ProfileTags key={tag.tagId} tagName={tag.tagName} />
-                                ))    
+                                ))
                                 }
-                            </div>         
+                            </div>
                         </div>
-                        
+
                     </div>
-                
-                    
+
+
                 </div>
-                <p className="text-gray-600 ml-4 mt-1 mb-10">$EMAIL$</p>
+                <p className="text-black ml-4 mt-1 mb-10">Email: {email}</p>
                 <div className="flex flex-col">
                     <div className="text-3xl mb-8">Groups</div>
                     {/* Groups table */}
@@ -74,11 +77,11 @@ const PublicProfilePage = () => {
                                     groupName={group.groupName}
                                     category={group.category}
                                     due={group.due}
-                                    groupOwner={group.groupOwner}
+                                    groupOwner={group.groupOwner == userName ? "You" : group.groupOwner}
                                     members={group.members}
                                     status={group.status}
                                 />
-                            ))    
+                            ))
                             }
                         </tbody>
                     </table>

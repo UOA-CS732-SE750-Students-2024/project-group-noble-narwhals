@@ -1,10 +1,18 @@
 import React from 'react';
-import '../index.css';
+import { GroupTableRow } from '../components/GroupTableRow';
 
 function LikedGroupPage() {
+
+    const userName = "Rainman96"; // dummy data for user name
+    
+    const groups = [ // dummy data for groups
+    { id: 1, groupName: "Group 1", category: "Project", due: "1 day left", groupOwner: "Owner 1", members: "2/4", status: "Open" },
+    { id: 2, groupName: "Group 2", category: "Activity", due: "1 day left", groupOwner: "Owner 2", members: "5/5", status: "Close" },
+    { id: 3, groupName: "Group 3", category: "Study", due: "1 day left", groupOwner: "Rainman96", members: "3/3", status: "Open" },
+];
     return (
         <div className="flex flex-col m-4 p-4">
-            <div className="text-3xl mb-8">Liked groups</div>
+            <div className="text-3xl mb-8">Liked Groups</div>
             {/* Groups table */}
             <table className="w-full border-collapse border-spacing-7 ">
                 <thead>
@@ -18,22 +26,18 @@ function LikedGroupPage() {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td className="border-b border-gray-700 text-left py-2  px-3 max-w-xs truncate">$GROUP_sadsaadadasdasdsadasdasdsdassppppppppppppppNAME$</td>
-                        <td className="border-b border-gray-700 text-left py-2  px-3 max-w-xs truncate">Project</td>
-                        <td className="border-b border-gray-700 text-left py-2  px-3 max-w-xs truncate">1 day left</td>
-                        <td className="border-b border-gray-700 text-left py-2  px-3 max-w-xs truncate">$GROUP_OWNER$</td>
-                        <td className="border-b border-gray-700 text-left py-2  px-3 max-w-xs truncate">2/4</td>
-                        <td className="border-b border-gray-700 text-left py-2  px-3 max-w-xs truncate">Open</td>
-                    </tr>
-                    <tr>
-                        <td className="border-b border-gray-700 text-left py-2  px-3 max-w-xs truncate">$GROUP_NAME$</td>
-                        <td className="border-b border-gray-700 text-left py-2  px-3 max-w-xs truncate">Activity</td>
-                        <td className="border-b border-gray-700 text-left py-2  px-3 max-w-xs truncate">1 day left</td>
-                        <td className="border-b border-gray-700 text-left py-2  px-3 max-w-xs truncate">$GROUP_OWNER$</td>
-                        <td className="border-b border-gray-700 text-left py-2  px-3 max-w-xs truncate">5/5</td>
-                        <td className="border-b border-gray-700 text-left py-2  px-3 max-w-xs truncate">Close</td>
-                    </tr>
+                    {groups.map((group) => (
+                                    <GroupTableRow
+                                        key={group.id}
+                                        groupName={group.groupName}
+                                        category={group.category}
+                                        due={group.due}
+                                        groupOwner={group.groupOwner == userName ? "You" : group.groupOwner}
+                                        members={group.members}
+                                        status={group.status}
+                                    />
+                                ))    
+                                }
                 </tbody>
             </table>
         </div>
