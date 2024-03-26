@@ -11,7 +11,9 @@ export default {
         main_content: "1280px",
         nav_height: '60px',
       }
+      
     },
+    
     
   },
   plugins: [],
