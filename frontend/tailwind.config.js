@@ -9,7 +9,7 @@ export default {
         secondary: "#0080a7",
       },
       spacing: {
-        mainContent: "1280px",
+        main_content: "1280px",
         navHeight: '60px',
       },
       boxShadow: {
