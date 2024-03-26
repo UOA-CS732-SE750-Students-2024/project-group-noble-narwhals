@@ -21,7 +21,7 @@ function Navbar({ isLogged = false, user = {} }) {
         darkMode ? "text-white bg-primary " : "bg-white text-primary"
       } `}
     >
-      <div className="mx-auto w-full h-nav_height px-12">
+      <div className="mx-auto w-full h-navHeight px-12">
         <div
           id="nav_content"
           className="flex flex-row justify-between items-center h-full w-full"
