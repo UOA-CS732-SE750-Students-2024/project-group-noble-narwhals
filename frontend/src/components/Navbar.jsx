@@ -58,7 +58,7 @@ function Navbar({ isLogged = false, user = {} }) {
           )}
 
           {isLogged && (
-            <div className="flex flex-row gap-5 items-center">
+            <div className="flex flex-row gap-7 items-center">
               <div
                 className={`flex flex-row items-center justify-between border-2 rounded-full pr-0.5 pl-4 bg-white focus-within:border-primary ${
                   darkMode &&
@@ -68,7 +68,7 @@ function Navbar({ isLogged = false, user = {} }) {
                 <input
                   type="text"
                   placeholder="Search"
-                  className={` w-14 h-8 outline-none focus:w-48 transition-all duration-300 `}
+                  className={`w-72 h-8 outline-none focus:w-96 transition-all duration-300 `}
                 />
                 <div
                   className={` w-7 h-7 rounded-full hover:bg-gray-200 flex items-center justify-center ${
@@ -78,28 +78,33 @@ function Navbar({ isLogged = false, user = {} }) {
                   <IoSearchOutline />
                 </div>
               </div>
-              <div
-                className={`w-7 h-7 text-xl rounded-sm flex flex-row items-center justify-center cursor-pointer hover:bg-gray-200 ${
-                  darkMode ? "hover:text-primary" : ""
-                }   `}
-              >
-                <Link to="/">
+              <div className={`flex flex-row items-center cursor-pointer hover:bg-gray-200 p-1 px-2 rounded-full ${
+                    darkMode ? "hover:text-primary" : ""
+                  }`} >
+                <Link to="/"
+                  className={`w-7 h-7 text-xl flex flex-row items-center justify-center `}
+                >
                   <IoAdd />
                 </Link>
+                <span>Create Group</span>
               </div>
-              <div
-                className={`w-7 h-7  text-xl rounded-sm flex flex-row items-center justify-center hover:bg-gray-200 cursor-pointer ${
-                  darkMode ? "hover:text-primary" : ""
-                } `}
-              >
-                <IoMdNotificationsOutline />
+              <div className={`flex flex-row items-center cursor-pointer hover:bg-gray-200 p-1 px-2 rounded-full ${
+                    darkMode ? "hover:text-primary" : ""
+                  }`} >
+                <Link to="/"
+                  className={`w-7 h-7 text-xl flex flex-row items-center justify-center `}
+                >
+                  <IoMdNotificationsOutline />
+                </Link>
+                <span>Notifications</span>
               </div>
-              <div onClick={switchMenu} className="relative">
+              <div onClick={switchMenu} className="relative flex flex-row items-center gap-3">
                 <img
                   src="logo.png"
                   alt="Avator"
                   className="h-10 rounded-full cursor-pointer "
                 />
+                Username
                 {showMenu && (
                   <div
                     className={`bg-white absolute top-11 -right-6 w-48 rounded-xl flex flex-col items-center p-1 pb-3 gap-3 shadow-basic ${
