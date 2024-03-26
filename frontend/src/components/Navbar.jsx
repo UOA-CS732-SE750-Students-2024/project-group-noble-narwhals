@@ -28,13 +28,11 @@ function Navbar({ isLogged = false, user = {} }) {
         >
           <Link to="/" className="flex flex-row gap-2 items-center">
             <img src="logo.png" alt="logo" className="h-11 rounded-lg" />
-            {/* <div className="text-xl">Hey Mate</div> */}
             {darkMode ? (
               <img src="brand_blue.png" alt="logo" className="h-11" />
             ) : (
               <img src="brand_white.png" alt="logo" className="h-11" />
             )}
-            {/* <img src="brand_white.png" alt="logo" className="h-11" /> */}
           </Link>
 
           {!isLogged && (
