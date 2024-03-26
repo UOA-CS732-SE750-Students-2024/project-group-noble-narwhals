@@ -17,11 +17,11 @@ function Navbar({ isLogged = false, user = {} }) {
 
   return (
     <nav
-      className={`shadow-sm ${
-        darkMode ? "text-white bg-primary " : "text-primary"
+      className={`shadow-sm fixed left-0 top-0 w-screen ${
+        darkMode ? "text-white bg-primary " : "bg-white text-primary"
       } `}
     >
-      <div className="mx-auto w-4/5 max-w-main_content h-nav_height ">
+      <div className="mx-auto w-full h-nav_height px-12">
         <div
           id="nav_content"
           className="flex flex-row justify-between items-center h-full w-full"
