@@ -2,7 +2,6 @@
 // where they are currently participating
 import React from 'react';
 import { useState } from 'react';
-import { ProfileTags } from '../components/ProfileTags';
 import { GroupTableRow } from '../components/GroupTableRow';
 import { IoMdMale } from "react-icons/io";
 import { IoMdFemale } from "react-icons/io";
@@ -92,4 +91,11 @@ const PublicProfilePage = () => {
     );
 };
 
+function ProfileTags({tagName}){
+    return(
+        <div className="rounded-2xl border-primary border pl-2 pr-2 mr-2">{tagName}</div>
+    )
+}
+
 export default PublicProfilePage;
+export { ProfileTags };

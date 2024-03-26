@@ -106,17 +106,6 @@ function AccountSettingsPage() {
                             <input
                                 type="radio"
                                 name="gender"
-                                value="Other"
-                                checked={gender === "Other"}
-                                onChange={handleGenderChange}
-                                disabled={!isEditing}
-                            />
-                            Other
-                        </label>
-                        <label>
-                            <input
-                                type="radio"
-                                name="gender"
                                 value="Prefer not to say"
                                 checked={gender === "Prefer not to say"}
                                 onChange={handleGenderChange}

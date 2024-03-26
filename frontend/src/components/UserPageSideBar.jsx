@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import SidebarOption from './SideBarOption';
+import { Link } from 'react-router-dom';
 import { CgProfile } from "react-icons/cg";
-import { CiSettings } from "react-icons/ci";
-import { FaUserGroup } from "react-icons/fa6";
+import { IoSettingsSharp } from "react-icons/io5";
+// import { FaUserGroup } from "react-icons/fa6";
 import { MdPendingActions } from "react-icons/md";
 import { FaHeart } from "react-icons/fa";
 import { IoIosNotifications } from "react-icons/io";
@@ -17,12 +17,11 @@ function UserPageSideBar() {
     };
 
     const options = [
-        { label: 'Public Profile', icon: <CgProfile className="mr-2" />, to: '/user/profile' },
-        { label: 'Account settings', icon: <CiSettings className="mr-2" size={24} />, to: '/user/settings' },
-        { label: 'My groups', icon: <FaUserGroup className="mr-2" />, to: '/user/my-groups' },
-        { label: 'Apply in progress', icon: <MdPendingActions className="mr-2" size={18} />, to: '/user/apply-in-progress' },
-        { label: 'Liked groups', icon: <FaHeart className="mr-2" />, to: '/user/liked' },
-        { label: 'Notification', icon: <IoIosNotifications className="mr-1" size={24} />, to: '/user/notification' },
+        { label: 'Public Profile', icon: <CgProfile className="mr-2" size={24}/>, to: '/user/profile' },
+        { label: 'Account settings', icon: <IoSettingsSharp  className="mr-2" size={24} />, to: '/user/settings' },
+        { label: 'Apply in progress', icon: <MdPendingActions className="mr-2" size={24} />, to: '/user/apply-in-progress' },
+        { label: 'Liked groups', icon: <FaHeart className="mr-2" size={24}/>, to: '/user/liked' },
+        { label: 'Notification', icon: <IoIosNotifications className="mr-2" size={24} />, to: '/user/notification' },
     ];
 
     return (
@@ -54,4 +53,20 @@ function UserPageSideBar() {
         </div>
     );
 };
+
+function SidebarOption({ icon, label, to, handleClick }) {
+    return (
+      <div
+        className="p-3 flex items-center justify-center hover:bg-secondary text-white cursor-pointer transition-colors duration-100"
+        onClick={() => handleClick(label)}
+      >
+        <Link to={to} className="flex items-center w-full justify-start pl-4">
+          {icon}
+          {label}
+        </Link>
+      </div>
+    );
+  }
+  
 export default UserPageSideBar;
+export { SidebarOption };
