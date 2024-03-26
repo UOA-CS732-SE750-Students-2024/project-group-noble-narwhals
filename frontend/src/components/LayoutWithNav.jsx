@@ -5,7 +5,7 @@ import Navbar from "./Navbar";
 export default function PageLayout() {
   return (
     <>
-      <Navbar isLogged={true} />
+      <Navbar isLogged={false} />
       <Outlet />
     </>
   );

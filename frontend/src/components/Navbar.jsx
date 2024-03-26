@@ -37,21 +37,25 @@ function Navbar({ isLogged = false, user = {} }) {
 
           {!isLogged && (
             <div className="flex flex-row gap-4">
-              <Button
-                className={`${
-                  darkMode && "bg-white hover:text-white border-white"
-                }`}
-              >
-                Login
-              </Button>
-              <Button
-                style_type="fill"
-                className={`${
-                  darkMode && "border-2  border-white hover:border-pink-600"
-                }`}
-              >
-                Sign up
-              </Button>
+              <Link to="/login">
+                <Button
+                  className={`${
+                    darkMode && "bg-white hover:text-white border-white"
+                  }`}
+                >
+                  Log in
+                </Button>
+              </Link>
+              <Link to="/signup">
+                <Button
+                  style_type="fill"
+                  className={`${
+                    darkMode && "border-2  border-white hover:border-pink-600"
+                  }`}
+                >
+                  Sign up
+                </Button>
+              </Link>
             </div>
           )}
 
@@ -76,27 +80,36 @@ function Navbar({ isLogged = false, user = {} }) {
                   <IoSearchOutline />
                 </div>
               </div>
-              <div className={`h-9 flex flex-row items-center gap-1 cursor-pointer hover:bg-gray-200 py-1 px-2 rounded-full ${
-                    darkMode ? "hover:text-primary" : ""
-                  }`} >
-                <Link to="/"
+              <div
+                className={`h-9 flex flex-row items-center gap-1 cursor-pointer hover:bg-gray-200 py-1 px-2 rounded-full ${
+                  darkMode ? "hover:text-primary" : ""
+                }`}
+              >
+                <Link
+                  to="/"
                   className={`text-xl flex flex-row items-center justify-center `}
                 >
                   <IoAdd />
                 </Link>
                 <span>Create Group</span>
               </div>
-              <div className={`h-9 flex flex-row items-center gap-1 cursor-pointer hover:bg-gray-200 py-1 px-2 rounded-full ${
-                    darkMode ? "hover:text-primary" : ""
-                  }`} >
-                <Link to="/"
+              <div
+                className={`h-9 flex flex-row items-center gap-1 cursor-pointer hover:bg-gray-200 py-1 px-2 rounded-full ${
+                  darkMode ? "hover:text-primary" : ""
+                }`}
+              >
+                <Link
+                  to="/"
                   className={`text-xl flex flex-row items-center justify-center `}
                 >
                   <IoMdNotificationsOutline />
                 </Link>
                 <span>Notifications</span>
               </div>
-              <div onClick={switchMenu} className="h-9 relative flex flex-row items-center gap-2 cursor-pointer hover:bg-gray-200 pr-3 rounded-full ">
+              <div
+                onClick={switchMenu}
+                className="h-9 relative flex flex-row items-center gap-2 cursor-pointer hover:bg-gray-200 pr-3 rounded-full "
+              >
                 <img
                   src="logo.png"
                   alt="Avator"
