@@ -1,43 +1,30 @@
 import React, { useState } from 'react';
-import Button from './Button'; 
-import { MdOutlineMarkUnreadChatAlt, MdOutlineMessage } from "react-icons/md";
+import Button from './Button';
 
 function Applicant({ username, message, avatar }) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isMessageRead, setIsMessageRead] = useState(false); // add new state to track if message is read
+  const [isExpanded, setIsExpanded] = useState(false);
 
-  const toggleModal = () => {
-    setIsModalOpen(!isModalOpen);
-    setIsMessageRead(true); // set message to read when modal is opened
+  const toggleMessageDisplay = () => {
+    setIsExpanded(!isExpanded);
   };
+ 
 
   return (
-    <div className="bg-white rounded-lg shadow p-4 w-56 mr-4 flex-shrink-0">
-      <div className="flex flex-col items-center">
-        <div className={`w-16 h-16 ${avatar} rounded-full mb-2`}></div>
-        <div className="text-base font-medium mb-2">{username}</div>
-
-        {/* Show different icons depending on whether the message is read or not */}
-        <button onClick={toggleModal} className="text-secondary hover:bg-red-300 p-2 rounded-full">
-          {isMessageRead ? <MdOutlineMessage size={24} /> : <MdOutlineMarkUnreadChatAlt size={24} />}
-        </button>
-
-        {/* Allow , Reject button */}
-        <div className="flex space-x-2 mt-2">
-          <Button className="text-xxs py-1 px-2" style_type="fill">Allow</Button>
-          <Button className="text-xxs py-1 px-2" style_type="border">Reject</Button>
-        </div>
+    <div className="flex flex-col items-center p-4 w-64 h-80 bg-white rounded-lg shadow-lg space-y-4 transition-all duration-300 ease-in-out">
+      <div className={`w-16 h-16 rounded-full ${avatar} transition-all duration-300 ease-in-out transform ${isExpanded ? 'scale-75' : 'scale-100'}self-center`}></div>
+      <div className="text-base font-medium mb-2">{username}</div>
+      <div className={`relative text-sm text-gray-600 mb-4 px-2 transition-all duration-300 ease-in-out ${isExpanded ? 'max-h-40 overflow-y-auto' : 'h-16 overflow-hidden'}`}>
+        {message}
       </div>
-
-      {/* modal window */}
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-10">
-          <div className="bg-white p-4 rounded-lg">
-            <p className="mb-4">{message}</p>
-            <Button onClick={() => setIsModalOpen(false)} style_type="border">Close</Button>
-          </div>
-        </div>
+      {message.length > 50 && (
+        <button className=" text-white bg-secondary hover:bg-pink-600 text-xs mb-2" onClick={toggleMessageDisplay}>
+          {isExpanded ? 'Less' : 'More'}
+        </button>
       )}
+      <div className="flex space-x-2 justify-center w-full">
+        <Button className="text-xs w-1/2 py-1 px-1" style_type="fill">Allow</Button>
+        <Button className="text-xs w-1/2 py-1 px-1" style_type="border">Reject</Button>
+      </div>
     </div>
   );
 }

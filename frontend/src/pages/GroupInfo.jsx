@@ -12,6 +12,7 @@ import Applicant from "../components/Applicant";
 import Description from "../components/Description";
 
 
+
 function GroupInfo() {
 
   const activityDetails = [
@@ -76,7 +77,7 @@ function MemberList() {
 function ApplicantList() {
   const applicants = [
     { username: "username1", message: "Hi! my name is Chris, I love fishing and BBQ", avatar: "bg-blue-800" },
-    { username: "username2", message: "Message 2", avatar: "bg-red-400" },
+    { username: "username2", message: " Hi! my name is Chris, I love fishing and BBQHi! my name is Chris, I love fishing and BBQHi! my name is Chris, I love fishing and BBQHi! my name is Chris, I love fishing and BBQHi! my name is Chris, I love fishing and BBQHi! my name is Chris, I love fishing and BBQHi! my name is Chris, I love fishing and BBQdsaijosda", avatar: "bg-red-400" },
     { username: "username3", message: "Message 3", avatar: "bg-blue-200" },
     { username: "username4", message: "Message 4", avatar: "bg-yellow-400" },
     { username: "username5", message: "Message 5", avatar: "bg-green-400" },
@@ -105,11 +106,13 @@ function ApplicantList() {
         </h3>
        
       </div>
-      <div className="flex overflow-x-auto"> 
-        {applicants.map((applicant, index) => (
-          <Applicant key={index} {...applicant} />
-        ))}
-      </div>
+      <div className="flex overflow-x-auto">
+  {applicants.map((applicant, index) => (
+    <div key={index} className="first:ml-0 ">
+      <Applicant {...applicant} />
+    </div>
+  ))}
+</div>
     </div>
   );
 }
