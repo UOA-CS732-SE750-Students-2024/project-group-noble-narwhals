@@ -60,7 +60,7 @@ function Navbar({ isLogged = false, user = {} }) {
               <div
                 className={`flex flex-row items-center justify-between border-2 rounded-full pr-0.5 pl-4 bg-white hover:border-primary focus-within:border-primary ${
                   darkMode &&
-                  "border-white focus-within:border-white focus-within:text-primary"
+                  "border-white hover:border-white focus-within:border-white focus-within:text-primary"
                 }  `}
               >
                 <input
