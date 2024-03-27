@@ -26,8 +26,8 @@ function LogAndSign({ loginType, switchHandler }) {
 
   return (
     <div className="flex flex-col items-center justify-center w-full">
-      <div className="flex flex-col items-center justify-around pb-11 w-full gap-5">
-        <div className="flex flex-col items-center justify-around gap-4">
+      <div className="flex flex-col items-center justify-around pb-11 w-full gap-8 ">
+        <div className="flex flex-col items-center justify-around gap-2">
           <h1 className="text-4xl font-extrabold text-primary">
             {loginType ? "Hey!" : "Welcome!"} Mate
           </h1>
@@ -61,7 +61,7 @@ function LogAndSign({ loginType, switchHandler }) {
             <Button style_type="fill">{type}</Button>
           </form>
         </div>
-        <div className="flex flex-col items-center gap-5">
+        <div className="flex flex-col items-center gap-3">
           <div className="font-bungee text-xl ">OR</div>
           <Button className="flex flex-row bg-white items-center gap-4 p-4 h-12 mb-10 rounded-full">
             <FcGoogle className="w-8 h-8" /> {type} with Google
