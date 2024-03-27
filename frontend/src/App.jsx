@@ -17,7 +17,7 @@ function App() {
         <Route index element={<HomePage />} />
       </Route>
       <Route path="login" element={<LoginPage />} />
-      <Route path="Signup" element={<LoginPage ifLogin={false} />} />
+      <Route path="signup" element={<LoginPage ifLogin={false} />} />
       <Route path="*" element={<p>404</p>} />
     </Routes>
   );
