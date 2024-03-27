@@ -30,14 +30,14 @@ function App() {
         <Route path="group/:groupId" element={<GroupInfoPage />} />
         <Route path="creategroup" element={<CreateGroupPage />} />
         <Route path="search" element={<SearchPage />} />
-        <Route path="user" element={<LayoutUserPages />}>
-          <Route index element={<Navigate to={"profile"} replace />} />
-          <Route path="profile" element={<PublicProfilePage />} />
-          <Route path="settings" element={<AccountSettingPage />} />
-          <Route path="apply-in-progress" element={<ApplyInProgressPage />} />
-          <Route path="liked" element={<LikedGroupPage />} />
-          <Route path="notification" element={<NotificationPage />} />
-        </Route>
+      </Route>
+      <Route path="user" element={<LayoutUserPages />}>
+        <Route index element={<Navigate to={"profile"} replace />} />
+        <Route path="profile" element={<PublicProfilePage />} />
+        <Route path="settings" element={<AccountSettingPage />} />
+        <Route path="apply-in-progress" element={<ApplyInProgressPage />} />
+        <Route path="liked" element={<LikedGroupPage />} />
+        <Route path="notification" element={<NotificationPage />} />
       </Route>
     </Routes>
   );

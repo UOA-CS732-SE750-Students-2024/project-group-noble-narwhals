@@ -18,6 +18,7 @@ function Navbar({ isLogged = false, user = {} }) {
   return (
     <>
       <nav
+        id="nav_bar"
         className={`shadow-sm fixed left-0 top-0 w-screen ${
           darkMode ? "text-white bg-primary " : "bg-white text-primary"
         } `}

@@ -25,7 +25,7 @@ function LogAndSign({ loginType, switchHandler }) {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center w-full">
+    <div id="login_content" className="flex flex-col items-center justify-center w-full">
       <div className="flex flex-col items-center justify-around pb-11 w-full gap-8 ">
         <div className="flex flex-col items-center justify-around gap-2">
           <h1 className="text-4xl font-extrabold text-primary">

@@ -13,13 +13,13 @@ function LoginPage({ ifLogin = true }) {
 
   return (
     <div
-      id="background"
+      id="login_background"
       className="h-screen w-screen bg-gradient-to-b from-blue-400 to-emerald-300 flex flex-row justify-between relative"
     >
       <LogAndSign loginType={false} switchHandler={switchLoginAndSign} />
       <LogAndSign loginType={true} switchHandler={switchLoginAndSign} />
       <div
-        id="cover"
+        id="login_cover"
         className={`absolute h-screen w-1/2 bg-primary flex flex-col justify-between p-9 transition-all duration-500 ${
           isLogin ? "left-0 rounded-r-2xl" : "left-1/2 rounded-l-2xl"
         }`}
