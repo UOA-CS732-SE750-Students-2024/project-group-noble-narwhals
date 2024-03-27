@@ -15,7 +15,6 @@ import ApplyInProgressPage from "./pages/user/ApplyInProgressPage";
 import LikedGroupPage from "./pages/user/LikedGroupPage";
 import NotificationPage from "./pages/user/NotificationPage";
 import SearchPage from "./pages/SearchPage";
-import SignUpPage from "./pages/SignUpPage";
 
 dayjs.extend(relativeTime);
 dayjs.extend(advandedFormat);
