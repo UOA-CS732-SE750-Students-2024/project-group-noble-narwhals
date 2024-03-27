@@ -17,24 +17,22 @@ function Navbar({ isLogged = false, user = {} }) {
 
   return (
     <nav
-      className={`shadow-sm ${
-        darkMode ? "text-white bg-primary " : "text-primary"
+      className={`shadow-sm fixed left-0 top-0 w-screen ${
+        darkMode ? "text-white bg-primary " : "bg-white text-primary"
       } `}
     >
-      <div className="mx-auto w-4/5 max-w-main_content h-nav_height ">
+      <div className="mx-auto w-full h-nav_height px-12">
         <div
           id="nav_content"
           className="flex flex-row justify-between items-center h-full w-full"
         >
           <Link to="/" className="flex flex-row gap-2 items-center">
             <img src="logo.png" alt="logo" className="h-11 rounded-lg" />
-            {/* <div className="text-xl">Hey Mate</div> */}
             {darkMode ? (
               <img src="brand_blue.png" alt="logo" className="h-11" />
             ) : (
               <img src="brand_white.png" alt="logo" className="h-11" />
             )}
-            {/* <img src="brand_white.png" alt="logo" className="h-11" /> */}
           </Link>
 
           {!isLogged && (
@@ -58,48 +56,53 @@ function Navbar({ isLogged = false, user = {} }) {
           )}
 
           {isLogged && (
-            <div className="flex flex-row gap-5 items-center">
+            <div className="flex flex-row gap-7 items-center">
               <div
-                className={`flex flex-row items-center border-2 rounded-full pr-1 pl-4 bg-white focus-within:border-primary ${
+                className={`flex flex-row items-center justify-between border-2 rounded-full pr-0.5 pl-4 bg-white hover:border-primary focus-within:border-primary ${
                   darkMode &&
-                  "border-white focus-within:border-white focus-within:text-primary"
+                  "border-white hover:border-white focus-within:border-white focus-within:text-primary"
                 }  `}
               >
                 <input
                   type="text"
                   placeholder="Search"
-                  className={` w-14 h-8 outline-none focus:w-48 transition-all duration-300 `}
+                  className={`w-72 h-8 outline-none transition-all duration-300 `}
                 />
                 <div
-                  className={` w-8 h-7 rounded-full hover:bg-gray-200 flex items-center justify-center ${
+                  className={` w-7 h-7 rounded-full hover:bg-gray-200 flex items-center justify-center ${
                     darkMode && "text-primary"
                   }`}
                 >
                   <IoSearchOutline />
                 </div>
               </div>
-              <div
-                className={`w-7 h-7 text-xl rounded-sm flex flex-row items-center justify-center cursor-pointer hover:bg-gray-200 ${
-                  darkMode ? "hover:text-primary" : ""
-                }   `}
-              >
-                <Link to="/">
+              <div className={`h-9 flex flex-row items-center gap-1 cursor-pointer hover:bg-gray-200 py-1 px-2 rounded-full ${
+                    darkMode ? "hover:text-primary" : ""
+                  }`} >
+                <Link to="/"
+                  className={`text-xl flex flex-row items-center justify-center `}
+                >
                   <IoAdd />
                 </Link>
+                <span>Create Group</span>
               </div>
-              <div
-                className={`w-7 h-7  text-xl rounded-sm flex flex-row items-center justify-center hover:bg-gray-200 cursor-pointer ${
-                  darkMode ? "hover:text-primary" : ""
-                } `}
-              >
-                <IoMdNotificationsOutline />
+              <div className={`h-9 flex flex-row items-center gap-1 cursor-pointer hover:bg-gray-200 py-1 px-2 rounded-full ${
+                    darkMode ? "hover:text-primary" : ""
+                  }`} >
+                <Link to="/"
+                  className={`text-xl flex flex-row items-center justify-center `}
+                >
+                  <IoMdNotificationsOutline />
+                </Link>
+                <span>Notifications</span>
               </div>
-              <div onClick={switchMenu} className="relative">
+              <div onClick={switchMenu} className="h-9 relative flex flex-row items-center gap-2 cursor-pointer hover:bg-gray-200 pr-3 rounded-full ">
                 <img
                   src="logo.png"
                   alt="Avator"
-                  className="h-10 rounded-full cursor-pointer "
+                  className="h-10 rounded-full "
                 />
+                Username
                 {showMenu && (
                   <div
                     className={`bg-white absolute top-11 -right-6 w-48 rounded-xl flex flex-col items-center p-1 pb-3 gap-3 shadow-basic ${
