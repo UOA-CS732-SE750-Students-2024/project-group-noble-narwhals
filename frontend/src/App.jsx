@@ -15,6 +15,7 @@ import ApplyInProgressPage from "./pages/user/ApplyInProgressPage";
 import LikedGroupPage from "./pages/user/LikedGroupPage";
 import NotificationPage from "./pages/user/NotificationPage";
 import SearchPage from "./pages/SearchPage";
+import SignUpPage from "./pages/SignUpPage";
 
 dayjs.extend(relativeTime);
 dayjs.extend(advandedFormat);
@@ -23,6 +24,7 @@ function App() {
   return (
     <Routes>
       <Route path="login" element={<LoginPage />} />
+      <Route path="signup" element={<SignUpPage />} />
       <Route path="*" element={<p>404</p>} />
       <Route path="/" element={<LayoutWithNav />}>
         <Route index element={<HomePage />} />
