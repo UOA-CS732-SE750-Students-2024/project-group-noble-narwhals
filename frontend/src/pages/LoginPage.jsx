@@ -28,7 +28,7 @@ function LoginPage({ ifLogin = true }) {
           Uplift your mind strengthen your circle
         </div>
         <img
-          src={`${isLogin ? "login_pic.png" : "signup_pic.png"}`}
+          src={`${isLogin ? "/login_pic.png" : "/signup_pic.png"}`}
           alt="cover"
           className="w-5/6 mx-auto"
         />

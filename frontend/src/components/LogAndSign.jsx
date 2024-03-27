@@ -31,7 +31,7 @@ function LogAndSign({ loginType, switchHandler }) {
           <h1 className="text-5xl font-extrabold text-primary">
             {loginType ? "Hey!" : "Welcome!"} Mate
           </h1>
-          <img src="logo-no-bg.png" alt="logo" className="w-36 h-36" />
+          <img src="/logo-no-bg.png" alt="logo" className="w-36 h-36" />
           <form
             onSubmit={submitHandler}
             className="flex flex-col items-center gap-9 w-64 mt-5"
