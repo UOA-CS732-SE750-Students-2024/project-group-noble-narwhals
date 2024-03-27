@@ -23,6 +23,9 @@ export default {
         main_content: "1280px",
         nav_height: "60px",
       },
+      boxShadow: {
+        basic: "0 0px 10px -4px rgba(0, 0, 0, 0.3)",
+      },
     },
   },
   plugins: [],
