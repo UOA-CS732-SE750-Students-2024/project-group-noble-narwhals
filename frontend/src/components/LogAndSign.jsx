@@ -25,18 +25,18 @@ function LogAndSign({ loginType, switchHandler }) {
   };
 
   return (
-    <div className="flex flex-col items-center justify-end w-full h-screen pb-20 ">
-      <div className="flex flex-col items-center justify-around p-11 w-full h-5/6">
-        <div className="flex flex-col items-center justify-around gap-6">
-          <h1 className="text-5xl font-extrabold text-primary">
+    <div className="flex flex-col items-center justify-center w-full">
+      <div className="flex flex-col items-center justify-around pb-11 w-full gap-5">
+        <div className="flex flex-col items-center justify-around gap-4">
+          <h1 className="text-4xl font-extrabold text-primary">
             {loginType ? "Hey!" : "Welcome!"} Mate
           </h1>
-          <img src="/logo-no-bg.png" alt="logo" className="w-36 h-36" />
+          <img src="/logo-no-bg.png" alt="logo" className="w-28 h-28" />
           <form
             onSubmit={submitHandler}
-            className="flex flex-col items-center gap-9 w-64 mt-5"
+            className="flex flex-col items-center gap-4 w-64 mt-5"
           >
-            <div className="w-80 flex flex-row items-center justify-between h-12 p-1 pl-4 rounded-full bg-white hover:outline focus-within:outline outline-2 outline-primary">
+            <div className="w-64 flex flex-row items-center justify-between h-10 p-1 pl-4 rounded-full bg-white hover:outline focus-within:outline outline-2 outline-primary">
               <input
                 type="text"
                 placeholder="Username"
@@ -44,7 +44,7 @@ function LogAndSign({ loginType, switchHandler }) {
                 ref={usenameRef}
               />
             </div>
-            <div className="w-80 flex flex-row items-center justify-between h-12 p-1 pl-4 rounded-full bg-white hover:outline focus-within:outline outline-2 outline-primary">
+            <div className="w-64 flex flex-row items-center justify-between h-10 p-1 pl-4 rounded-full bg-white hover:outline focus-within:outline outline-2 outline-primary">
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder="Password"
@@ -63,7 +63,7 @@ function LogAndSign({ loginType, switchHandler }) {
         </div>
         <div className="flex flex-col items-center gap-5">
           <div className="font-bungee text-xl ">OR</div>
-          <Button className="flex flex-row bg-white items-center gap-4 p-4 h-12 mb-9 rounded-full">
+          <Button className="flex flex-row bg-white items-center gap-4 p-4 h-12 mb-10 rounded-full">
             <FcGoogle className="w-8 h-8" /> {type} with Google
           </Button>
         </div>

@@ -24,7 +24,7 @@ function LoginPage({ ifLogin = true }) {
           isLogin ? "left-0 rounded-r-2xl" : "left-1/2 rounded-l-2xl"
         }`}
       >
-        <div className="font-bungee text-7xl text-white">
+        <div className="font-bungee text-5xl text-white">
           Uplift your mind strengthen your circle
         </div>
         <img
