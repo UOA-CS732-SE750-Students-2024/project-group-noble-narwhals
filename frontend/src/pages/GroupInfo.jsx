@@ -26,8 +26,10 @@ function GroupInfo() {
         <Description />
         <MemberList />
         <ApplicantList />
+       
       </div>
       <Footer />
+      
 
     </>
   );
