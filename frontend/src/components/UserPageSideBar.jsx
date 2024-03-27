@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { CgProfile } from "react-icons/cg";
 import { IoSettingsSharp } from "react-icons/io5";
-// import { FaUserGroup } from "react-icons/fa6";
 import { MdPendingActions } from "react-icons/md";
 import { FaHeart } from "react-icons/fa";
 import { IoIosNotifications } from "react-icons/io";

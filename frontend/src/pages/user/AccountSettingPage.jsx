@@ -10,46 +10,46 @@ function AccountSettingsPage() {
     const [gender, setGender] = useState("Male");
     const [email, setEmail] = useState("InitialEmail");
     const [password, setPassword] = useState("InitialPassword");
-    const [tags, setTags] = useState(["exampleTag1", "exampleTag2"]); // 假设这是初始的tags
-    const [newTag, setNewTag] = useState(""); // 新增加的tag
+    const [tags, setTags] = useState(["exampleTag1", "exampleTag2"]); // some dummy initial tags
+    const [newTag, setNewTag] = useState(""); // new tag input
 
     const handleUsernameChange = (event) => {
-        setUsername(event.target.value); // 只更新用户名
+        setUsername(event.target.value); // for updating username
     };
 
     const handleGenderChange = (event) => {
-        setGender(event.target.value); // 只更新性别
+        setGender(event.target.value); // for updating gender
     };
 
     const handleEditClick = () => {
-        setIsEditing(!isEditing); // 切换编辑状态
+        setIsEditing(!isEditing); // toggle isEditing state
     };
 
     const handleEmailChange = (event) => {
-        // 这里添加更新邮箱的逻辑
+        // update the email 
     };
 
     const handleAddTag = () => {
 
         if (newTag.trim() && !tags.includes(newTag)) {
             setTags([...tags, newTag.trim()]);
-            setNewTag(""); // 清空输入框
+            setNewTag(""); // clear the input
         }
     };
 
     const handleDeleteTag = (index) => {
-        setTags(tags.filter((_, i) => i !== index)); // 删除指定index的tag
+        setTags(tags.filter((_, i) => i !== index)); // remove the tag at the index
     };
 
     const handleSubmit = () => {
         setIsEditing(false);
         console.log("Submitted Username:", username);
         console.log("Submitted Gender:", gender);
-        // 这里添加提交到服务器的逻辑
+        // submit the updated data to the backend
     };
 
     const deleteAccount = () => {
-        // 这里添加删除账户的逻辑
+        // delete the account
     }
 
 
@@ -157,7 +157,7 @@ function AccountSettingsPage() {
                             <Button className="ml-6" onClick={() => handleAddTag()}>Add</Button>
                         )}
                         
-                        {/**列表的形式显示用户的tags,当编辑模式激活后，在每行右侧有一个按钮可以删除这个tag */}
+                        {/**when the isEditing is active, the style will change */}
                         <div className="max-w-lg mr-4 flex flex-row"> {/**user's tags list */}
                             {tags.map((tag, index) => (
                             <div key={index} className={`mt-2 mr-2 pr-1 pl-1 rounded-3xl border-2 ${isEditing ? 'text-black border-black' : 'border-gray-500 text-gray-500'} text-sm flex flex-row`}>
