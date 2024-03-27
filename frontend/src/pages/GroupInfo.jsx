@@ -41,7 +41,10 @@ function MemberList() {
     { username: "username1", role: "Host", avatar: "bg-yellow-400" },
     { username: "username2", avatar: "bg-pink-600" },
     { username: "username3", avatar: "bg-blue-400" },
-    { username: "username4", avatar: "bg-yellow-400" }
+    { username: "username4", avatar: "bg-yellow-400" },
+
+ 
+   
   ];
 
   return (
