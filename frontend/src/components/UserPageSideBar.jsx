@@ -17,15 +17,15 @@ function UserPageSideBar() {
     };
 
     const options = [
-        { label: 'Public Profile', icon: <CgProfile className="mr-2" size={24}/>, to: '/user/profile' },
-        { label: 'Account settings', icon: <IoSettingsSharp  className="mr-2" size={24} />, to: '/user/settings' },
-        { label: 'Apply in progress', icon: <MdPendingActions className="mr-2" size={24} />, to: '/user/apply-in-progress' },
-        { label: 'Liked groups', icon: <FaHeart className="mr-2" size={24}/>, to: '/user/liked' },
-        { label: 'Notification', icon: <IoIosNotifications className="mr-2" size={24} />, to: '/user/notification' },
+        { label: 'Public Profile', icon: <CgProfile className="mr-2 w-6 h-6" />, to: '/user/profile' },
+        { label: 'Account settings', icon: <IoSettingsSharp  className="mr-2 w-6 h-6"  />, to: '/user/settings' },
+        { label: 'Apply in progress', icon: <MdPendingActions className="mr-2 w-6 h-6"  />, to: '/user/apply-in-progress' },
+        { label: 'Liked groups', icon: <FaHeart className="mr-2 w-6 h-6" />, to: '/user/liked' },
+        { label: 'Notification', icon: <IoIosNotifications className="mr-2 w-6 h-6"  />, to: '/user/notification' },
     ];
 
     return (
-        <div className="w-1/6 min-w-fit overflow-y-auto bg-primary flex flex-col items-center ">
+        <div className="w-sideBarWidth min-w-fit overflow-y-auto bg-primary flex flex-col items-center ">
             <div>{/*users' avatar and username*/}
                 <div className="flex flex-col items-center justify-center p-8">
                     <img
@@ -67,6 +67,7 @@ function SidebarOption({ icon, label, to, handleClick }) {
       </div>
     );
   }
+
   
 export default UserPageSideBar;
 export { SidebarOption };

@@ -160,7 +160,7 @@ function AccountSettingsPage() {
                         {/**列表的形式显示用户的tags,当编辑模式激活后，在每行右侧有一个按钮可以删除这个tag */}
                         <div className="max-w-lg mr-4 flex flex-row"> {/**user's tags list */}
                             {tags.map((tag, index) => (
-                            <div key={index} className={`mt-2 mr-2 pr-1 pl-1 rounded-3xl border-2 ${isEditing ? 'text-black border-black' : 'border-gray-500 text-gray-500'} text-sm flex flex-row justify-between`}>
+                            <div key={index} className={`mt-2 mr-2 pr-1 pl-1 rounded-3xl border-2 ${isEditing ? 'text-black border-black' : 'border-gray-500 text-gray-500'} text-sm flex flex-row`}>
                                 
                                 <div>{tag}</div>
                                 {isEditing && (

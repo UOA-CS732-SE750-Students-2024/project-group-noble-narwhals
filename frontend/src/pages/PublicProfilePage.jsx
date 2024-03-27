@@ -42,7 +42,8 @@ const PublicProfilePage = () => {
                                 {gender === 'male' && <IoMdMale className='fill-sky-500 text-2xl mt-5' />}
                                 {gender === 'female' && <IoMdFemale className='fill-pink-500 text-2xl mt-5' />}
                             </div>
-                            <div className="flex m-5 pt-5">
+                            <div className="ml-5 mr-5 mb-5 ">Email: {email}</div>
+                            <div className="flex ml-5 mr-5 mb-5">
                                 {tags.map((tag) => (
                                     <ProfileTags key={tag.tagId} tagName={tag.tagName} />
                                 ))
@@ -54,7 +55,7 @@ const PublicProfilePage = () => {
 
 
                 </div>
-                <p className="text-black ml-4 mt-1 mb-10">Email: {email}</p>
+        
                 <div className="flex flex-col">
                     <div className="text-3xl mb-8">Groups</div>
                     {/* Groups table */}

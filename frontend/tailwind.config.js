@@ -8,8 +8,9 @@ export default {
         secondary: "#0080a7",
       },
       spacing: {
-        main_content: "1280px",
+        mainContent: "1280px",
         navHeight: '60px',
+        sideBarWidth: '230px',
       },
       boxShadow: {
         'basic': '0 0px 10px -4px rgba(0, 0, 0, 0.3)',
