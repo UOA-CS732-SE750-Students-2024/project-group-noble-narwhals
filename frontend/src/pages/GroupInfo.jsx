@@ -1,15 +1,14 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { MdPeople } from "react-icons/md";
 import { IoMdTime } from "react-icons/io";
 import { IoPricetag } from "react-icons/io5";
-import Logo from "../assets/logo-no-bg.png";
-import Button from "../components/Button";
 import ActivityDetail from "../components/ActivityDetail";
 import Member from "../components/Member";
 import Applicant from "../components/Applicant";
 import Description from "../components/Description";
+import HeaderContent from "../components/HeaderContent";
+import Footer from "../components/Footer";
 
 function GroupInfo() {
 
@@ -21,26 +20,15 @@ function GroupInfo() {
   return (
     <>
       <Navbar />
-      <div className="max-w-main_content mx-auto mt-10">
-        <div className="header-content flex justify-between items-start mb-4">
-          <div className="header-title space-y-2">
-            <div className="text-4xl font-bold mb-2">Let us go fishing</div>
-            <Link to="/activity" className="text-primary">Activity</Link>
-          </div>
-          <div className="actions flex flex-col space-y-2">
-            <Button className="py-3 px-16" style_type="fill">Join</Button>
-            <Button className="py-3 px-16" style_type="border">Edit</Button>
-          </div>
-        </div>
-
-        <div className="content">
-          <ActivityDetail details={activityDetails} />
-          <Description />
-          <MemberList />
-          <ApplicantList />
-          <Footer />
-        </div>
+      <div className="content">
+        <HeaderContent />
+        <ActivityDetail details={activityDetails} />
+        <Description />
+        <MemberList />
+        <ApplicantList />
       </div>
+      <Footer />
+
     </>
   );
 }
@@ -57,11 +45,11 @@ function MemberList() {
   return (
     <div className="member-list p-6 mt-6">
       <div className="flex justify-between items-center mb-4">
-        <h3 className="font-semibold">
+        <h3 className="font-semibold text-2xl">
           Members
           <span className="ml-2 text-gray-500">{members.length}/5</span>
         </h3>
-        
+
       </div>
       <div className="flex space-x-4 overflow-x-auto">
         {members.map((member, index) => (
@@ -77,7 +65,7 @@ function ApplicantList() {
     { username: "username1", message: "Hi! my name is Chris, I love fishing and BBQ", avatar: "bg-blue-800" },
     { username: "username2", message: " Hi! my name is Chris, I love fishing and BBQHi! my name is Chris, I love fishing and BBQHi! my name is Chris, I love fishing and BBQHi! my name is Chris, I love fishing and BBQHi! my name is Chris, I love fishing and BBQHi! my name is Chris, I love fishing and BBQHi! my name is Chris, I love fishing and BBQdsaijosda", avatar: "bg-red-400" },
     { username: "username3", message: "Message Message Message Message Message Message Message Message Message MessageMessage Message Message Message Message Message Message Message MessageMessage Message Message Message Message Message Message Message Message Message Message Message Message Message Message Message Message Message MessageMessage Message Message Message Message Message3", avatar: "bg-blue-200" },
-    { username: "username4", message: "Message 4", avatar: "bg-yellow-400" },
+    { username: "username4", message: "null", avatar: "bg-yellow-400" },
     { username: "username5", message: "Message 5", avatar: "bg-green-400" },
     { username: "username6", message: "Message 6", avatar: "bg-pink-600" },
     { username: "username7", message: "Message 7", avatar: "bg-blue-400" },
@@ -99,35 +87,22 @@ function ApplicantList() {
   return (
     <div className="applicant-list p-6 mt-6">
       <div className="flex justify-between items-center mb-4 sticky top-0 bg-white"> {/* 使标题和人数固定 */}
-        <h3 className="font-semibold">Applicants
-        <span className="ml-2 text-gray-500">{applicants.length}</span>
+        <h3 className="font-semibold text-2xl">Applicants
+          <span className="ml-2 text-gray-500">{applicants.length}</span>
         </h3>
-       
+
       </div>
       <div className="flex overflow-x-auto">
-  {applicants.map((applicant, index) => (
-    <div key={index} className="first:ml-0 ">
-      <Applicant {...applicant} />
-    </div>
-  ))}
-</div>
-    </div>
-  );
-}
-function Footer() {
-  return (
-    <div className="bg-primary text-white p-4 rounded-b shadow flex">
-      <div className="flex items-center">
-        <img src={Logo} alt="Logo" className="h-12 mr-3" />
-        <div>
-          <p className="font-bold text-lg">Hey Mate</p>
-          <p className="text-sm">Uplift your mind</p>
-          <p className="text-sm">strengthen your circle</p>
-        </div>
+        {applicants.map((applicant, index) => (
+          <div key={index} className="first:ml-0 ">
+            <Applicant {...applicant} />
+          </div>
+        ))}
       </div>
     </div>
   );
 }
+
 
 
 
