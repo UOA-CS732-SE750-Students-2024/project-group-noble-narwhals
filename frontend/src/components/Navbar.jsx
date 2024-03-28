@@ -19,7 +19,7 @@ function Navbar({ isLogged = false, user = {} }) {
     <nav
       className={`shadow-sm fixed left-0 top-0 w-screen ${
         darkMode ? "text-white bg-primary " : "bg-white text-primary"
-      } `}
+      }  z-10`}
     >
       <div className="mx-auto w-full h-nav_height px-12">
         <div
@@ -76,27 +76,36 @@ function Navbar({ isLogged = false, user = {} }) {
                   <IoSearchOutline />
                 </div>
               </div>
-              <div className={`h-9 flex flex-row items-center gap-1 cursor-pointer hover:bg-gray-200 py-1 px-2 rounded-full ${
-                    darkMode ? "hover:text-primary" : ""
-                  }`} >
-                <Link to="/"
+              <div
+                className={`h-9 flex flex-row items-center gap-1 cursor-pointer hover:bg-gray-200 py-1 px-2 rounded-full ${
+                  darkMode ? "hover:text-primary" : ""
+                }`}
+              >
+                <Link
+                  to="/"
                   className={`text-xl flex flex-row items-center justify-center `}
                 >
                   <IoAdd />
                 </Link>
                 <span>Create Group</span>
               </div>
-              <div className={`h-9 flex flex-row items-center gap-1 cursor-pointer hover:bg-gray-200 py-1 px-2 rounded-full ${
-                    darkMode ? "hover:text-primary" : ""
-                  }`} >
-                <Link to="/"
+              <div
+                className={`h-9 flex flex-row items-center gap-1 cursor-pointer hover:bg-gray-200 py-1 px-2 rounded-full ${
+                  darkMode ? "hover:text-primary" : ""
+                }`}
+              >
+                <Link
+                  to="/"
                   className={`text-xl flex flex-row items-center justify-center `}
                 >
                   <IoMdNotificationsOutline />
                 </Link>
                 <span>Notifications</span>
               </div>
-              <div onClick={switchMenu} className="h-9 relative flex flex-row items-center gap-2 cursor-pointer hover:bg-gray-200 pr-3 rounded-full ">
+              <div
+                onClick={switchMenu}
+                className="h-9 relative flex flex-row items-center gap-2 cursor-pointer hover:bg-gray-200 pr-3 rounded-full "
+              >
                 <img
                   src="logo.png"
                   alt="Avator"
