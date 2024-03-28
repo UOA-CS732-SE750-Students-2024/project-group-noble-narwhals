@@ -25,6 +25,7 @@ const PublicProfilePage = () => {
     ];
 
     return (
+        // ======================profile information div starts from here======================
         <div className="flex min-w-fit overflow-y-auto"  >
 
             <div className="pl-10 pr-10 bg-white flex flex-col flex-grow">
@@ -55,8 +56,8 @@ const PublicProfilePage = () => {
 
 
                 </div>
-        
-                <div className="flex flex-col">
+            {/* ==================Groups div starts from here===================== */}
+                <div className="flex flex-col"> 
                     <div className="text-3xl mb-8">Groups</div>
                     {/* Groups table */}
                     <table className="w-full border-collapse border-spacing-7 ">

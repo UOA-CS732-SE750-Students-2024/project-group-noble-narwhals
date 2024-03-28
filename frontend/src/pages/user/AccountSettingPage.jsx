@@ -61,7 +61,8 @@ function AccountSettingsPage() {
                     <p className="font-bold text-xl mb-3">Avatar</p>
                     <div className="flex flex-row">
                         <img className="w-24 h-24 rounded-full mb-2" src="https://www.animesenpai.net/wp-content/uploads/2022/12/Bocchi-The-Rock-21-1024x576.webp" />
-                        <Button className="mt-6 ml-6"> Change Avatar</Button>
+                        {isEditing && ( // when editing is active, show the change avatar button}
+                        <Button className="mt-6 ml-6"> Change Avatar</Button>)}
                     </div>
                 </div>
                 <div> {/* username*/}
@@ -80,39 +81,41 @@ function AccountSettingsPage() {
                 <div> {/**Gender */}
                     <p className='font-bold text-xl mb-3'>Gender</p>
                     <div className="flex flex-row mb-3 items-center gap-5">
+                        {isEditing? ( // when editing is active, show the radio buttons
+                        <>
                         <label>
-                            <input
-                                type="radio"
-                                name="gender"
-                                value="Male"
-                                checked={gender === "Male"}
-                                onChange={handleGenderChange}
-                                disabled={!isEditing}
-                            />
-                            Male
-                        </label>
-                        <label>
-                            <input
-                                type="radio"
-                                name="gender"
-                                value="Female"
-                                checked={gender === "Female"}
-                                onChange={handleGenderChange}
-                                disabled={!isEditing}
-                            />
-                            Female
-                        </label>
-                        <label>
-                            <input
-                                type="radio"
-                                name="gender"
-                                value="Prefer not to say"
-                                checked={gender === "Prefer not to say"}
-                                onChange={handleGenderChange}
-                                disabled={!isEditing}
-                            />
-                            Prefer not to say
-                        </label>
+                                <input
+                                    type="radio"
+                                    name="gender"
+                                    value="Male"
+                                    checked={gender === "Male"}
+                                    onChange={handleGenderChange}
+                                    disabled={!isEditing} />
+                                Male
+                            </label>
+                            <label>
+                                    <input
+                                        type="radio"
+                                        name="gender"
+                                        value="Female"
+                                        checked={gender === "Female"}
+                                        onChange={handleGenderChange}
+                                        disabled={!isEditing} />
+                                    Female
+                                </label>
+                                <label>
+                                    <input
+                                        type="radio"
+                                        name="gender"
+                                        value="Prefer not to say"
+                                        checked={gender === "Prefer not to say"}
+                                        onChange={handleGenderChange}
+                                        disabled={!isEditing} />
+                                    Prefer not to say
+                                </label>
+                                </>
+                        ):
+                        (<p className="text-gray-500">{gender}</p>)}
                     </div>
                 </div>
 
@@ -143,6 +146,8 @@ function AccountSettingsPage() {
 
                 <div> {/**tags */}
                     <p className='font-bold text-xl mb-3'>Tags</p>
+                    {isEditing && (
+                    <>
                     <p className="text-gray-500">Add tags to help others find you.</p>
                     <p className="text-gray-500">Type your tag names into the textbox and press "Add" button.</p>
                     <div>
@@ -151,26 +156,26 @@ function AccountSettingsPage() {
                             value={newTag}
                             onChange={(e) => setNewTag(e.target.value)}
                             disabled={!isEditing}
-                            className={`border-black border-2 rounded w-1/3 px-2 py-1 ${isEditing ? "border-black text-black" : "border-transparent text-gray-500"}`}
-                        />
-                        {isEditing && (
-                            <Button className="ml-6" onClick={() => handleAddTag()}>Add</Button>
-                        )}
-                        
-                        {/**when the isEditing is active, the style will change */}
-                        <div className="max-w-lg mr-4 flex flex-row"> {/**user's tags list */}
-                            {tags.map((tag, index) => (
-                            <div key={index} className={`mt-2 mr-2 pr-1 pl-1 rounded-3xl border-2 ${isEditing ? 'text-black border-black' : 'border-gray-500 text-gray-500'} text-sm flex flex-row`}>
-                                
-                                <div>{tag}</div>
-                                {isEditing && (
-                                    <IoClose onClick={() => handleDeleteTag(index)} size={20} className='cursor-pointer'/>
-                                )}
+                            className={`border-black border-2 rounded w-1/3 px-2 py-1 ${isEditing ? "border-black text-black" : "border-transparent text-gray-500"}`} />
+
+                        <Button className="ml-6" onClick={() => handleAddTag()}>Add</Button>
                             
-                            </div>
-                        ))}
-                         </div>
                     </div>
+                    </>)}
+                    {/**user's current tags */}
+                    <div className="max-w-lg mr-4 flex flex-row"> {/**user's tags list */}
+                        {tags.map((tag, index) => (
+                        <div key={index} className={`mt-2 mr-2 pr-1 pl-1 rounded-3xl border-2 ${isEditing ? 'text-black border-black' : 'border-gray-500 text-gray-500'} text-sm flex flex-row`}>
+                            
+                            <div>{tag}</div>
+                            {isEditing && (
+                                <IoClose onClick={() => handleDeleteTag(index)} size={20} className='cursor-pointer'/>
+                            )}
+                        
+                        </div>
+                    ))}
+                        </div>
+                   
                 </div>
                 <Button onClick={isEditing ? handleSubmit : handleEditClick} className="mt-6">
                     {isEditing ? "Update profile" : "Edit Profile"}
