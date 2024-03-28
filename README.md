@@ -15,7 +15,7 @@
 - Every component file should be in the `components` folder.
 - IF a component have sub-components, please create a folder for it and put the sub-components in it.
 - For the hooks, please put them in the `hooks` folder.
-- For the picture and other assets, please put them in the `assets` folder.
+- For the picture and other assets, please put them in the `public` folder.
 
 ### For the style
 

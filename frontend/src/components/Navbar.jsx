@@ -29,11 +29,11 @@ function Navbar({ isLogged = false, user = {} }) {
             className="flex flex-row justify-between items-center h-full w-full"
           >
             <Link to="/" className="flex flex-row gap-2 items-center">
-              <img src="/logo.png" alt="logo" className="h-11 rounded-lg" />
+              <img src="/image/logo.png" alt="logo" className="h-11 rounded-lg" />
               {darkMode ? (
-                <img src="/brand_blue.png" alt="logo" className="h-11" />
+                <img src="/image/brand_blue.png" alt="logo" className="h-11" />
               ) : (
-                <img src="/brand_white.png" alt="logo" className="h-11" />
+                <img src="/image/brand_white.png" alt="logo" className="h-11" />
               )}
             </Link>
 

@@ -31,7 +31,7 @@ function LogAndSign({ loginType, switchHandler }) {
           <h1 className="text-4xl font-extrabold text-primary">
             {loginType ? "Hey!" : "Welcome!"} Mate
           </h1>
-          <img src="/logo-no-bg.png" alt="logo" className="w-28 h-28" />
+          <img src="/image/logo-no-bg.png" alt="logo" className="w-28 h-28" />
           <form
             onSubmit={submitHandler}
             className="flex flex-col items-center gap-4 w-64 mt-5"
@@ -58,7 +58,7 @@ function LogAndSign({ loginType, switchHandler }) {
                 {showPassword ? <IoIosEye /> : <IoIosEyeOff />}
               </div>
             </div>
-            <Button style_type="fill">{type}</Button>
+            <Button style_type="fill" className="w-32">{type}</Button>
           </form>
         </div>
         <div className="flex flex-col items-center gap-3">
