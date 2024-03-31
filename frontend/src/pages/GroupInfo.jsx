@@ -91,7 +91,7 @@ function ApplicantList() {
 
   return (
     <div className="applicant-list p-6 mt-6">
-      <div className="flex justify-between items-center mb-4 sticky top-0 bg-white"> {/* 使标题和人数固定 */}
+      <div className="flex justify-between items-center mb-4 sticky top-0 bg-white">
         <h3 className="font-semibold text-2xl">Applicants
           <span className="ml-2 text-gray-500">{applicants.length}</span>
         </h3>
