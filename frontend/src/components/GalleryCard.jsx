@@ -41,7 +41,7 @@ const GalleryCard = ({
             : description}
         </p>
       </div>
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center m-2">
         <AvatarGroup imageSources={imageLink} num={num} />
         <button className="flex justify-center items-center text-sky-800 font-bold border-solid border-2 border-sky-800 rounded-xl w-4 h-6 hover:scale-110">
           Join
