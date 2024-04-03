@@ -19,7 +19,7 @@ const GalleryCard = ({
         <div className="flex flex-col justify-center h-8">
           <Link
             to={`/group/${id}`}
-            className="text-base font-bold text-sky-800 hover:text-sky-600"
+            className="text-base font-bold text-sky-800 hover:scale-125 hover:text-sky-600"
           >
             {title}
           </Link>
