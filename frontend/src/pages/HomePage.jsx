@@ -69,10 +69,11 @@ function HomePage() {
         >
           {/* Blurred overlay div */}
           <div className="w-full h-full bg-white/40 backdrop-blur-sm flex flex-col items-center justify-center">
-            <h1 className="text-4xl font-bold text-sky-800 my-4">
-              Need Group/ Activities?
+            <h1 className="text-4xl text-sky-800 my-4">
+              <b>Need Group/ Activities?</b>
+              {/* Need Group/ Activities? */}
             </h1>
-            <p className="text-lg font-bold text-sky-700 mb-4">
+            <p className="text-lg font-black text-sky-700 mb-4">
               Type in the group name, course name, find your group!
             </p>
             <LongSearchingBar />
