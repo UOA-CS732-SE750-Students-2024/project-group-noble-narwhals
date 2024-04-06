@@ -1,7 +1,6 @@
 import express from 'express';
-import Notification from '../models/notificationModel.js';
-import getNotification from '../middleware/notificationMiddleware.js';
-
+import Notification from '../../models/notificationModel.js';
+import { getNotification } from '../../middleware/entityMiddleware.js';
 const router = express.Router();
 
 // get all notifications

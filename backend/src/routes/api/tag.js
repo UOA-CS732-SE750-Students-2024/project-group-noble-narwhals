@@ -1,9 +1,8 @@
 
 import express from 'express';
 import { body, validationResult } from 'express-validator';
-import Tag from '../models/tagModel.js';
-import getTag from '../middleware/tagMiddleware.js';
-
+import Tag from '../../models/tagModel.js';
+import { getTag } from '../../middleware/entityMiddleware.js';  
 const router = express.Router();
 
 // Get all tags

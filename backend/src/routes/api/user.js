@@ -1,7 +1,7 @@
 import express from 'express';
 import bcrypt from 'bcrypt';
-import User from '../models/userModel.js';
-import getUser from '../middleware/userMiddleware.js';
+import User from '../../models/userModel.js';
+import { getUser } from '../../middleware/entityMiddleware.js';
 const router = express.Router();
 
 
@@ -25,6 +25,16 @@ router.post('/', async (req, res) => {
     try {
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
+         // Randomly select an avatar style
+         const selectedStyle = avatarStyles[Math.floor(Math.random() * avatarStyles.length)];
+
+         // Construct the DiceBear avatar URL with the randomly selected style
+         const avatarUrl = `https://api.dicebear.com/8.x/${selectedStyle}/svg?seed=${user._id}`;
+ 
+         // Update the user record with the avatar
+         user.avatar = avatarUrl;
+         await user.save();
+
         // Define the array of avatar styles
         const avatarStyles = ['thumbs', 'fun-emoji', 'adventurer', 'avataaars','bottts-neutra','icons','micah'];
 
@@ -42,15 +52,7 @@ router.post('/', async (req, res) => {
         // First saving the user to generate the MongoDB _id
         await user.save();
 
-        // Randomly select an avatar style
-        const selectedStyle = avatarStyles[Math.floor(Math.random() * avatarStyles.length)];
-
-        // Construct the DiceBear avatar URL with the randomly selected style
-        const avatarUrl = `https://api.dicebear.com/8.x/${selectedStyle}/svg?seed=${user._id}`;
-
-        // Update the user record with the avatar
-        user.avatar = avatarUrl;
-        await user.save();
+       
 
         // Responding to the client
         res.status(201).json({
@@ -77,45 +79,25 @@ router.post('/', async (req, res) => {
 
 // update user
 router.patch('/update/:id', getUser, async (req, res) => {
-    if (req.body.name != null) {
-        res.user.name = req.body.name;
-    }
-    if (req.body.accountType != null) {
-        res.user.accountType = req.body.accountType;
-    }
-    if (req.body.email != null) {
-        res.user.email = req.body.email;
-    }
-    if (req.body.isVerification != null) {
-        res.user.isVerification = req.body.isVerification;
-    }
-    if (req.body.gender != null) {
-        res.user.gender = req.body.gender;
-    }
-    if (req.body.profileTags != null) {
-        res.user.profileTags = req.body.profileTags;
-    }
-    if (req.body.avatar != null) {
-        res.user.avatar = req.body.avatar;
-    }
-    if (req.body.participatingGroups != null) {
-        res.user.participatingGroups = req.body.participatingGroups;
-    }
-    if (req.body.likedGroups != null) {
-        res.user.likedGroups = req.body.likedGroups;
-    }
-    if (req.body.appliedGroups != null) {
-        res.user.appliedGroups = req.body.appliedGroups;
+    // Get the user object from the response
+    const user = res.user;
+
+    // Loop over the fields in the request body
+    for (const [key, value] of Object.entries(req.body)) {
+        // Check if the user has the key and the value is not null
+        if (user[key] !== undefined && value !== null) {
+            user[key] = value;
+        }
     }
 
-
-    // update password
-    if (req.body.password != null) {
-        res.user.password = await bcrypt.hash(req.body.password, 10);
+    // If password is in the request, hash it before saving
+    if (req.body.password) {
+        user.password = await bcrypt.hash(req.body.password, 10);
     }
 
     try {
-        const updatedUser = await res.user.save();
+        // Save the updated user information
+        const updatedUser = await user.save();
         res.json(updatedUser);
     } catch (err) {
         res.status(400).json({ message: err.message });

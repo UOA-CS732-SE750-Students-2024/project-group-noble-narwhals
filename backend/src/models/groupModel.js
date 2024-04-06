@@ -23,9 +23,7 @@ const groupSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'User'
     },
-    groupType: String,
-    maxNumber: Number,
-    minNumber: Number,
+   
     groupStatus: {
         type: String,
         enum: ['available', 'closed', 'full']

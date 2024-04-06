@@ -21,8 +21,9 @@ app.use(express.json());
 // app.use(express.static("public"));
 
 // Import and use our application routes.
-import routes from "./routes/routes.js";
+import routes from './routes/api/routes.js';
 app.use("/", routes);
+
 
 // Start the server running. Once the server is running, the given function will be called, which will
 // log a simple message to the server console. Any console.log() statements in your node.js code

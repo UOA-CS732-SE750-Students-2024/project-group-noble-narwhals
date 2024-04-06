@@ -1,11 +1,12 @@
 import express from 'express';
-import Application from '../models/applicationModel.js';
+import Application from '../../models/applicationModel.js';
 import { body, validationResult } from 'express-validator';
-import getApplication from '../middleware/applicationMiddleware.js';
-
+import { getApplication } from '../../middleware/entityMiddleware.js';
 const router = express.Router();
 
 // get all applications
+
+
 router.get('/', async (req, res) => {
     try {
         const applications = await Application.find().populate('applicantId').populate('groupId');

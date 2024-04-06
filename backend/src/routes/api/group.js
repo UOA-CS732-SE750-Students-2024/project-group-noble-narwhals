@@ -1,8 +1,7 @@
 import express from 'express';
-import Group from '../models/groupModel.js'
-import getGroup from '../middleware/groupMiddleware.js';
+import Group from '../../models/groupModel.js'
 import { body, validationResult } from 'express-validator';
-
+import { getGroup } from '../../middleware/entityMiddleware.js';
 const router = express.Router();
 
 // get all groups
