@@ -6,7 +6,9 @@ export default function PageLayout() {
   return (
     <>
       <Navbar isLogged={true} />
-      <Outlet />
+      <div className="container mx-auto">
+        <Outlet />
+      </div>
     </>
   );
 }
