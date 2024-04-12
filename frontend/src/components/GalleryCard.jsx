@@ -13,6 +13,8 @@ const GalleryCard = ({
   num,
   description,
 }) => {
+  const hostAvatar = imageLink[0];
+  const groupImage = imageLink.slice(1, num);
   return (
     <div className="bg-white p-4 rounded-lg shadow-basic hover:bg-slate-100">
       <div className="flex justify-between">
@@ -20,9 +22,7 @@ const GalleryCard = ({
           <img
             key={1}
             className="inline-block h-10 w-10 rounded-full ring-2 ring-white bg-gray-500 items-center"
-            src={
-              "https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-            }
+            src={hostAvatar}
             alt={`Host Avatar`}
           />
           <div className="flex flex-col justify-center ml-3">
@@ -49,13 +49,20 @@ const GalleryCard = ({
       </div>
       <div className="text-base text-sky-700 font-thin m-2">
         <p>
-          {description.length > 150
-            ? description.substring(0, 150) + " ..."
-            : description}
+          {description.length > 150 ? (
+            <>
+              {description.substring(0, 150)}
+              <Link to={`/group/${id}`} className="ml-2 hover:text-red-500">
+                ...
+              </Link>
+            </>
+          ) : (
+            description
+          )}
         </p>
       </div>
       <div className="flex justify-between items-center">
-        <AvatarGroup imageSources={imageLink} num={num} />
+        <AvatarGroup imageSources={groupImage} num={num} />
         <button className="flex justify-center items-center text-sky-800 font-bold border-solid border-2 border-sky-800 rounded-xl w-4 h-6 hover:scale-110">
           Join
         </button>
