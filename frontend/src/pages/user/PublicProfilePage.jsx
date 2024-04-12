@@ -6,6 +6,8 @@ import { GroupTableRow } from '../../components/GroupTableRow';
 import { IoMdMale } from "react-icons/io";
 import { IoMdFemale } from "react-icons/io";
 
+import dummyGroups from '../../components/dummyGroups';
+import UserGroupBar from '../../components/UserGroupBar';
 
 const PublicProfilePage = () => {
     const [gender, setGender] = useState("male");
@@ -17,12 +19,6 @@ const PublicProfilePage = () => {
         { tagId: 1, tagName: "tag1" },
         { tagId: 2, tagName: "tag2" }
     ]; // dummy data for tags
-
-    const groups = [ // dummy data for groups
-        { id: 1, groupName: "Group 1", category: "Project", due: "1 day left", groupOwner: "Owner 1", members: "2/4", status: "Open" },
-        { id: 2, groupName: "Group 2", category: "Activity", due: "1 day left", groupOwner: "Owner 2", members: "5/5", status: "Close" },
-        { id: 3, groupName: "Group 3", category: "Study", due: "1 day left", groupOwner: "Rainman96", members: "3/3", status: "Open" },
-    ];
 
     return (
         // ======================profile information div starts from here======================
@@ -56,45 +52,19 @@ const PublicProfilePage = () => {
 
 
                 </div>
-            {/* ==================Groups div starts from here===================== */}
-                <div className="flex flex-col"> 
-                    <div className="text-3xl mb-8">Groups</div>
-                    {/* Groups table */}
-                    <table className="w-full border-collapse border-spacing-7 ">
-                        <thead className=" ">
-                            <tr>
-                                <th className="border-b border-gray-700 text-left py-2 px-3 ">Group Name</th>
-                                <th className="border-b border-gray-700 text-left py-2  px-3">Category</th>
-                                <th className="border-b border-gray-700 text-left py-2  px-3">Due</th>
-                                <th className="border-b border-gray-700 text-left py-2  px-3">Group Owner</th>
-                                <th className="border-b border-gray-700 text-left py-2  px-3">Member</th>
-                                <th className="border-b border-gray-700 text-left py-2 px-3 ">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {groups.map((group) => (
-                                <GroupTableRow
-                                    key={group.id}
-                                    groupName={group.groupName}
-                                    category={group.category}
-                                    due={group.due}
-                                    groupOwner={group.groupOwner == userName ? "You" : group.groupOwner}
-                                    members={group.members}
-                                    status={group.status}
-                                />
-                            ))
-                            }
-                        </tbody>
-                    </table>
-                </div>
+                {/* ==================Groups div starts from here===================== */}
+                <div className="text-3xl mb-8">Groups</div>
+                {dummyGroups.map((group,index) => (
+                    <UserGroupBar key={index} group={group} />
+                ))}
             </div>
         </div>
 
     );
 };
 
-function ProfileTags({tagName}){
-    return(
+function ProfileTags({ tagName }) {
+    return (
         <div className="rounded-2xl border-primary border pl-2 pr-2 mr-2">{tagName}</div>
     )
 }
