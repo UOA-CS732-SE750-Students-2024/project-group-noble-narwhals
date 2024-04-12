@@ -1,14 +1,12 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import Navbar from "../components/Navbar";
 import { MdFavoriteBorder } from "react-icons/md";
 
 
 function HomePage() {
   return (
     <>
-      <Navbar />
-      <div id="main_content" className="mx-auto max-w-main_content">
+      <div id="main_content" className="mx-auto w-4/5 max-w-main_content">
         <div className="text-3xl">HomePage</div>
         <Link to="/login">Login</Link>
         <Link to="/group/2">Group Info</Link>

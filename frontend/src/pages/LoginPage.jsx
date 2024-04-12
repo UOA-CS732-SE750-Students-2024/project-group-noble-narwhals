@@ -5,12 +5,14 @@ import { Link } from 'react-router-dom';
 function LoginPage() {
   return (
 <>
-    <div>LoginPage</div>
+    <>
+      <div>LoginPage</div>
     
     <Link to="/">Home</Link>
 
 </>
     
+    </>
   );
 }
 

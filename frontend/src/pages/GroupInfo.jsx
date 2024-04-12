@@ -1,5 +1,4 @@
 import React from "react";
-import Navbar from "../components/Navbar";
 import { MdPeople } from "react-icons/md";
 import { IoMdTime } from "react-icons/io";
 import { IoPricetag } from "react-icons/io5";
@@ -10,6 +9,7 @@ import Description from "../components/Description";
 import HeaderContent from "../components/HeaderContent";
 import Footer from "../components/Footer";
 
+
 function GroupInfo() {
 
   const activityDetails = [
@@ -19,8 +19,9 @@ function GroupInfo() {
   ];
   return (
     <>
-      <Navbar />
-      <div className="content">
+
+      <div className="content w-main_content mx-auto ">
+      
         <HeaderContent />
         <ActivityDetail details={activityDetails} />
         <Description />
@@ -42,6 +43,7 @@ function MemberList() {
     { username: "username2", avatar: "bg-pink-600" },
     { username: "username3", avatar: "bg-blue-400" },
     { username: "username4", avatar: "bg-yellow-400" },
+  
 
  
    
@@ -68,7 +70,7 @@ function MemberList() {
 function ApplicantList() {
   const applicants = [
     { username: "username1", message: "Hi! my name is Chris, I love fishing and BBQ", avatar: "bg-blue-800" },
-    { username: "username2", message: " Hi! my name is Chris, I love fishing and BBQHi! my name is Chris, I love fishing and BBQHi! my name is Chris, I love fishing and BBQHi! my name is Chris, I love fishing and BBQHi! my name is Chris, I love fishing and BBQHi! my name is Chris, I love fishing and BBQHi! my name is Chris, I love fishing and BBQdsaijosda", avatar: "bg-red-400" },
+    { username: "username2", message: " Hi! my name is Chris, I love fishing and BBQHi! my name is Chris, I love fishing and BBQHi! my name is Chris, I love fishing and BBQHi! my name is Chris, I love fishing and BBQHi! my name is Chris, I love fishing and BBQHi! my name is Chris, I love fishing and BBQHi! my name is Chris, I love fishing and BBQdsaijosda dnauo disao qwoiowueqo dsaioj dsaoiqw dsaioq 111 111 11", avatar: "bg-red-400" },
     { username: "username3", message: "Message Message Message Message Message Message Message Message Message MessageMessage Message Message Message Message Message Message Message MessageMessage Message Message Message Message Message Message Message Message Message Message Message Message Message Message Message Message Message MessageMessage Message Message Message Message Message3", avatar: "bg-blue-200" },
     { username: "username4", message: "null", avatar: "bg-yellow-400" },
     { username: "username5", message: "Message 5", avatar: "bg-green-400" },
