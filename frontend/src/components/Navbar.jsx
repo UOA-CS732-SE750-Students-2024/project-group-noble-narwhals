@@ -113,7 +113,7 @@ function Navbar({ isLogged = false, user = {} }) {
                   className="h-9 relative flex flex-row items-center gap-2 cursor-pointer hover:bg-gray-200 pr-3 rounded-full "
                 >
                   <img
-                    src="/logo.png"
+                    src="/image/logo.png"
                     alt="Avator"
                     className="h-10 rounded-full "
                   />
