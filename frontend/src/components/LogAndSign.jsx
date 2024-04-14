@@ -71,7 +71,7 @@ function LogAndSign({ loginType, switchHandler }) {
           {contentBlow}
           <div>
             <span
-              className="text-secondary cursor-pointer"
+              className="text-secondary cursor-pointer hover:underline"
               onClick={switchHandler}
             >
               {loginType ? "Sign up" : "Log in"}
