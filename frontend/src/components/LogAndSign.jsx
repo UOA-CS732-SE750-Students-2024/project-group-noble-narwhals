@@ -53,17 +53,17 @@ function LogAndSign({ loginType, switchHandler }) {
               />
               <div
                 onClick={showPasswordHandler}
-                className="flex flex-row items-center justify-center w-10 h-10 hover:bg-gray-200 rounded-full"
+                className="flex flex-row items-center justify-center w-8 h-8 hover:bg-gray-200 rounded-full"
               >
                 {showPassword ? <IoIosEye /> : <IoIosEyeOff />}
               </div>
             </div>
-            <Button style_type="fill" className="w-32">{type}</Button>
+            <Button style_type="fill" className="w-64">{type}</Button>
           </form>
         </div>
         <div className="flex flex-col items-center gap-3">
           <div className="font-bungee text-xl ">OR</div>
-          <Button className="flex flex-row bg-white items-center gap-4 p-4 h-12 mb-10 rounded-full">
+          <Button className="flex flex-row bg-white items-center gap-4 p-4 h-11 mb-10 rounded-full w-64">
             <FcGoogle className="w-8 h-8" /> {type} with Google
           </Button>
         </div>
