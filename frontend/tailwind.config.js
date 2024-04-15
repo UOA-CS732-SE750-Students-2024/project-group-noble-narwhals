@@ -13,7 +13,11 @@ export default {
       },
       boxShadow: {
         'basic': '0 0px 10px -4px rgba(0, 0, 0, 0.3)',
+      },
+      fontWeight:{
+        title:'1200',
       }
+    
     },
   },
   plugins: [],
