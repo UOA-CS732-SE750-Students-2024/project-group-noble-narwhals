@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
 import Button from "./Button";
+
 import { FcGoogle } from "react-icons/fc";
 import { IoIosEye } from "react-icons/io";
 import { IoIosEyeOff } from "react-icons/io";
@@ -24,8 +25,19 @@ function LogAndSign({ loginType, switchHandler }) {
     // need to be implemented
   };
 
+  const googleAuth = (e) => {
+    e.preventDefault;
+    window.open(
+      `${import.meta.env.VITE_API_BASE_URL}/auth/google/callback`,
+      "_self"
+    );
+  };
+
   return (
-    <div id="login_content" className="flex flex-col items-center justify-center w-full">
+    <div
+      id="login_content"
+      className="flex flex-col items-center justify-center w-full"
+    >
       <div className="flex flex-col items-center justify-around pb-11 w-full gap-8 ">
         <div className="flex flex-col items-center justify-around gap-2">
           <h1 className="text-4xl font-extrabold text-primary">
@@ -58,7 +70,9 @@ function LogAndSign({ loginType, switchHandler }) {
                 {showPassword ? <IoIosEye /> : <IoIosEyeOff />}
               </div>
             </div>
-            <Button style_type="fill" className="w-64">{type}</Button>
+            <Button style_type="fill" className="w-64">
+              {type}
+            </Button>
           </form>
         </div>
         <div className="flex flex-col items-center gap-3">

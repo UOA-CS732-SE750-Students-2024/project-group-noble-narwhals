@@ -6,9 +6,8 @@ import express from "express";
 import cors from "cors";
 import morgan from "morgan";
 import passport from "passport";
-import jwt from "jsonwebtoken";
-
-
+import session from "express-session";
+import passportSetup from "./config/passport.js";
 
 // Set's our port to the PORT environment variable, or 3000 by default if the env is not configured.
 const PORT = process.env.PORT ?? 3000;
@@ -16,12 +15,22 @@ const PORT = process.env.PORT ?? 3000;
 // Creates the express server
 const app = express();
 
-// Configure middleware (logging, CORS support, JSON parsing support, static files support)
+// Configure middleware
 app.use(morgan("combined"));
 app.use(cors());
 app.use(express.json());
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+
+// Configure Passport for Google
 app.use(passport.initialize());
-// app.use(express.static("public"));
+app.use(passport.session());
+passportSetup(passport);
 
 // Import and use our application routes.
 import routes from "./routes/routes.js";
