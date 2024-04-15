@@ -6,6 +6,7 @@ function CreatGroupPage() {
 
   const [tags, setTags] = useState([]); // Used to store all tags
   const [input, setInput] = useState(""); //Used to store the value of the input box
+  const [inputError, setInputError] = useState(''); 
 
   // Random color generation function
   const randomColor = () => {
@@ -19,9 +20,15 @@ function CreatGroupPage() {
   //Handle tag event
   const addTag = (e) => {
     e.preventDefault();
-    if (input) {
-      setTags([...tags, { text: input, color: randomColor() }]);
+    const trimInput = input.trim();
+    console.log(input);
+    if (trimInput) {
+      setTags([...tags, { text: trimInput, color: randomColor() }]);
       setInput(""); // Clear input box
+      setInputError('');
+    }
+    else{
+      setInputError('Please enter a tag');
     }
   };
   // Change event handler of input box
@@ -44,32 +51,30 @@ function CreatGroupPage() {
   const handleCreate = async (event) => {
     event.preventDefault();
   };
-  
+
   const handleCancel = async (event) => {
     event.preventDefault();
   };
 
   return (
-    <div>
+    <div className="flex justify-center items-center h-createImageHeight">
       <div
-        className=" bg-cover h-screen absolute inset-0 z-0 mt-nav_height"
+        className=" bg-cover h-screen  absolute inset-0 -z-10 "
         style={{
-          backgroundImage: "url('../../../public/creategroup_bg.jpg')",
+          backgroundImage: "url('../../../public/image/creategroup_bg.jpg')",
           filter: "blur(1px)",
         }}
       ></div>
 
-      <div className="bg-white max-w-mainContent w-2/3 mx-auto relative mt-28 flex flex-col items-center ">
+      <div className="bg-white max-w-mainContent w-2/3 lg:w-4/5  relative m-auto flex flex-col items-center ">
         <div>
           <h1 className="text-center text-5xl font-black text-primary pt-12 ">
             Create A New Group/Activity
           </h1>
         </div>
         <form action="" className=" w-4/5">
-          <div className=" flex pt-12 pb-10 w-4/5 mx-auto">
-            <label className=" text-xl text-primary font-title w-1/4 "
-          
-            >
+          <div className=" flex pt-12 pb-8 w-4/5 mx-auto items-center">
+            <label className=" text-xl text-primary font-title w-1/4 ">
               Title
             </label>
             <input
@@ -78,7 +83,7 @@ function CreatGroupPage() {
               placeholder="Enter a title"
             />
           </div>
-          <div className="flex pb-10 w-4/5 mx-auto">
+          <div className="flex pb-8 w-4/5 mx-auto items-center">
             <label className="text-xl text-primary font-title w-1/4">
               Type
             </label>
@@ -88,9 +93,8 @@ function CreatGroupPage() {
               } `}
               onClick={(e) => {
                 e.preventDefault();
-                setSelectedButton("group")
+                setSelectedButton("group");
               }}
-              
             >
               Group
             </button>
@@ -100,14 +104,13 @@ function CreatGroupPage() {
               } `}
               onClick={(e) => {
                 e.preventDefault();
-                setSelectedButton("activity")
+                setSelectedButton("activity");
               }}
-             
             >
               Activity
             </button>
           </div>
-          <div className="flex pb-10 w-4/5 mx-auto">
+          <div className="flex pb-8 w-4/5 mx-auto items-center">
             <label className=" text-xl text-primary font-title w-1/4 ">
               Due Date
             </label>
@@ -116,16 +119,17 @@ function CreatGroupPage() {
               className="border-2 border-primary w-2/5 rounded-full h-9 px-4"
             />
           </div>
-          <div className="flex pb-10 w-4/5 mx-auto ">
-           <div className="flex flex-col w-1/4">
-            <label className="text-xl text-primary font-title w-1/4 flex-initial">
-              Tags
-            </label>
-            <span className="text-xs w-5/6 text-slate-500 ">
-            *To make it easier for others to find your group, we recommand adding the  course name as a tag
-            </span>
+          <div className="flex pb-2 w-4/5 mx-auto ">
+            <div className="flex flex-col w-1/4 ">
+              <label className="text-xl text-primary font-title w-1/4 flex-initial pt-1 ">
+                Tags
+              </label>
+              <span className="text-xs pr-2 text-slate-500 ">
+                *To make it easier for others to find your group, we recommand
+                adding the course name as a tag
+              </span>
             </div>
-            <div className="w-3/5">
+            <div className="w-3/4">
               <input
                 type="text"
                 value={input}
@@ -140,6 +144,7 @@ function CreatGroupPage() {
               >
                 Add
               </button>
+              {inputError && <div className="text-red-500 text-xs italic">{inputError}</div>}
               <div className="flex flex-wrap pt-2 gap-2 ">
                 {tags.map((tag, index) => (
                   <div
@@ -162,7 +167,7 @@ function CreatGroupPage() {
               </div>
             </div>
           </div>
-          <div className=" flex pb-10 w-4/5 mx-auto">
+          <div className=" flex pb-8 w-4/5 mx-auto items-center">
             <label className=" text-xl text-primary font-title w-1/4">
               Members
             </label>
@@ -170,10 +175,9 @@ function CreatGroupPage() {
               type="number"
               min={0}
               className="border-2 border-primary w-1/5 rounded-full h-9 text-center p-0"
-              
             />
           </div>
-          <div className=" flex pb-10 w-4/5 mx-auto">
+          <div className=" flex pb-8 w-4/5 mx-auto">
             <label className="text-xl text-primary font-title w-1/4 ">
               Description
             </label>
@@ -181,32 +185,19 @@ function CreatGroupPage() {
               type="text"
               className="border-2 border-primary w-3/5 rounded-2xl h-32 px-3"
               min={0}
-              cols={8}
+             
               placeholder="Write a description of the group/activity"
             />
           </div>
-          <div className=" flex pb-10 w-1/3 mx-auto justify-between ">
-           
-              <Button
-                className="w-28"
-                style_type="fill"
-                onClick={handleCreate}
-              >
-                Create
-              </Button>
-              <Button
-                className="w-28"
-                style_type="fill"
-              onClick={handleCancel}
-            >
+          <div className=" flex pb-12 w-1/2 mx-auto justify-between ">
+            <Button className="w-28" style_type="fill" onClick={handleCreate}>
+              Create
+            </Button>
+            <Button className="w-28" style_type="fill" onClick={handleCancel}>
               Cancel
             </Button>
-            
           </div>
-          <div>
-           
-          </div>
-
+          <div></div>
         </form>
       </div>
     </div>
