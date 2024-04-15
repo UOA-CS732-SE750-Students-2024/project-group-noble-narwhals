@@ -26,6 +26,7 @@ router.post('/',
     [
         body('applicantId').not().isEmpty().withMessage('Applicant ID is required'),
         body('groupId').not().isEmpty().withMessage('Group ID is required'),
+        body('message').not().isEmpty().withMessage('Message is required'),
         body('applicationDate').optional().isISO8601().toDate(),
     ],
     async (req, res) => {
@@ -33,33 +34,41 @@ router.post('/',
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
-
-        const application = new Application({
-            ...req.body
-        });
-
         try {
-            const newApplication = await application.save();
+            const newApplication = new Application({
+                applicantId: req.body.applicantId,
+                groupId: req.body.groupId,
+                message: req.body.message, 
+                applicationDate: req.body.applicationDate || new Date() 
+            });
+            await newApplication.save();
             res.status(201).json(newApplication);
         } catch (err) {
             res.status(400).json({ message: err.message });
         }
     }
 );
-
 // update application by id
 router.patch('/:id', getApplication, async (req, res) => {
-    if (req.body.applicationStatus != null) {
-        res.application.applicationStatus = req.body.applicationStatus;
+    const updates = Object.keys(req.body);
+    const allowedUpdates = ['applicationStatus', 'message']; // only allow these fields to be updated
+    const isValidOperation = updates.every((update) => allowedUpdates.includes(update));
+
+    if (!isValidOperation) {
+        return res.status(400).send({ error: 'Invalid updates!' });
     }
 
     try {
+        updates.forEach((update) => {
+            res.application[update] = req.body[update];
+        });
         const updatedApplication = await res.application.save();
         res.json(updatedApplication);
     } catch (err) {
         res.status(400).json({ message: err.message });
     }
 });
+
 
 // delete application by id
 router.delete('/:id', getApplication, async (req, res) => {

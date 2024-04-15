@@ -28,7 +28,7 @@ const groupSchema = new Schema({
         type: String,
         enum: ['available', 'closed', 'full']
     },
-    
+    maxNumber: Number,
     likeNumber: Number,
 });
 

@@ -4,7 +4,7 @@ import { getNotification } from '../../middleware/entityMiddleware.js';
 const router = express.Router();
 
 // get all notifications
-router.get('/', async (req, res) => {
+router.get('/user/:userId', async (req, res) => {
     try {
         const notifications = await Notification.find()
             .populate('senderId', 'name') // fill senderId, select to display username
@@ -14,6 +14,8 @@ router.get('/', async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 });
+
+
 
 // get notification by id
 router.get('/:id', getNotification, (req, res) => {

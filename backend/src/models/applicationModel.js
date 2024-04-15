@@ -15,6 +15,10 @@ const applicationSchema = new Schema({
         type: String,
         enum: ['pending', 'accepted', 'rejected'],  
         default: 'pending' 
+    },
+    message: {
+        type: String,
+        required: true  
     }
 });
 

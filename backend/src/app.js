@@ -21,7 +21,7 @@ app.use(express.json());
 // app.use(express.static("public"));
 
 // Import and use our application routes.
-import routes from './routes/api/routes.js';
+import routes from './routes/routes.js';
 app.use("/", routes);
 
 
