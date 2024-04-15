@@ -7,45 +7,47 @@ function Applicant({ username, message, avatar }) {
   const isLongMessage = message.length > 50;
 
   return (
-    <div className="flex flex-col items-center w-60 h-96 bg-gradient-to-r from-blue-100 to-blue-300 rounded-lg overflow-hidden m-2 transition-all duration-300 ease-in-out">
+    <div className=" flex flex-col items-center justify-between py-6 px-4 bg-gradient-to-r from-blue-100 to-blue-300 rounded-lg overflow-hidden m-2 transition-all duration-300 ease-in-out" style={{ width: '240px', height: '300px' }}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}>
       {/* User info section */}
-      <div
-        className={`transition-transform duration-300 ease-in-out ${hover && isLongMessage ? 'flex flex-row items-center transform scale-50 -translate-y-5 -translate-x-20' : 'flex flex-col items-center mt-6'}`}
-        onMouseEnter={() => setHover(true)}
-        onMouseLeave={() => setHover(false)}
-        style={{ transitionProperty: 'transform', willChange: 'transform' }}
-      >
-        {/* Avatar */}
-        <div className={`w-24 h-24 ${avatar} rounded-full transition-transform duration-300 ease-in-out`}></div>
+      <div className='flex-shrink' >
+        <div className={`flex  justify-start items-center ${hover && isLongMessage ? 'flex-row  ' : 'flex-col'}`}>
 
 
-      </div>
+          {/* Avatar */}
+          <div className={` ${avatar} rounded-full transition-transform duration-300 ease-in-out ${hover && isLongMessage ? 'w-12 h-12  ' : 'w-24 h-24'}`}></div>
 
-      {/* Username, move this into the hover effect area */}
-      <div className={`text-base font-medium transition-transform duration-300 ease-in-out ${hover && isLongMessage ? '  transform -translate-y-20 translate-x-15' : ''}`}
-        onMouseEnter={() => setHover(true)}
-        onMouseLeave={() => setHover(false)}>
-        {username}
-      </div>
+          {/* Username, move this into the hover effect area */}
 
-      {/* Message container */}
 
-      <div
-        className={`flex flex-col flex-grow justify-center items-center text-center overflow-hidden cursor-pointer ${hover && isLongMessage ? 'h-auto py-4 -mt-24' : 'h-16'}`}
-        onMouseEnter={() => setHover(true)}
-        onMouseLeave={() => setHover(false)}
-      >
 
-        <div className="text-sm text-gray-600">
-          {isLongMessage ? (hover ? message : `${message.substring(0, 50)}...`) : message}
+          <div className={`text-base font-medium transition-transform duration-300 ease-in-out ${hover && isLongMessage ? 'translate-x-2  ' : ''}`}
+          >
+            {username}
+          </div>
         </div>
+
+        {/* Message container */}
+
+        <div
+          className={`text-center cursor-pointer ${hover && isLongMessage ? 'h-40  overflow-auto py-4 hide-scrollbar' : 'h-16 overflow-hidden'}`}
+          onMouseEnter={() => setHover(true)}
+          onMouseLeave={() => setHover(false)}
+        >
+          <div className="text-sm text-gray-600">
+            {message}
+          </div>
+        </div>
+
       </div>
 
       {/* Action buttons */}
-      <div className="w-full pb-4 px-4 flex justify-between">
-        <Button className=" w-20 py-1" style_type="fill">Allow</Button>
-        <Button className=" w-20 py-1" style_type="border">Reject</Button>
-      </div>
+      <div className="flex flex-row flex-initial w-full  pt-8 px-4 flex justify-around relative"> 
+    <Button className="absolute left-3 -bottom-1 w-20 py-1 px-0" style_type="fill">Allow</Button>
+    <Button className="absolute right-3 -bottom-1 w-20 py-1 px-0" style_type="border">Reject</Button>
+</div>
+
     </div>
   );
 }

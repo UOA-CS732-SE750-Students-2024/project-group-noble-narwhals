@@ -2,7 +2,6 @@ import React from "react";
 import { MdPeople } from "react-icons/md";
 import { IoMdTime } from "react-icons/io";
 import { IoPricetag } from "react-icons/io5";
-import ActivityDetail from "../components/ActivityDetail";
 import Member from "../components/Member";
 import Applicant from "../components/Applicant";
 import Description from "../components/Description";
@@ -20,15 +19,15 @@ function GroupInfo() {
   return (
     <>
 
-      <div className="content w-main_content mx-auto ">
+      <div className="content w-4/5 max-w-main_content mx-auto ">
       
-        <HeaderContent />
-        <ActivityDetail details={activityDetails} />
+        <HeaderContent details={activityDetails}  />
         <Description />
         <MemberList />
         <ApplicantList />
        
       </div>
+    
       <Footer />
       
 
@@ -50,7 +49,7 @@ function MemberList() {
   ];
 
   return (
-    <div className="member-list p-6 mt-6">
+    <div className="member-list p-6 mt-2">
       <div className="flex justify-between items-center mb-4">
         <h3 className="font-semibold text-2xl">
           Members
@@ -58,7 +57,7 @@ function MemberList() {
         </h3>
 
       </div>
-      <div className="flex space-x-4 overflow-x-auto">
+      <div className="flex justify space-x-2 overflow-x-auto">
         {members.map((member, index) => (
           <Member key={index} {...member} />
         ))}

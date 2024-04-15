@@ -3,9 +3,8 @@ import Button from './Button';
 
 function Member({ username, role, avatar }) {
   return (
-    <div className="flex flex-col items-center w-60 h-96 bg-gradient-to-r from-blue-100 to-blue-300 rounded-lg space-y-4 m-5 p-4">
-      {/* Container for avatar and username */}
-      <div className="flex-1 flex flex-col items-center justify-start space-y-2">
+    <div className={`flex flex-col items-center bg-gradient-to-r from-blue-100 to-blue-300 rounded-lg space-y-4 p-4 first:ml-0 `} style={{ width: '240px', height: '300px' }}>      {/* Container for avatar and username */}
+      <div className="flex-1 flex flex-col items-center justify-between space-y-2">
         <div className={`w-32 h-32 ${avatar} rounded-full`}></div>
         <span className="text-md font-medium text-center">{username}</span>
         {role && (
@@ -19,8 +18,8 @@ function Member({ username, role, avatar }) {
       <div className="w-full flex justify-between pb-4">
         {role !== 'Host' && (
           <>
-            <Button className="w-20 py-1" style_type="fill">View</Button>
-            <Button className="w-20 py-1" style_type="border">Delete</Button>
+            <Button className="w-20 py-1 px-0" style_type="fill">View</Button>
+            <Button className="w-20 py-1 px-0" style_type="border">Delete</Button>
           </>
         )}
         {/* If role is 'Host', render empty spans to maintain spacing */}

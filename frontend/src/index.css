@@ -57,3 +57,13 @@ button {
   zoom: 1;
 }
 
+/* hide auto scroll  */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* for Chrome, Safari, 和 Opera */
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;  /* for Edge */
+  scrollbar-width: none;  /*  for Firefox */
+}
+
