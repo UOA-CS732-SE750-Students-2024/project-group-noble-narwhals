@@ -15,7 +15,6 @@ import ApplyInProgressPage from "./pages/user/ApplyInProgressPage";
 import LikedGroupPage from "./pages/user/LikedGroupPage";
 import NotificationPage from "./pages/user/NotificationPage";
 import SearchPage from "./pages/SearchPage";
-import SignUpPage from "./pages/SignUpPage";
 
 dayjs.extend(relativeTime);
 dayjs.extend(advandedFormat);
@@ -24,21 +23,21 @@ function App() {
   return (
     <Routes>
       <Route path="login" element={<LoginPage />} />
-      <Route path="signup" element={<SignUpPage />} />
+      <Route path="signup" element={<LoginPage ifLogin={false} />} />
       <Route path="*" element={<p>404</p>} />
       <Route path="/" element={<LayoutWithNav />}>
         <Route index element={<HomePage />} />
         <Route path="group/:groupId" element={<GroupInfoPage />} />
         <Route path="creategroup" element={<CreateGroupPage />} />
         <Route path="search" element={<SearchPage />} />
-        <Route path="user" element={<LayoutUserPages />}>
-          <Route index element={<Navigate to={"profile"} replace />} />
-          <Route path="profile" element={<PublicProfilePage />} />
-          <Route path="settings" element={<AccountSettingPage />} />
-          <Route path="apply-in-progress" element={<ApplyInProgressPage />} />
-          <Route path="liked" element={<LikedGroupPage />} />
-          <Route path="notification" element={<NotificationPage />} />
-        </Route>
+      </Route>
+      <Route path="user" element={<LayoutUserPages />}>
+        <Route index element={<Navigate to={"profile"} replace />} />
+        <Route path="profile" element={<PublicProfilePage />} />
+        <Route path="settings" element={<AccountSettingPage />} />
+        <Route path="apply-in-progress" element={<ApplyInProgressPage />} />
+        <Route path="liked" element={<LikedGroupPage />} />
+        <Route path="notification" element={<NotificationPage />} />
       </Route>
     </Routes>
   );
