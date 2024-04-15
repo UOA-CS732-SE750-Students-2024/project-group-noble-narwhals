@@ -7,7 +7,7 @@ function Applicant({ username, message, avatar }) {
   const isLongMessage = message.length > 50;
 
   return (
-    <div className=" flex flex-col items-center justify-between py-6 px-4 bg-gradient-to-r from-blue-100 to-blue-300 rounded-lg overflow-hidden m-2 transition-all duration-300 ease-in-out" style={{ width: '240px', height: '300px' }}
+    <div className=" flex flex-col items-center justify-between py-6 px-4 bg-gradient-to-br from-blue-100 to-blue-300 rounded-lg overflow-hidden m-2 transition-all duration-300 ease-in-out" style={{ width: '240px', height: '300px' }}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}>
       {/* User info section */}
