@@ -11,6 +11,7 @@ export default function LayoutUserPages() {
                     <Outlet />
                 </div>
             </div>
+
     </div>
   );
 }
