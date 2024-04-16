@@ -139,6 +139,7 @@ function CreatGroupPage() {
                 onKeyDown={handleKeyPress}
                 className="border-2 border-primary w-2/5 rounded-full h-9 px-4"
                 placeholder="Enter a tag"
+                maxLength={20}
               />
               <button
                 className="h-9 w-1/6 mr-4 rounded-full bg-primary text-white ml-2 p-0 hover:bg-pink-600"
@@ -178,7 +179,8 @@ function CreatGroupPage() {
             <input
               type="number"
               min={0}
-              className="border-2 border-primary w-1/6 rounded-full h-9 text-center p-0"
+              max={99}
+              className="border-2 border-primary w-1/6 rounded-full h-9 text-center p-0 appearance-none "
               placeholder="0"
             />
           </div>
