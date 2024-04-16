@@ -3,8 +3,8 @@ import Button from "../../components/Button";
 function NotificationPage() {
   const notifications = dummynotifications;
   return (
-    <div className="w-4/5 m-auto ">
-      <div className="leading-7 text-3xl mb-10">Notification</div>
+    <div className="w-4/5 mx-auto p-4">
+      <div className="text-3xl pb-10">Notification</div>
       <div>
         {notifications.map((notification, idx) => (
           <SingleNotification key={idx} notification={notification} idx={idx} />

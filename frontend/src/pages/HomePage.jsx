@@ -76,7 +76,9 @@ function HomePage() {
             <p className="text-lg font-black text-sky-700 mb-4">
               Type in the group name, course name, find your group!
             </p>
-            <LongSearchingBar />
+            <div className="w-1/2">
+              <LongSearchingBar />
+            </div>
           </div>
         </div>
         <Gallery name="Recommendation" data={dummyData} />

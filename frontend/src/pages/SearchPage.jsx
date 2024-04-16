@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Button from "../components/Button";
+import LongSearchingBar from "../components/LongSearchingBar";
 
 /**
  * Search group page
@@ -59,16 +60,10 @@ function SearchPage({ keywords }) {
   return (
     <>
       {/* search box */}
-      <div className="mt-10 flex space-x-4 w-2/3 m-auto border-2 border-primary rounded-full pl-4">
-        <input
-          id="Search"
-          className="flex-grow text-2xl outline-none pl-4"
-          type="text"
-        />
-        <Button className="block" onClick={handleSearchBthClick}>
-          Search
-        </Button>
+      <div className="w-4/5 mx-auto my-16">
+        <LongSearchingBar />
       </div>
+
       {/* tab control */}
       <div className="mt-5 flex space-x-5">
         {groupTypes.map((type) => (
@@ -163,7 +158,7 @@ function SingleSearchedGroup({ group, keywords }) {
           }}
         ></div>
         <div className="font-thin text-gray-400 text-sm">
-          {`Members: ${group.currentMember}/[${group.minMember}-${group.maxMember}]`}
+          {`Members: ${group.currentMember}/${group.maxMember}`}
         </div>
       </div>
       <div className="flex justify-start space-x-1 text-xs mt-2 overflow-hidden">
