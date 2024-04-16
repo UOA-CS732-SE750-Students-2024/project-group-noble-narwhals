@@ -28,8 +28,8 @@ function App() {
       <Route path="/" element={<LayoutWithNav />}>
         <Route index element={<HomePage />} />
         <Route path="group/:groupId" element={<GroupInfoPage />} />
-        <Route path="creategroup" element={<CreateGroupPage />} />
         <Route path="search" element={<SearchPage />} />
+        <Route path="creategroup" element={<CreateGroupPage />} />
       </Route>
       <Route path="user" element={<LayoutUserPages />}>
         <Route index element={<Navigate to={"profile"} replace />} />
