@@ -10,16 +10,18 @@ function CreatGroupPage() {
 
   // Random color generation function
   const randomColor = () => {
-    let color = "#FFFFFF";
-    while (color === "#FFFFFF") {
-      let hex = Math.floor(Math.random() * 0xffffff);
-      color = "#" + hex.toString(16).padStart(6, "0");
-    }
-    return color;
+    const h = Math.floor(Math.random() * 360);
+  const s = 30 + Math.floor(Math.random() * 10);
+  const l = 40 + Math.floor(Math.random() * 10); 
+  return `hsl(${h}, ${s}%, ${l}%)`;
   };
   //Handle tag event
   const addTag = (e) => {
     e.preventDefault();
+    if (tags.length >= 6) {
+      setInputError('You can only add up to 6 tags');
+      return;
+    }
     const trimInput = input.trim();
     console.log(input);
     if (trimInput) {
@@ -174,7 +176,8 @@ function CreatGroupPage() {
             <input
               type="number"
               min={0}
-              className="border-2 border-primary w-1/5 rounded-full h-9 text-center p-0"
+              className="border-2 border-primary w-1/6 rounded-full h-9 text-center p-0"
+              placeholder="0"
             />
           </div>
           <div className=" flex pb-8 w-4/5 mx-auto">
