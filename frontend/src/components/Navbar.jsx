@@ -16,6 +16,7 @@ function Navbar({ isLogged = false, user = {} }) {
   };
 
   return (
+
     <>
       <nav
         id="nav_bar"
@@ -100,9 +101,11 @@ function Navbar({ isLogged = false, user = {} }) {
                     darkMode ? "hover:text-primary" : ""
                   }`}
                 >
+
                   <Link
                     to="/"
                     className={`text-xl flex flex-row items-center justify-center `}
+
                   >
                     <IoMdNotificationsOutline />
                   </Link>

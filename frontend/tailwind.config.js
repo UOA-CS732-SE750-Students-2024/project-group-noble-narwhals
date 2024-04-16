@@ -13,11 +13,16 @@ export default {
       },
       boxShadow: {
         'basic': '0 0px 10px -4px rgba(0, 0, 0, 0.3)',
+
       },
       fontFamily: {
         bungee: ['Bungee-Regular', 'sans-serif'],
       },
+
     },
+    
+    
   },
   plugins: [],
+  
 };

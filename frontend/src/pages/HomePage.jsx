@@ -9,6 +9,8 @@ function HomePage() {
       <div id="main_content">
         <div className="text-3xl">HomePage</div>
         <Link to="/login">Login</Link>
+        <Link to="/group/2">Group Info</Link>
+
         <MdFavoriteBorder className="text-2xl fill-pink-600" />
       </div>
     </>
