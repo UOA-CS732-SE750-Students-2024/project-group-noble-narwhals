@@ -17,22 +17,20 @@ import LikedGroupPage from "./pages/user/LikedGroupPage";
 import NotificationPage from "./pages/user/NotificationPage";
 import SearchPage from "./pages/SearchPage";
 
-
 dayjs.extend(relativeTime);
 dayjs.extend(advandedFormat);
 
 function App() {
   return (
     <Routes>
-
       <Route path="login" element={<LoginPage />} />
       <Route path="signup" element={<LoginPage ifLogin={false} />} />
       <Route path="*" element={<p>404</p>} />
       <Route path="/" element={<LayoutWithNav />}>
         <Route index element={<HomePage />} />
         <Route path="group/:groupId" element={<GroupInfoPage />} />
-        <Route path="creategroup" element={<CreateGroupPage />} />
         <Route path="search" element={<SearchPage />} />
+        <Route path="creategroup" element={<CreateGroupPage />} />
       </Route>
       <Route path="user" element={<LayoutUserPages />}>
         <Route index element={<Navigate to={"profile"} replace />} />
