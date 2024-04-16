@@ -21,21 +21,16 @@ export default {
       },
       spacing: {
         mainContent: "1280px",
-        navHeight: '60px',
-        sideBarWidth: '230px',
+        navHeight: "60px",
+        sideBarWidth: "230px",
       },
       boxShadow: {
-        'basic': '0 0px 10px -4px rgba(0, 0, 0, 0.3)',
-
+        basic: "0 0px 10px -4px rgba(0, 0, 0, 0.3)",
       },
       fontFamily: {
-        bungee: ['Bungee-Regular', 'sans-serif'],
+        bungee: ["Bungee-Regular", "sans-serif"],
       },
-
     },
-    
-    
   },
   plugins: [],
-  
 };
