@@ -6,31 +6,31 @@ function CreatGroupPage() {
 
   const [tags, setTags] = useState([]); // Used to store all tags
   const [input, setInput] = useState(""); //Used to store the value of the input box
-  const [inputError, setInputError] = useState(''); 
+  const [inputError, setInputError] = useState("");
 
   // Random color generation function
   const randomColor = () => {
     const h = Math.floor(Math.random() * 360);
-  const s = 30 + Math.floor(Math.random() * 10);
-  const l = 40 + Math.floor(Math.random() * 10); 
-  return `hsl(${h}, ${s}%, ${l}%)`;
+    const s = 30 + Math.floor(Math.random() * 10);
+    const l = 40 + Math.floor(Math.random() * 10);
+    return `hsl(${h}, ${s}%, ${l}%)`;
+    
   };
   //Handle tag event
   const addTag = (e) => {
     e.preventDefault();
     if (tags.length >= 6) {
-      setInputError('You can only add up to 6 tags');
+      setInputError("You can only add up to 6 tags");
       return;
     }
     const trimInput = input.trim();
-    console.log(input);
+
     if (trimInput) {
       setTags([...tags, { text: trimInput, color: randomColor() }]);
       setInput(""); // Clear input box
-      setInputError('');
-    }
-    else{
-      setInputError('Please enter a tag');
+      setInputError("");
+    } else {
+      setInputError("Please enter a tag");
     }
   };
   // Change event handler of input box
@@ -146,7 +146,9 @@ function CreatGroupPage() {
               >
                 Add
               </button>
-              {inputError && <div className="text-red-500 text-xs italic">{inputError}</div>}
+              {inputError && (
+                <div className="text-red-500 text-xs italic">{inputError}</div>
+              )}
               <div className="flex flex-wrap pt-2 gap-2 ">
                 {tags.map((tag, index) => (
                   <div
@@ -188,7 +190,6 @@ function CreatGroupPage() {
               type="text"
               className="border-2 border-primary w-3/5 rounded-2xl h-32 px-3"
               min={0}
-             
               placeholder="Write a description of the group/activity"
             />
           </div>
