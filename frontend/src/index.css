@@ -68,8 +68,16 @@ button {
   display: none; /* for Chrome, Safari, 和 Opera */
 }
 
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 .hide-scrollbar {
   -ms-overflow-style: none;  /* for Edge */
   scrollbar-width: none;  /*  for Firefox */
 }
+
 
