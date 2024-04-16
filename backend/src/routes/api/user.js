@@ -4,7 +4,8 @@ import User from '../../models/userModel.js';
 import { getUser } from '../../middleware/entityMiddleware.js';
 const router = express.Router();
 
-
+// Define the array of avatar styles
+const avatarStyles = ['thumbs', 'fun-emoji', 'adventurer', 'pixel-art-neutral', 'open-peeps', 'lorelei', 'croodles-neutral', 'croodles', 'miniavs', 'avataaars', 'bottts-neutra', 'icons', 'micah'];
 
 // get all users
 router.get('/', async (req, res) => {
@@ -25,19 +26,6 @@ router.post('/', async (req, res) => {
     try {
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
-         // Randomly select an avatar style
-         const selectedStyle = avatarStyles[Math.floor(Math.random() * avatarStyles.length)];
-
-         // Construct the DiceBear avatar URL with the randomly selected style
-         const avatarUrl = `https://api.dicebear.com/8.x/${selectedStyle}/svg?seed=${user._id}`;
- 
-         // Update the user record with the avatar
-         user.avatar = avatarUrl;
-         await user.save();
-
-        // Define the array of avatar styles
-        const avatarStyles = ['thumbs', 'fun-emoji', 'adventurer', 'avataaars','bottts-neutra','icons','micah'];
-
         // Creating a new user instance without the avatar
         const user = new User({
             name: req.body.name,
@@ -52,7 +40,15 @@ router.post('/', async (req, res) => {
         // First saving the user to generate the MongoDB _id
         await user.save();
 
-       
+        // Randomly select an avatar style
+        const selectedStyle = avatarStyles[Math.floor(Math.random() * avatarStyles.length)];
+
+        // Construct the DiceBear avatar URL with the randomly selected style
+        const avatarUrl = `https://api.dicebear.com/8.x/${selectedStyle}/svg?seed=${user._id}`;
+
+        // Update the user record with the avatar
+        user.avatar = avatarUrl;
+        await user.save();
 
         // Responding to the client
         res.status(201).json({
@@ -64,7 +60,7 @@ router.post('/', async (req, res) => {
                 gender: user.gender,
                 accountType: user.accountType,
                 isVerification: user.isVerification,
-                avatar: user.avatar, // Including the avatar
+                avatar: user.avatar, 
                 profileTags: user.profileTags,
             },
         });
@@ -73,6 +69,7 @@ router.post('/', async (req, res) => {
         res.status(400).json({ message: "Error creating user" });
     }
 });
+
 
 
 
@@ -122,8 +119,11 @@ router.post('/regenerate-avatar/:id', async (req, res) => {
             return res.status(404).json({ message: 'User not found' });
         }
 
+        // Randomly select an avatar style
+        const selectedStyle = avatarStyles[Math.floor(Math.random() * avatarStyles.length)];
+
         const newSeed = Date.now().toString();
-        const newAvatarUrl = `https://api.dicebear.com/8.x/thumbs/svg?seed=${newSeed}`;
+        const newAvatarUrl = `https://api.dicebear.com/8.x/${selectedStyle}/svg?seed=${newSeed}`;
 
         user.avatar = newAvatarUrl;
         await user.save();
