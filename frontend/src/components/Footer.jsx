@@ -4,8 +4,8 @@ function Footer() {
   const footerImagePath = "/footerImage.png";
 
   return (
-    <div className="bg-primary text-white p-4 rounded-b shadow flex items-start h-64 ">
-      <div className="w-4/5 max-w-main_content mx-auto">
+    <div className="bg-primary text-white h-64 ">
+      <div className="w-4/5 max-w-mainContent mx-auto">
         <img src={footerImagePath} alt="Footer" className="h-40 " />
       </div>
     </div>
