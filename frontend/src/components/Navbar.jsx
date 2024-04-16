@@ -19,7 +19,7 @@ function Navbar({ isLogged = false, user = {} }) {
     <>
       <nav
         id="nav_bar"
-        className={`shadow-sm fixed  left-0 top-0 w-screen ${
+        className={`shadow-sm fixed z-50 left-0 top-0 w-screen ${
           darkMode ? "text-white bg-primary " : "bg-white text-primary"
         } `}
       >
@@ -92,12 +92,12 @@ function Navbar({ isLogged = false, user = {} }) {
                   }`}
                 >
                   <Link
-                    to="/"
-                    className={`text-xl flex flex-row items-center justify-center `}
+                    to="/creategroup"
+                    className={`text-xl flex flex-row items-center justify-center gap-1 `}
                   >
                     <IoAdd />
+                    <span>Create Group</span>
                   </Link>
-                  <span>Create Group</span>
                 </div>
                 <div
                   className={`h-9 flex flex-row items-center gap-1 cursor-pointer hover:bg-gray-200 py-1 px-2 rounded-full ${
@@ -105,12 +105,12 @@ function Navbar({ isLogged = false, user = {} }) {
                   }`}
                 >
                   <Link
-                    to="/"
-                    className={`text-xl flex flex-row items-center justify-center `}
+                    to="/user/notification"
+                    className={`text-xl flex flex-row items-center justify-center gap-1 `}
                   >
                     <IoMdNotificationsOutline />
+                    <span>Notifications</span>
                   </Link>
-                  <span>Notifications</span>
                 </div>
                 <div
                   onClick={switchMenu}
@@ -128,13 +128,16 @@ function Navbar({ isLogged = false, user = {} }) {
                         darkMode && "text-primary"
                       }`}
                     >
-                      <div className="flex flex-row justify-around items-center w-full h-10 hover:bg-gray-200 rounded-lg cursor-pointer">
+                      <Link
+                        to="/user/profile"
+                        className="flex flex-row justify-around items-center w-full h-10 hover:bg-gray-200 rounded-lg cursor-pointer"
+                      >
                         <span>Your profile</span>
                         <BsChevronCompactRight className="w-6 h-6 text-lg font-extrabold" />
-                      </div>
-                      <Button className="border-1 h-9 ">
-                        <Link to="/">Log out</Link>
-                      </Button>
+                      </Link>
+                      <Link to="/auth/logout">
+                        <Button className="border-1 h-9 ">Log out</Button>
+                      </Link>
                     </div>
                   )}
                 </div>
