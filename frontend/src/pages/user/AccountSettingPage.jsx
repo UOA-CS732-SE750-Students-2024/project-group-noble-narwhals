@@ -54,7 +54,7 @@ function AccountSettingsPage() {
 
 
     return (
-        <div className="m-5 p-5">
+        <div className="w-4/5 m-4 p-4">
             <div className="text-3xl mb-5">Account Settings</div>
             <div>
                 <div> {/* Avatar*/}
