@@ -12,7 +12,7 @@ export default function passportSetup(passport) {
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
         callbackURL: "/auth/google/callback",
       },
-      (accessToken, refreshToken, profile, cb) => {
+      (accessToken, refreshToken, profile, done) => {
         console.log("1Google it!!!", profile);
         // User.findOne({ googleId: profile.id }, (err, user) => {
         //     if (!user) {
@@ -22,7 +22,7 @@ export default function passportSetup(passport) {
         //         return cb(err, user);
         //     }
         // });
-        return cb(null, profile);
+        return done(null, profile);
       }
     )
   );
@@ -51,6 +51,12 @@ export default function passportSetup(passport) {
 
   passport.serializeUser((user, done) => done(null, user._id));
   passport.deserializeUser((id, done) => {
-    User.findById(id, (err, user) => done(err, user));
+    User.findById(id)
+      .then((user) => {
+        return done(null, user);
+      })
+      .catch((err) => {
+        return done(err);
+      });
   });
 }
