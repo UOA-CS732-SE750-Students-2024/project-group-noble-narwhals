@@ -1,7 +1,9 @@
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import { Strategy as LocalStrategy } from "passport-local";
+import User from "../models/userModel.js";
+import bcrypt from "bcrypt";
 
-export default function passportSetup(passport){
+export default function passportSetup(passport) {
   // Google OAuth Strategy
   passport.use(
     new GoogleStrategy(
@@ -11,7 +13,7 @@ export default function passportSetup(passport){
         callbackURL: "/auth/google/callback",
       },
       (accessToken, refreshToken, profile, cb) => {
-        console.log("1Google it!!!",profile)
+        console.log("1Google it!!!", profile);
         // User.findOne({ googleId: profile.id }, (err, user) => {
         //     if (!user) {
         //         user = new User({ googleId: profile.id, email: profile.emails[0].value });
@@ -32,19 +34,23 @@ export default function passportSetup(passport){
         usernameField: "email",
       },
       (email, password, done) => {
-        // User.findOne({ email: email }, (err, user) => {
-        //     if (err) return done(err);
-        //     if (!user) return done(null, false, { message: 'Incorrect email.' });
-        //     if (!bcrypt.compareSync(password, user.password)) return done(null, false, { message: 'Incorrect password.' });
-        //     return done(null, user);
-        // });
-        return done(null, profile);
+        User.findOne({ email: email })
+          .then((user) => {
+            if (!user)
+              return done(null, false, { message: "Incorrect email." });
+            if (!bcrypt.compareSync(password, user.password))
+              return done(null, false, { message: "Incorrect password." });
+            return done(null, user);
+          })
+          .catch((err) => {
+            return done(err);
+          });
       }
     )
   );
 
-//   passport.serializeUser((user, done) => done(null, user.id));
-//   passport.deserializeUser((id, done) => {
-//     // User.findById(id, (err, user) => done(err, user));
-//   });
-};
+  passport.serializeUser((user, done) => done(null, user._id));
+  passport.deserializeUser((id, done) => {
+    User.findById(id, (err, user) => done(err, user));
+  });
+}

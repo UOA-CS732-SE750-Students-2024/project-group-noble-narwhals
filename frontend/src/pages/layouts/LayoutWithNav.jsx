@@ -6,7 +6,7 @@ import Footer from "../../components/Footer";
 export default function PageLayout() {
   return (
     <>
-      <Navbar isLogged={true} />
+      <Navbar isLogged={false} />
       <div id="main_content" className="w-4/5 max-w-mainContent mx-auto">
         <Outlet />
       </div>

@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
 import Button from "./Button";
+import axios from "axios";
 
 import { FcGoogle } from "react-icons/fc";
 import { IoIosEye } from "react-icons/io";
@@ -7,7 +8,7 @@ import { IoIosEyeOff } from "react-icons/io";
 
 function LogAndSign({ loginType, switchHandler }) {
   const [showPassword, setShowPassword] = useState(false);
-  const usenameRef = useRef();
+  const emailRef = useRef();
   const passwordRef = useRef();
 
   const showPasswordHandler = () => {
@@ -22,6 +23,37 @@ function LogAndSign({ loginType, switchHandler }) {
   const submitHandler = (e) => {
     e.preventDefault();
 
+    const username = emailRef.current.value;
+    const password = passwordRef.current.value;
+    console.log("1", username, password);
+
+    if (loginType) {
+      axios
+        .post(`${import.meta.env.VITE_API_BASE_URL}/auth/login`, {
+          email: emailRef.current.value,
+          password: passwordRef.current.value,
+        })
+        .then(function (response) {
+          if (response.status === 200) {
+            window.location.href = "/";
+          }
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    } else {
+      axios
+        .post(`${import.meta.env.VITE_API_BASE_URL}/auth/signup`, {
+          email: emailRef.current.value,
+          password: passwordRef.current.value,
+        })
+        .then(function (response) {
+          console.log(response);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+      }
     // need to be implemented
   };
 
@@ -50,10 +82,10 @@ function LogAndSign({ loginType, switchHandler }) {
           >
             <div className="w-64 flex flex-row items-center justify-between h-10 p-1 pl-4 rounded-full bg-white hover:outline focus-within:outline outline-2 outline-primary">
               <input
-                type="text"
-                placeholder="Username"
+                type="email"
+                placeholder="E-mail"
                 className="outline-none w-full"
-                ref={usenameRef}
+                ref={emailRef}
               />
             </div>
             <div className="w-64 flex flex-row items-center justify-between h-10 p-1 pl-4 rounded-full bg-white hover:outline focus-within:outline outline-2 outline-primary">
@@ -62,6 +94,7 @@ function LogAndSign({ loginType, switchHandler }) {
                 placeholder="Password"
                 className="outline-none"
                 ref={passwordRef}
+                minLength="8"
               />
               <div
                 onClick={showPasswordHandler}
@@ -77,12 +110,12 @@ function LogAndSign({ loginType, switchHandler }) {
         </div>
         <div className="flex flex-col items-center gap-3">
           <div className="font-bungee text-xl ">OR</div>
-           <Button
-                className="flex flex-row bg-white items-center gap-4 p-4 h-11 mb-10 rounded-full w-64"
-                onClick={googleAuth}
-              >
-                <FcGoogle className="w-8 h-8" /> {type} with Google
-              </Button>
+          <Button
+            className="flex flex-row bg-white items-center gap-4 p-4 h-11 mb-10 rounded-full w-64"
+            onClick={googleAuth}
+          >
+            <FcGoogle className="w-8 h-8" /> {type} with Google
+          </Button>
         </div>
         <div className="flex flex-col items-center">
           {contentBlow}

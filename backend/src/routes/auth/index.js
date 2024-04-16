@@ -1,25 +1,13 @@
 import express from "express";
 import passport from "passport";
+import isLoggedIn from "../../middleware/authMiddleware";
 const router = express.Router();
 
-router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
-  console.log(email, password);
-  console.log(req.body);
-  // const user = users.find(u => u.username === username);
-
-  // if (!user) {
-  //     return res.status(401).send('用户名不存在');
-  // }
-
-  // if (!bcrypt.compareSync(password, user.password)) {
-  //     return res.status(401).send('密码错误');
-  // }
-
-  // const token = jwt.sign({ id: user.id }, 'your_secret_key', { expiresIn: '1h' });
-
-  res.json({ message: "登录成功" });
+router.post("/login", passport.authenticate("local"), (req, res) => {
+  res.send("logged in");
 });
+
+// router.post("/signup", )
 
 router.get(
   "/google",
@@ -28,7 +16,10 @@ router.get(
 
 router.get(
   "/google/callback",
-  passport.authenticate("google", {scope: ["profile", "email"], failureRedirect: "/login" }),
+  passport.authenticate("google", {
+    scope: ["profile", "email"],
+    failureRedirect: "/login",
+  }),
   (req, res) => {
     res.redirect("/");
   }
@@ -37,6 +28,14 @@ router.get(
 router.get("/logout", (req, res) => {
   req.logout();
   res.redirect("/");
+});
+
+rpute.get('/check-session', isLoggedIn, (req, res) => {
+  if (req.isAuthenticated()) {
+    res.json({ isLoggedIn: true, user: req.user });
+} else {
+    res.json({ isLoggedIn: false });
+}
 });
 
 export default router;
