@@ -28,17 +28,17 @@ const GalleryCard = ({
           <div className="flex flex-col justify-center ml-3">
             <Link
               to={`/group/${id}`}
-              className="text-base font-bold text-sky-800 hover:scale-125 hover:text-sky-600"
+              className="text-base font-bold text-sky-800 hover:underline"
             >
               {title}
             </Link>
-            <div className="text-sm text-sky-700">{dayNum} days left</div>
+            <div className="text-xs text-gray-400">{dayNum} days left</div>
           </div>
         </div>
 
         <div className="flex items-center">
           {/* favarite button */}
-          <button className="flex justify-center items-center bg-slate-200 rounded-full p-0 h-8 w-8 hover:scale-110">
+          <button className="flex justify-center items-center rounded-full p-0 h-6 w-6 hover:scale-110">
             {isFavorite ? (
               <MdFavorite size={28} color="red" />
             ) : (
@@ -52,7 +52,7 @@ const GalleryCard = ({
           {description.length > 150 ? (
             <>
               {description.substring(0, 150)}
-              <Link to={`/group/${id}`} className="ml-2 hover:text-red-500">
+              <Link to={`/group/${id}`} className="ml-2">
                 ...
               </Link>
             </>

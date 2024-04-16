@@ -18,7 +18,7 @@ const AvatarGroup = ({ imageSources, num }) => {
         ))}
       </div>
       <p className="inline-block font-bold ml-1">
-        <span className={`${linkNum < num ? "text-red-500" : "text-sky-800"}`}>
+        <span className={`${linkNum < num ? "text-sky-800" : "text-sky-800"}`}>
           {linkNum}
         </span>
         /{num}
