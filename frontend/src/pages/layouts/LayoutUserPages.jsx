@@ -1,17 +1,22 @@
-import React from 'react';
+import React from "react";
 import { Outlet } from "react-router-dom";
-import UserPageSideBar from '../../components/UserPageSideBar.jsx';
+import UserPageSideBar from "../../components/UserPageSideBar.jsx";
+import Navbar from "../../components/Navbar.jsx";
 
 export default function LayoutUserPages() {
   return (
-    <div className="overflow-y-auto">
-     <div className="flex pt-10 overflow-y-auto min-h-screen" > {/**May delete the "pt-10" after adding a placeholder to the nav bar */}
-                <UserPageSideBar />
-                <div className="flex-grow" >
-                    <Outlet />
-                </div>
-            </div>
-    </div>
+    <>
+      <Navbar isLogged={false} />
+      <div className="overflow-y-auto">
+        <div className="flex overflow-y-auto min-h-[calc(100vh-theme(spacing.navHeight))]">
+          {" "}
+          {/**May delete the "pt-10" after adding a placeholder to the nav bar */}
+          <UserPageSideBar />
+          <div className="flex-grow">
+            <Outlet />
+          </div>
+        </div>
+      </div>
+    </>
   );
 }
-
