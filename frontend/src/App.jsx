@@ -2,6 +2,7 @@ import React from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
+import GroupInfo from "./pages/GroupInfo";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import advandedFormat from "dayjs/plugin/advancedFormat";
@@ -16,12 +17,14 @@ import LikedGroupPage from "./pages/user/LikedGroupPage";
 import NotificationPage from "./pages/user/NotificationPage";
 import SearchPage from "./pages/SearchPage";
 
+
 dayjs.extend(relativeTime);
 dayjs.extend(advandedFormat);
 
 function App() {
   return (
     <Routes>
+
       <Route path="login" element={<LoginPage />} />
       <Route path="signup" element={<LoginPage ifLogin={false} />} />
       <Route path="*" element={<p>404</p>} />
