@@ -4,7 +4,7 @@ import isLoggedIn from "../../middleware/authMiddleware.js";
 const router = express.Router();
 
 router.post("/login", passport.authenticate("local"), (req, res) => {
-  res.send("logged in");
+  res.json({ isLoggedIn: true, user: req.user });
 });
 
 // router.post("/signup", )
@@ -21,19 +21,21 @@ router.get(
     failureRedirect: "/login",
   }),
   (req, res) => {
-    res.redirect("/");
+    res.json({ isLoggedIn: true, user: req.user });
   }
 );
 
-router.get("/logout", isLoggedIn, (req, res) => {
-  req.logout((err) =>{
-    if(err){ return next(err)}
-    res.json({ isLoggedIn: false });
-  });
+router.get("/check-session", isLoggedIn, (req, res) => {
+  res.json({ isLoggedIn: true, user: req.user });
 });
 
-router.get("/check-session", isLoggedIn, (req, res) => {
-  res.json({ isLoggedIn: true });
+router.get("/logout", isLoggedIn, (req, res) => {
+  req.logout((err) => {
+    if (err) {
+      return next(err);
+    }
+    res.json({ isLoggedIn: false });
+  });
 });
 
 export default router;

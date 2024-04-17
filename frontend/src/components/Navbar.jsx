@@ -5,10 +5,23 @@ import { IoAdd } from "react-icons/io5";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import { IoSearchOutline } from "react-icons/io5";
 import { BsChevronCompactRight } from "react-icons/bs";
+import { useAuth } from "../store/AuthContext";
+import axios from "axios";
 
-function Navbar({ isLogged = false, user = {} }) {
+function Navbar() {
+  const { isLoggedIn, user, setIsLoggedIn, setUser } = useAuth();
   const location = useLocation();
   let darkMode = location.pathname.startsWith("/search");
+
+  const logoutHandler = () => {
+    axios.get(`${import.meta.env.VITE_API_BASE_URL}/auth/logout`, {
+      withCredentials: true
+  }).then(() => {
+      setIsLoggedIn(false);
+      setUser(null);
+      // window.location.href = "/"; 
+    });
+  };
 
   const [showMenu, setShowMenu] = useState(false);
   const switchMenu = () => {
@@ -41,7 +54,7 @@ function Navbar({ isLogged = false, user = {} }) {
               )}
             </Link>
 
-            {!isLogged && (
+            {!isLoggedIn && (
               <div className="flex flex-row gap-4">
                 <Link to="/login">
                   <Button
@@ -65,7 +78,7 @@ function Navbar({ isLogged = false, user = {} }) {
               </div>
             )}
 
-            {isLogged && (
+            {isLoggedIn && (
               <div className="flex flex-row gap-7 items-center">
                 <div
                   className={`flex flex-row items-center justify-between border-2 rounded-full pr-0.5 pl-4 bg-white hover:border-primary focus-within:border-primary ${
@@ -117,11 +130,11 @@ function Navbar({ isLogged = false, user = {} }) {
                   className="h-9 relative flex flex-row items-center gap-2 cursor-pointer hover:bg-gray-200 pr-3 rounded-full "
                 >
                   <img
-                    src="/image/logo.png"
+                    src={user.avatar}
                     alt="Avator"
                     className="h-10 rounded-full "
                   />
-                  Username
+                  {user.name}
                   {showMenu && (
                     <div
                       className={`bg-white absolute top-11 -right-6 w-48 rounded-xl flex flex-col items-center p-1 pb-3 gap-3 shadow-basic ${
@@ -135,9 +148,7 @@ function Navbar({ isLogged = false, user = {} }) {
                         <span>Your profile</span>
                         <BsChevronCompactRight className="w-6 h-6 text-lg font-extrabold" />
                       </Link>
-                      <Link to="/auth/logout">
-                        <Button className="border-1 h-9 ">Log out</Button>
-                      </Link>
+                      <Button onClick={logoutHandler} className="border-1 h-9 ">Log out</Button>
                     </div>
                   )}
                 </div>

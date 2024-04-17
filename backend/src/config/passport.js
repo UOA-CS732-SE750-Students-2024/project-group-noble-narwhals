@@ -40,7 +40,11 @@ export default function passportSetup(passport) {
               return done(null, false, { message: "Incorrect email." });
             if (!bcrypt.compareSync(password, user.password))
               return done(null, false, { message: "Incorrect password." });
-            return done(null, user);
+
+            const simplifiedUser = { ...user.toObject(), password: undefined };
+            console.log("ssss", simplifiedUser)
+            console.log("user", user)
+            return done(null, simplifiedUser);
           })
           .catch((err) => {
             return done(err);
@@ -53,7 +57,8 @@ export default function passportSetup(passport) {
   passport.deserializeUser((id, done) => {
     User.findById(id)
       .then((user) => {
-        return done(null, user);
+        const simplifiedUser = { ...user.toObject(), password: undefined };
+        return done(null, simplifiedUser);
       })
       .catch((err) => {
         return done(err);

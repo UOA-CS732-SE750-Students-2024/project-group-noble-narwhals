@@ -1,6 +1,7 @@
 import React, { useState, useRef } from "react";
 import Button from "./Button";
 import axios from "axios";
+axios.defaults.withCredentials = true;
 
 import { FcGoogle } from "react-icons/fc";
 import { IoIosEye } from "react-icons/io";
