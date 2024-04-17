@@ -9,6 +9,7 @@ import { IoIosEyeOff } from "react-icons/io";
 
 function LogAndSign({ loginType, switchHandler }) {
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState(" ");
   const emailRef = useRef();
   const passwordRef = useRef();
 
@@ -21,41 +22,36 @@ function LogAndSign({ loginType, switchHandler }) {
     ? "First time with us?"
     : "Already have an account?";
 
+  //login or Signup handler
   const submitHandler = (e) => {
     e.preventDefault();
+    setError(" ");
 
-    const username = emailRef.current.value;
-    const password = passwordRef.current.value;
-    console.log("1", username, password);
+    const apiUrl = import.meta.env.VITE_API_BASE_URL;
+    const url = loginType ? `${apiUrl}/auth/login` : `${apiUrl}/auth/signup`;
+    const payload = {
+      email: emailRef.current.value,
+      password: passwordRef.current.value,
+    };
 
-    if (loginType) {
-      axios
-        .post(`${import.meta.env.VITE_API_BASE_URL}/auth/login`, {
-          email: emailRef.current.value,
-          password: passwordRef.current.value,
-        })
-        .then(function (response) {
-          if (response.status === 200) {
-            window.location.href = "/";
-          }
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-    } else {
-      axios
-        .post(`${import.meta.env.VITE_API_BASE_URL}/auth/signup`, {
-          email: emailRef.current.value,
-          password: passwordRef.current.value,
-        })
-        .then(function (response) {
-          console.log(response);
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-      }
-    // need to be implemented
+    axios
+      .post(url, payload)
+      .then((response) => {
+        if (loginType && response.status === 200) {
+          window.location.href = "/";
+        } else {
+          switchHandler();
+          emailRef.current.value = "";
+          passwordRef.current.value = "";
+        }
+      })
+      .catch((error) => {
+        if (error.response) {
+          setError(error.response.data.message || "An error occurred");
+        } else {
+          setError("An error occurred");
+        }
+      });
   };
 
   const googleAuth = (e) => {
@@ -104,6 +100,7 @@ function LogAndSign({ loginType, switchHandler }) {
                 {showPassword ? <IoIosEye /> : <IoIosEyeOff />}
               </div>
             </div>
+            {error && <div className="text-red-500 h-2 text-sm">{error}</div>}
             <Button style_type="fill" className="w-64">
               {type}
             </Button>
