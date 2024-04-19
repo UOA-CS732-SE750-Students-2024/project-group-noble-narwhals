@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import Button from "./Button";
 import { IoAdd } from "react-icons/io5";
@@ -10,22 +10,38 @@ import axios from "axios";
 
 function Navbar() {
   const { isLoggedIn, user, setIsLoggedIn, setUser } = useAuth();
+  const [showSearch, setShowSearch] = useState(true);
   const location = useLocation();
   let darkMode = location.pathname.startsWith("/search");
 
   const logoutHandler = () => {
-    axios.get(`${import.meta.env.VITE_API_BASE_URL}/auth/logout`, {
-      withCredentials: true
-  }).then(() => {
-      setIsLoggedIn(false);
-      setUser(null);
-    });
+    axios
+      .get(`${import.meta.env.VITE_API_BASE_URL}/auth/logout`, {
+        withCredentials: true,
+      })
+      .then(() => {
+        setIsLoggedIn(false);
+        setUser(null);
+      });
   };
 
   const [showMenu, setShowMenu] = useState(false);
   const switchMenu = () => {
     setShowMenu((preState) => !preState);
   };
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const checkPath = location.pathname === "/";
+      const visible = window.scrollY < 320;
+      setShowSearch(!(visible && checkPath));
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    handleScroll();
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [location]);
 
   return (
     <>
@@ -79,25 +95,29 @@ function Navbar() {
 
             {isLoggedIn && (
               <div className="flex flex-row gap-7 items-center">
-                <div
-                  className={`flex flex-row items-center justify-between border-2 rounded-full pr-0.5 pl-4 bg-white hover:border-primary focus-within:border-primary ${
-                    darkMode &&
-                    "border-white hover:border-white focus-within:border-white focus-within:text-primary"
-                  }  `}
-                >
-                  <input
-                    type="text"
-                    placeholder="Search"
-                    className={`w-72 h-8 outline-none transition-all duration-300 `}
-                  />
+                {showSearch && (
                   <div
-                    className={` w-7 h-7 rounded-full hover:bg-gray-200 flex items-center justify-center ${
-                      darkMode && "text-primary"
-                    } z-10`}
+                    id="nav_search_bar"
+                    className={`flex flex-row items-center justify-between border-2 rounded-full pr-0.5 pl-4 bg-white hover:border-primary focus-within:border-primary ${
+                      darkMode &&
+                      "border-white hover:border-white focus-within:border-white focus-within:text-primary"
+                    }  `}
                   >
-                    <IoSearchOutline />
+                    <input
+                      type="text"
+                      placeholder="Search"
+                      className={`w-72 h-8 outline-none transition-all duration-300 `}
+                    />
+                    <div
+                      className={` w-7 h-7 rounded-full hover:bg-gray-200 flex items-center justify-center ${
+                        darkMode && "text-primary"
+                      } z-10`}
+                    >
+                      <IoSearchOutline />
+                    </div>
                   </div>
-                </div>
+                )}
+
                 <div
                   className={`h-9 flex flex-row items-center gap-1 cursor-pointer hover:bg-gray-200 py-1 px-2 rounded-full ${
                     darkMode ? "hover:text-primary" : ""
@@ -147,7 +167,9 @@ function Navbar() {
                         <span>Your profile</span>
                         <BsChevronCompactRight className="w-6 h-6 text-lg font-extrabold" />
                       </Link>
-                      <Button onClick={logoutHandler} className="border-1 h-9 ">Log out</Button>
+                      <Button onClick={logoutHandler} className="border-1 h-9 ">
+                        Log out
+                      </Button>
                     </div>
                   )}
                 </div>
