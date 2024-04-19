@@ -62,7 +62,14 @@ router.get(
     failureRedirect: "/login",
   }),
   (req, res) => {
-    res.json({ isLoggedIn: true, user: req.user });
+    if (req.user) {
+      res.redirect(`${process.env.CLIENT_URL}/`);
+    } else {
+      res.status(500).redirect(`${process.env.CLIENT_URL}/signup`).json({
+        success: false,
+        message: "Failed to create user due to server error.",
+      });
+    }
   }
 );
 

@@ -14,15 +14,31 @@ export default function passportSetup(passport) {
       },
       (accessToken, refreshToken, profile, done) => {
         console.log("1Google it!!!", profile);
-        // User.findOne({ googleId: profile.id }, (err, user) => {
-        //     if (!user) {
-        //         user = new User({ googleId: profile.id, email: profile.emails[0].value });
-        //         user.save(err => cb(err, user));
-        //     } else {
-        //         return cb(err, user);
-        //     }
-        // });
-        return done(null, profile);
+        User.findOne({ googleId: profile.id })
+          .then((user) => {
+            if (!user) {
+              user = new User({
+                googleId: profile.id,
+                email: profile.emails[0].value,
+                isVerification: true,
+                name: profile.displayName,
+                accountType: "google",
+                avatar: profile.photos[0].value,
+              });
+              user.save().catch((err) => done(err, user));
+              return done(null, user);
+            } else {
+              const simplifiedUser = {
+                ...user.toObject(),
+                password: undefined,
+              };
+              return done(null, simplifiedUser);
+            }
+          })
+          .catch((err) => {
+            return done(err);
+          });
+
       }
     )
   );
@@ -42,8 +58,6 @@ export default function passportSetup(passport) {
               return done(null, false, { message: "Incorrect password." });
 
             const simplifiedUser = { ...user.toObject(), password: undefined };
-            console.log("ssss", simplifiedUser)
-            console.log("user", user)
             return done(null, simplifiedUser);
           })
           .catch((err) => {

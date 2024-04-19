@@ -60,6 +60,32 @@ function LogAndSign({ loginType, switchHandler }) {
       `${import.meta.env.VITE_API_BASE_URL}/auth/google/callback`,
       "_self"
     );
+
+    // const googleWindow = window.open(
+    //   `${import.meta.env.VITE_API_BASE_URL}/auth/google`,
+    //   "_blank",
+    //   "width=500,height=600"
+    // );
+
+    // let pollTimer = window.setInterval(() => {
+    //   try {
+    //     if (googleWindow.document.URL.includes("google/callback")) {
+    //       window.clearInterval(pollTimer);
+    //       googleWindow.close();
+
+    //       // Here you need to handle the login just like after email login
+    //       // Fetch the user details/token from local storage or API depending on your setup
+    //       // This part depends on how your backend is configured to handle the session after OAuth redirect
+    //       const userInfo = JSON.parse(localStorage.getItem("userInfo")); // Assuming user info is stored after login
+    //       if (userInfo) {
+    //         window.location.href = "/";
+    //       }
+    //     }
+    //   } catch (e) {
+    //     // Error catching in case the window was closed before the process was complete
+    //     console.log("Error polling Google Auth Window", e);
+    //   }
+    // }, 500);
   };
 
   return (
