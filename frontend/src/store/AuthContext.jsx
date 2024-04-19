@@ -1,3 +1,5 @@
+// Global state management for user authentication
+
 import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
 axios.defaults.withCredentials = true;

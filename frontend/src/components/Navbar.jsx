@@ -19,7 +19,6 @@ function Navbar() {
   }).then(() => {
       setIsLoggedIn(false);
       setUser(null);
-      // window.location.href = "/"; 
     });
   };
 
