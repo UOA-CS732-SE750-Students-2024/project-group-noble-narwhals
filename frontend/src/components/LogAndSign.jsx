@@ -60,32 +60,6 @@ function LogAndSign({ loginType, switchHandler }) {
       `${import.meta.env.VITE_API_BASE_URL}/auth/google/callback`,
       "_self"
     );
-
-    // const googleWindow = window.open(
-    //   `${import.meta.env.VITE_API_BASE_URL}/auth/google`,
-    //   "_blank",
-    //   "width=500,height=600"
-    // );
-
-    // let pollTimer = window.setInterval(() => {
-    //   try {
-    //     if (googleWindow.document.URL.includes("google/callback")) {
-    //       window.clearInterval(pollTimer);
-    //       googleWindow.close();
-
-    //       // Here you need to handle the login just like after email login
-    //       // Fetch the user details/token from local storage or API depending on your setup
-    //       // This part depends on how your backend is configured to handle the session after OAuth redirect
-    //       const userInfo = JSON.parse(localStorage.getItem("userInfo")); // Assuming user info is stored after login
-    //       if (userInfo) {
-    //         window.location.href = "/";
-    //       }
-    //     }
-    //   } catch (e) {
-    //     // Error catching in case the window was closed before the process was complete
-    //     console.log("Error polling Google Auth Window", e);
-    //   }
-    // }, 500);
   };
 
   return (
@@ -135,10 +109,10 @@ function LogAndSign({ loginType, switchHandler }) {
         <div className="flex flex-col items-center gap-3">
           <div className="font-bungee text-xl ">OR</div>
           <Button
-            className="flex flex-row bg-white items-center gap-4 p-4 h-11 mb-10 rounded-full w-64"
+            className="flex flex-row bg-white items-center gap-4 p-4 h-11 mb-10 rounded-full w-64 "
             onClick={googleAuth}
           >
-            <FcGoogle className="w-8 h-8" /> {type} with Google
+            <FcGoogle className="w-8 h-8 " /> {type} with Google
           </Button>
         </div>
         <div className="flex flex-col items-center">

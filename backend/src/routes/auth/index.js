@@ -6,8 +6,30 @@ import User from "../../models/userModel.js";
 import { avatarStyles } from "../api/user.js";
 const router = express.Router();
 
-router.post("/login", passport.authenticate("local"), (req, res) => {
-  res.json({ isLoggedIn: true, user: req.user });
+router.post("/login", (req, res, next) => {
+  passport.authenticate("local", (err, user, info) => {
+    if (err) {
+      return res.status(500).json({
+        success: false,
+        message: "Failed to log in due to server error.",
+      });
+    }
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: info.message || "Login failed. Check email and password.",
+      });
+    }
+    req.logIn(user, (err) => {
+      if (err) {
+        return res.status(500).json({
+          success: false,
+          message: "Failed to log in due to server error.",
+        });
+      }
+      res.json({ isLoggedIn: true, user: user });
+    });
+  })(req,res,next);
 });
 
 router.post("/signup", async (req, res) => {

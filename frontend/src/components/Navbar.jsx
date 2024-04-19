@@ -70,7 +70,29 @@ function Navbar() {
             </Link>
 
             {!isLoggedIn && (
-              <div className="flex flex-row gap-4">
+              <div className="flex flex-row gap-7 items-center">
+                {showSearch && (
+                  <div
+                    id="nav_search_bar"
+                    className={`flex flex-row items-center justify-between border-2 rounded-full pr-0.5 pl-4 bg-white hover:border-primary focus-within:border-primary ${
+                      darkMode &&
+                      "border-white hover:border-white focus-within:border-white focus-within:text-primary"
+                    }  `}
+                  >
+                    <input
+                      type="text"
+                      placeholder="Search"
+                      className={`w-72 h-8 outline-none transition-all duration-300 `}
+                    />
+                    <div
+                      className={` w-7 h-7 rounded-full hover:bg-gray-200 flex items-center justify-center ${
+                        darkMode && "text-primary"
+                      } z-10`}
+                    >
+                      <IoSearchOutline />
+                    </div>
+                  </div>
+                )}
                 <Link to="/login">
                   <Button
                     className={`${
@@ -146,7 +168,9 @@ function Navbar() {
                 </div>
                 <div
                   onClick={switchMenu}
-                  className="h-9 relative flex flex-row items-center gap-2 cursor-pointer hover:bg-gray-200 pr-3 rounded-full "
+                  className={`h-9 relative flex flex-row items-center gap-2 cursor-pointer hover:bg-gray-200 pr-3 rounded-full ${
+                    darkMode ? "hover:text-primary" : ""
+                  }`}
                 >
                   <img
                     src={user.avatar}
