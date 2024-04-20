@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import LogAndSign from "../components/LogAndSign";
 import { useNavigate } from "react-router-dom";
@@ -11,7 +12,9 @@ function LoginPage({ ifLogin = true }) {
     setIsLogin((preState) => !preState);
   };
 
+
   return (
+
     <div
       id="login_background"
       className="h-screen w-screen bg-gradient-to-b from-blue-400 to-emerald-300 flex flex-row justify-between relative"
@@ -38,3 +41,4 @@ function LoginPage({ ifLogin = true }) {
 }
 
 export default LoginPage;
+

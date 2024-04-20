@@ -19,7 +19,7 @@ function Navbar({ isLogged = false, user = {} }) {
     <>
       <nav
         id="nav_bar"
-        className={`shadow-sm fixed left-0 top-0 w-screen ${
+        className={`shadow-sm fixed  left-0 top-0 w-screen ${
           darkMode ? "text-white bg-primary " : "bg-white text-primary"
         } `}
       >
@@ -29,7 +29,11 @@ function Navbar({ isLogged = false, user = {} }) {
             className="flex flex-row justify-between items-center h-full w-full"
           >
             <Link to="/" className="flex flex-row gap-2 items-center">
-              <img src="/image/logo.png" alt="logo" className="h-11 rounded-lg" />
+              <img
+                src="/image/logo.png"
+                alt="logo"
+                className="h-11 rounded-lg"
+              />
               {darkMode ? (
                 <img src="/image/brand_blue.png" alt="logo" className="h-11" />
               ) : (
@@ -77,7 +81,7 @@ function Navbar({ isLogged = false, user = {} }) {
                   <div
                     className={` w-7 h-7 rounded-full hover:bg-gray-200 flex items-center justify-center ${
                       darkMode && "text-primary"
-                    }`}
+                    } z-10`}
                   >
                     <IoSearchOutline />
                   </div>
