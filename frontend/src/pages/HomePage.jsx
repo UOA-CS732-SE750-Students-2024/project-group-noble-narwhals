@@ -1,5 +1,5 @@
 import React from "react";
-import backgroundImage from "../assets/group-discussion.svg";
+import backgroundImage from "../../public/image/homePage_search_bg.jpg";
 import LongSearchingBar from "../components/LongSearchingBar";
 import Gallery from "../components/Gallery";
 
@@ -69,9 +69,8 @@ function HomePage() {
         >
           {/* Blurred overlay div */}
           <div className="w-full h-full bg-white/40 backdrop-blur-sm flex flex-col items-center justify-center">
-            <h1 className="text-4xl text-sky-800 my-4">
-              <b>Need Group/ Activities?</b>
-              {/* Need Group/ Activities? */}
+            <h1 className="text-sky-800 my-4">
+              <b className="text-4xl">Need Group/ Activities?</b>
             </h1>
             <p className="text-lg font-black text-sky-700 mb-4">
               Type in the group name, course name, find your group!
