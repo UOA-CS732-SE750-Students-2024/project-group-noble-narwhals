@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Button from "../../components/Button";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "";
 
 function CreatGroupPage() {
   const [selectedButton, setSelectedButton] = useState("");
@@ -14,11 +15,30 @@ function CreatGroupPage() {
     const s = 30 + Math.floor(Math.random() * 10);
     const l = 40 + Math.floor(Math.random() * 10);
     return `hsl(${h}, ${s}%, ${l}%)`;
-    
   };
   //Handle tag event
-  const addTag = (e) => {
+  const addTag = async (e) => {
     e.preventDefault();
+    //  ** how to get automate tags from openAI API **
+    // get the content of the textarea
+    // const content = document.getElementsByName("content")[0].value;
+    // // if the content is not empty, send it to the azure openai api
+    // if (content !== "") {
+    //   try {
+    //     const response = await fetch(`${API_BASE_URL}/api/autoTagger`, {
+    //       method: "POST",
+    //       headers: {
+    //         "Content-Type": "application/json",
+    //       },
+    //       body: JSON.stringify({ messages: content }),
+    //     });
+    //     const data = await response.json();
+    //     console.log(data);
+    //   } catch (error) {
+    //     console.error("Error:", error);
+    //     return;
+    //   }
+    // }
     if (tags.length >= 6) {
       setInputError("You can only add up to 6 tags");
       return;
@@ -190,6 +210,7 @@ function CreatGroupPage() {
             </label>
             <textarea
               type="text"
+              name="content"
               className="border-2 border-primary w-3/5 rounded-2xl h-32 px-3"
               min={0}
               placeholder="Write a description of the group/activity"
