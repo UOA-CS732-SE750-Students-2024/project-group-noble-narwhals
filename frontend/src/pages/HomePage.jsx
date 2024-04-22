@@ -56,7 +56,7 @@ function HomePage() {
   ];
   return (
     <>
-      <div id="main_content" className="mx-auto w-4/5 max-w-main_content mt-16">
+      <div id="main_content" className="">
         <div
           className="bg-cover bg-center flex flex-col items-center justify-center"
           style={{
