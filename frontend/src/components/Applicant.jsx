@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Button from './Button';
 
-function Applicant({ username, message, avatar }) {
+function Applicant({ username, message='', avatar,isHost }) {
   const [hover, setHover] = useState(false);
   // check if message is longer than 50 characters
   const isLongMessage = message.length > 50;
@@ -16,7 +16,13 @@ function Applicant({ username, message, avatar }) {
 
 
           {/* Avatar */}
-          <div className={` ${avatar} rounded-full transition-transform duration-300 ease-in-out ${hover && isLongMessage ? 'w-12 h-12  ' : 'w-24 h-24'}`}></div>
+          <div className="some-container-class">
+            <img
+              src={avatar}
+              alt="avatar"
+              className={`rounded-full transition-transform duration-300 ease-in-out ${hover && isLongMessage ? 'w-12 h-12' : 'w-24 h-24'}`}
+            />
+          </div>
 
           {/* Username, move this into the hover effect area */}
 
@@ -43,10 +49,14 @@ function Applicant({ username, message, avatar }) {
       </div>
 
       {/* Action buttons */}
-      <div className="flex flex-row flex-initial w-full  pt-8 px-4 flex justify-around relative"> 
-    <Button className="absolute left-3 -bottom-1 w-20 py-1 px-0" style_type="fill">Allow</Button>
-    <Button className="absolute right-3 -bottom-1 w-20 py-1 px-0" style_type="border">Reject</Button>
-</div>
+      <div className="flex flex-row flex-initial w-full  pt-8 px-4 flex justify-around relative">
+      {isHost && (
+        <>
+          <Button className="absolute left-3 -bottom-1 w-20 py-1 px-0" style_type="fill">Allow</Button>
+          <Button className="absolute right-3 -bottom-1 w-20 py-1 px-0" style_type="border">Reject</Button>
+        </>
+      )}
+      </div>
 
     </div>
   );

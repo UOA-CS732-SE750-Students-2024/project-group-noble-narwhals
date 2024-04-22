@@ -14,13 +14,29 @@ router.get('/', async (req, res) => {
     }
 });
 
-// get group by id
-router.get('/:id', getGroup, (req, res) => {
-    res.json(res.group);
+// get group by id with  details populated
+router.get('/:id', getGroup,async (req, res) => {
+    try {
+        const group = await Group.findById(req.params.id)
+            .populate('groupMembers', 'name avatar')
+            .populate('groupApplicants', 'name avatar')
+            .populate('groupTags', 'name')
+            .populate('ownerId', 'name avatar');
+
+        if (!group) {
+            return res.status(404).send('Group not found');
+        }
+        res.json(group);
+
+    } catch (err) {
+        console.error('Error fetching group:', err);
+        res.status(500).json({ message: err.message });
+    }
 });
 
+
 // create a new group
-router.post( '/', 
+router.post('/',
     [
         body('groupName').not().isEmpty().withMessage('group name cannot be empty'),
         body('createDate').optional().isISO8601().toDate(),

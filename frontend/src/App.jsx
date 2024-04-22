@@ -2,7 +2,6 @@ import React from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
-import GroupInfo from "./pages/GroupInfo";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import advandedFormat from "dayjs/plugin/advancedFormat";

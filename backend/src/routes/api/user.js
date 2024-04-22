@@ -5,7 +5,7 @@ import { getUser } from '../../middleware/entityMiddleware.js';
 const router = express.Router();
 
 // Define the array of avatar styles
-const avatarStyles = ['thumbs', 'fun-emoji', 'adventurer', 'pixel-art-neutral', 'open-peeps', 'lorelei', 'croodles-neutral', 'croodles', 'miniavs', 'avataaars', 'bottts-neutra', 'icons', 'micah'];
+const avatarStyles = ['thumbs', 'fun-emoji', 'adventurer', 'pixel-art-neutral', 'open-peeps', 'lorelei', 'croodles-neutral', 'croodles', 'miniavs', 'avataaars', 'icons', 'micah'];
 
 // get all users
 router.get('/', async (req, res) => {
