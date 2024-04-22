@@ -20,35 +20,38 @@ router.get('/:id', getGroup, (req, res) => {
 });
 
 // create a new group
-router.post( '/', 
-    [
-        body('groupName').not().isEmpty().withMessage('group name cannot be empty'),
-        body('createDate').optional().isISO8601().toDate(),
-        body('deadlineDate').optional().isISO8601().toDate(),
-        // body('numberOfGroupMember').optional().isInt({ min: 1 }),
-        body('groupDescription').optional().isString(),
-        body('groupType').not().isEmpty().withMessage('group type cannot be empty'),
-        body('maxNumber').optional().isInt({ min: 1 }),
-        //body('groupStatus').optional().isIn(['available', 'closed', 'full']),
-    ],
-    async (req, res) => {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
-        }
+router.post('/', [
+    body('groupName').not().isEmpty().withMessage('Group name cannot be empty'),
+    body('createDate').optional().isISO8601().toDate(),
+    body('deadlineDate').optional().isISO8601().toDate(),
+    body('groupDescription').optional().isString(),
+    body('groupTags').optional().isArray(),
+    body('ownerId').not().isEmpty().withMessage('Owner ID is required'),
+    body('groupStatus').optional().isIn(['available', 'closed', 'full']),
+    body('maxNumber').optional().isInt({ min: 1 }).withMessage('Max number must be at least 1'),
+    body('likeNumber').optional().isInt({ min: 0 }).withMessage('Like number must be at least 0'),
+    body('groupMembers').optional().isArray(),
+    body('groupApplicants').optional().isArray(),
+], async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
 
+    try {
         const group = new Group({
             ...req.body,
+            groupMembers: req.body.groupMembers || [],
+            groupApplicants: req.body.groupApplicants || [],
+            groupTags: req.body.groupTags || [],
         });
 
-        try {
-            const newGroup = await group.save();
-            res.status(201).json(newGroup);
-        } catch (err) {
-            res.status(400).json({ message: err.message });
-        }
+        const newGroup = await group.save();
+        res.status(201).json(newGroup);
+    } catch (err) {
+        res.status(400).json({ message: err.message });
     }
-);
+});
 
 
 // update group by id

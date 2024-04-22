@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import { useEffect } from "react";
+import { useParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { CgProfile } from "react-icons/cg";
 import { IoSettingsSharp } from "react-icons/io5";
@@ -6,39 +9,88 @@ import { MdPendingActions } from "react-icons/md";
 import { FaHeart } from "react-icons/fa";
 import { IoIosNotifications } from "react-icons/io";
 
+
 function UserPageSideBar() {
   const [selectedOption, setSelectedOption] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [isOwner, setIsOwner] = useState(true);
+  const [user, setUser] = useState(null);
+  const [error, setError] = useState(null);
+  const location = useLocation();
+  const { userId } = useParams();
+
+  useEffect(() => {
+    //get user data from backend
+    const fetchUser = async () => {
+      try {
+        console.log("userId(sidebar): ", userId);
+        const response = await fetch(`http://localhost:3000/api/user/${userId}`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+     
+        const data = await response.json();
+        console.log(" data from usersidebar", data);
+        setUser(data);
+      } catch (e) {
+        setError(e);
+      }
+    };
+    if (userId) {
+      fetchUser();
+    }
+
+  }, [userId]);
+
+  if (error) {
+    return <div>Error fetching data: {error.message}</div>;
+  }
+
+  // if user is not found (is null)
+  if (!user) {
+    return <div>User not found</div>;
+  }
+
+
+
 
   const handleOptionClick = (option) => {
     setSelectedOption(option);
   };
 
-  const options = [
+
+  const options = isOwner ? [
     {
       label: "Public Profile",
       icon: <CgProfile className="mr-2 w-6 h-6" />,
-      to: "/user/profile",
+      to: `/user/profile/${userId}`,
     },
     {
       label: "Account settings",
       icon: <IoSettingsSharp className="mr-2 w-6 h-6" />,
-      to: "/user/settings",
+      to: `/user/settings/${userId}`,
     },
     {
       label: "Apply in progress",
       icon: <MdPendingActions className="mr-2 w-6 h-6" />,
-      to: "/user/apply-in-progress",
+      to: `/user/apply-in-progress/${userId}`,
     },
     {
       label: "Liked groups",
       icon: <FaHeart className="mr-2 w-6 h-6" />,
-      to: "/user/liked",
+      to: `/user/liked/${userId}`,
     },
     {
       label: "Notification",
       icon: <IoIosNotifications className="mr-2 w-6 h-6" />,
-      to: "/user/notification",
+      to: `/user/notification/${userId}`,
     },
+  ] : [
+    {
+      label: "Public Profile",
+      icon: <CgProfile className="mr-2 w-6 h-6" />,
+      to: `/user/profile/${userId}`,
+    }
   ];
 
   return (
@@ -48,11 +100,11 @@ function UserPageSideBar() {
         <div className="flex flex-col items-center justify-center p-8">
           <img
             className="w-24 h-24 rounded-full mb-2"
-            src="https://www.animesenpai.net/wp-content/uploads/2022/12/Bocchi-The-Rock-21-1024x576.webp"
+            src={user.avatar}
             alt="User Avatar"
           />
           <div>
-            <p className="text-xl text-white font-bold">Username</p>
+            <p className="text-xl text-white font-bold">{user.name}</p>
           </div>
         </div>
       </div>
@@ -63,6 +115,7 @@ function UserPageSideBar() {
             label={option.label}
             icon={option.icon}
             to={option.to}
+            isActive={location.pathname === option.to}
             handleClick={handleOptionClick}
           />
         ))}
@@ -71,10 +124,12 @@ function UserPageSideBar() {
   );
 }
 
-function SidebarOption({ icon, label, to, handleClick }) {
+function SidebarOption({ icon, label, to, handleClick, isActive }) {
+  const activeClass = isActive ? "bg-secondary" : "";
   return (
     <div
-      className="p-3 flex items-center justify-center hover:bg-secondary text-white cursor-pointer transition-colors duration-100"
+      className={`p-3 flex items-center justify-center hover:bg-secondary text-white cursor-pointer ${activeClass} transition-colors duration-100`}
+  
       onClick={() => handleClick(label)}
     >
       <Link to={to} className="flex items-center w-full justify-start pl-4">

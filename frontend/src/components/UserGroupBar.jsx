@@ -1,38 +1,66 @@
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import { useNavigate } from 'react-router-dom';
+
+
+dayjs.extend(relativeTime);
+
 export default function UserGroupBar({ group }) {
+  const navigate = useNavigate();
+  console.log("enter userGroupBar, group: ", group);
   const pickStatusColor = () => {
-    switch (group.status) {
-      case "Available":
+    switch (group.groupStatus) {
+      case "available":
         return "bg-green-400";
-      case "Full":
+      case "full":
         return "bg-red-400";
-      case "Closed":
+      case "closed":
         return "bg-gray-400";
     }
   };
   const statusColor = pickStatusColor();
 
+  const calculateTimeLeft = () => {
+    // use dayjs to calculate the time left
+    const deadline = dayjs(group.deadlineDate);
+    const now = dayjs();
+    
+    if (deadline.isBefore(now)) {
+      return 'Expired'; 
+    } else {
+      return deadline.from(now); 
+    }
+  };
+  
+  const timeLeft = calculateTimeLeft();
+
+  const handleGroupClick = () => {
+    navigate(`/group/${group._id}`);
+  };
+
   return (
     <>
-      <div className="flex flex-col border-2 border-hmblue-100 m-1 rounded-lg px-4 py-2">
+      <div className="flex flex-col border-2 border-hmblue-100 m-1 rounded-lg px-4 py-2 overflow-hidden cursor-pointer"
+      onClick={handleGroupClick}>
         <div className="flex flex-row justify-between items-center">
           <div className="flex flex-col min-w-0">
             <div id="statusAndTitle" className="flex flex-row items-center">
               <div
                 className={`${statusColor} flex items-center justify-center font-thin text-xs text-white p-[2px] w-14 text-center rounded-md mr-1`}
               >
-                {group.status}
+                {group.groupStatus}
               </div>
 
-              <div className="font-bold ml-1 truncate">{group.title}</div>
+              <div className="font-bold ml-1 truncate">{group.groupName}</div>
             </div>
 
             <div className="flex justify-start space-x-1 text-xs mt-2 overflow-hidden">
-              {group.tags.map((tag, idx) => (
+              {group.groupTags && group.groupTags.map((tag) => (
                 <span
-                  key={idx}
+                  key={tag._id}
                   className="rounded-full px-2 py-1 h-auto bg-hmblue-100 text-hmblue-800 border-hmblue-800 border-[1px]"
                 >
-                  {tag}
+                  {tag.name}
                 </span>
               ))}
             </div>
@@ -42,19 +70,20 @@ export default function UserGroupBar({ group }) {
             {" "}
             {/* Flex container for Owner */}
             <span>
-              <img className="w-8 h-8 rounded-full" src={group.avatar} />
+              <img className="w-8 h-8 rounded-full" 
+              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZBBJp5NzE6vecp47xB47lbqoSt1SlFJ81WfdZHltPIg&s" />
             </span>
-            <span className="text-gray-400">{`${group.owner}`}</span>
+            <span className="text-gray-400">{group.ownerId.name}</span>
             {/* </div>
 
 
 
           <div className="flex flex-col items-center font-thin text-gray-400 text-sm gap-4"> Flex container for Members */}
-            <span>{`${group.currentMember}/[${group.minMember}-${group.maxMember}]`}</span>
+            <span>{`[${group.groupMembers.length}/${group.maxNumber}]`}</span>
             <div className="flex flex-col items-center">
               {" "}
               {/* Flex container for Deadline */}
-              <span>{`${group.deadlineDate}`}</span>
+              <span>{timeLeft}</span>
             </div>
           </div>
         </div>

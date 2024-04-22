@@ -2,6 +2,8 @@ import express from 'express';
 import bcrypt from 'bcrypt';
 import User from '../../models/userModel.js';
 import { getUser } from '../../middleware/entityMiddleware.js';
+import { getUserParticipatingGroups, getUserLikedGroups, getUserAppliedGroups } from '../../middleware/userPageDao.js';
+
 const router = express.Router();
 
 // Define the array of avatar styles
@@ -22,6 +24,16 @@ router.get('/:id', getUser, (req, res) => {
     res.json(res.user);
 });
 
+router.get('/participatingGroups/:id', getUserParticipatingGroups(User, 'User'), (req, res) => {
+    res.json(res.user);
+});
+router.get('/likedGroups/:id', getUserLikedGroups(User, 'User'), (req, res) => {
+    res.json(res.user);
+});
+router.get('/appliedGroups/:id', getUserAppliedGroups(User, 'User'), (req, res) => {
+    res.json(res.user);
+});
+
 router.post('/', async (req, res) => {
     try {
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
@@ -35,6 +47,10 @@ router.post('/', async (req, res) => {
             isVerification: req.body.isVerification || false,
             gender: req.body.gender,
             profileTags: req.body.profileTags || [],
+            participatingGroups: req.body.participatingGroups || [],
+            likedGroups: req.body.likedGroups || [],
+            appliedGroups: req.body.appliedGroups || [],
+            
         });
 
         // First saving the user to generate the MongoDB _id

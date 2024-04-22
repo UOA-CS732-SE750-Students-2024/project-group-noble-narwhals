@@ -1,34 +1,75 @@
-// This page is for the public profile page of a user, showing basic user information and their groups
-// where they are currently participating
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
+import { useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { GroupTableRow } from "../../components/GroupTableRow";
 import { IoMdMale } from "react-icons/io";
 import { IoMdFemale } from "react-icons/io";
 
-import dummyGroups from "../../components/dummyGroups";
 import UserGroupBar from "../../components/UserGroupBar";
 
 const PublicProfilePage = () => {
-  const [gender, setGender] = useState("male");
+  const [isLoggedIn, setIsLoggedIn] = useState(true); // suppose the user is logged in 
+  const { userId } = useParams();
 
-  const userName = "Rainman96"; // dummy data for user name
-  const email = "tpan501@aucklanduni.ac.nz"; // dummy data for email
+  const [user, setUser] = useState(null);
+  const [error, setError] = useState(null);
 
-  const tags = [
-    { tagId: 1, tagName: "tag1" },
-    { tagId: 2, tagName: "tag2" },
-  ]; // dummy data for tags
+  useEffect(() => {
+
+
+    //get user data from backend
+    const fetchUser = async () => {
+      
+      try {
+        console.log("userId: ", userId);
+        const response = await fetch(`http://localhost:3000/api/user/participatingGroups/${userId}`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+     
+        const data = await response.json();
+        console.log("data from public profile", data);
+        setUser(data);
+      } catch (e) {
+        setError(e);
+      }
+    };
+    if (userId) {
+      fetchUser();
+    }
+
+  }, [userId]);
+
+  if (error) {
+    return <div>Error fetching data: {error.message}</div>;
+  }
+
+  // if user is not found (is null)
+  if (!user) {
+    return <div>User not found</div>;
+  }
+
+  const userName = `${user.name}`; 
+  const email = `${user.email}`; 
+  const avatar = `${user.avatar}`;
+  const gender = `${user.gender}`;
+  const tags = user.profileTags; 
+  const participatingGroups = user.participatingGroups;
+  console.log("tags:", tags);
+  console.log("participatingGroups:", participatingGroups);
+  
+
+
+
 
   return (
-    // ======================profile information div starts from here======================
     <div className="flex min-w-fit overflow-y-auto">
       <div className="pl-10 pr-10 bg-white flex flex-col flex-grow">
         <div className="py-8">
           <div className="flex items-center mb-2">
             <img
               className="w-40 h-40 rounded-full mr-4"
-              src="https://www.animesenpai.net/wp-content/uploads/2022/12/Bocchi-The-Rock-21-1024x576.webp"
+              src={avatar}
               alt="User Avatar"
             />
             <div>
@@ -43,18 +84,23 @@ const PublicProfilePage = () => {
               </div>
               <div className="ml-5 mr-5 mb-5 ">Email: {email}</div>
               <div className="flex ml-5 mr-5 mb-5">
-                {tags.map((tag) => (
-                  <ProfileTags key={tag.tagId} tagName={tag.tagName} />
+                {tags && tags.map((tag) => (
+                  <ProfileTags key={tag._id} tagName={tag.name} />
                 ))}
+
               </div>
             </div>
           </div>
         </div>
-        {/* ==================Groups div starts from here===================== */}
+        {/* Groups section */}
         <div className="text-3xl mb-8">Groups</div>
-        {dummyGroups.map((group, index) => (
-          <UserGroupBar key={index} group={group} />
-        ))}
+        {isLoggedIn ? (
+          participatingGroups && participatingGroups.map((group) => (
+            <UserGroupBar key={group._id} group={group} />
+          ))
+        ) : (
+          <div className="text-lg text-gray-400 ">Please log in first.</div>
+        )}
       </div>
     </div>
   );
