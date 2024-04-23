@@ -8,12 +8,6 @@ import autoTagger from "./autoTagger.js";
 
 const router = express.Router();
 
-// Adds both the /products and /orders routes.
-// import products from "./products.js";
-// import orders from "./orders.js";
-// router.use("/products", products);
-// router.use("/orders", orders);
-
 router.use("/user", userRouter);
 router.use("/group", groupRouter);
 router.use("/tag", tagRouter);
