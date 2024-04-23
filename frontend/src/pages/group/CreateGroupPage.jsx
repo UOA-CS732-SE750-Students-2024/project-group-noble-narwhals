@@ -301,7 +301,7 @@ function CreatGroupPage() {
                 </button>
                 <button
                   title="Extract tags from Description by OpenAI"
-                  className="flex flex-row items-center h-9 px-4 rounded-full bg-primary text-white ml-2 p-0 hover:bg-pink-600"
+                  className="flex flex-row items-center h-9 px-4 pr-3 rounded-full bg-openai text-white ml-2 p-0 hover:bg-pink-600"
                   onClick={generateTag}
                 >
                   <span>AI Tag 

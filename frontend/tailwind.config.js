@@ -6,6 +6,7 @@ export default {
       colors: {
         primary: "#00467f",
         secondary: "#0080a7",
+        openai: "#739d92",
         hmblue: {
           50: "#e5f3ff",
           100: "#b2dcff",
