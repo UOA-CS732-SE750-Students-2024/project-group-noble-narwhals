@@ -15,11 +15,13 @@ import ApplyInProgressPage from "./pages/user/ApplyInProgressPage";
 import LikedGroupPage from "./pages/user/LikedGroupPage";
 import NotificationPage from "./pages/user/NotificationPage";
 import SearchPage from "./pages/SearchPage";
+import { useAuth } from "./store/AuthContext";
 
 dayjs.extend(relativeTime);
 dayjs.extend(advandedFormat);
 
 function App() {
+  const { isLoggedIn } = useAuth();
   return (
     <Routes>
       <Route path="login" element={<LoginPage />} />
@@ -29,7 +31,12 @@ function App() {
         <Route index element={<HomePage />} />
         <Route path="group/:groupId" element={<GroupInfoPage />} />
         <Route path="search" element={<SearchPage />} />
-        <Route path="creategroup" element={<CreateGroupPage />} />
+        <Route
+          path="creategroup"
+          element={
+            isLoggedIn ? <CreateGroupPage /> : <Navigate to={"../login"} replace />
+          }
+        />
       </Route>
       <Route path="user" element={<LayoutUserPages />}>
         <Route index element={<Navigate to={"profile"} replace />} />

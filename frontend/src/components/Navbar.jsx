@@ -188,7 +188,7 @@ function Navbar() {
                         to="/user/profile"
                         className="flex flex-row justify-around items-center w-full h-10 hover:bg-gray-200 rounded-lg cursor-pointer"
                       >
-                        <span>Your profile</span>
+                        <span>My profile</span>
                         <BsChevronCompactRight className="w-6 h-6 text-lg font-extrabold" />
                       </Link>
                       <Button onClick={logoutHandler} className="border-1 h-9 ">

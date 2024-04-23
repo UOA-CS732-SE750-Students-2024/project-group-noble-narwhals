@@ -3,6 +3,7 @@ import Group from '../../models/groupModel.js'
 import { body, validationResult } from 'express-validator';
 import { getGroup } from '../../middleware/entityMiddleware.js';
 import { addGroupTag, checkTagExist } from '../../middleware/tagDAO.js';
+import isLoggedIn from '../../middleware/authMiddleware.js';
 const router = express.Router();
 
 // get all groups
@@ -29,7 +30,7 @@ router.post( '/creategroup',
         body('type').not().isEmpty().withMessage('group type cannot be empty'),
         body('members').optional().isInt({ min: 1 }),
         body('tags').optional().isArray(),
-    ],
+    ], isLoggedIn,
     async (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -55,7 +56,7 @@ router.post( '/creategroup',
             groupMembers: [], // add current user to the group, fix later
             groupDescription: req.body.description,
             groupTags: modifiedTags,
-            ownerId: "660624c95d210ffadab318b9",   //req.user._id, //fix later
+            ownerId: req.user._id, //fix later
             groupStatus: 'available',
             groupType: req.body.type,
         });

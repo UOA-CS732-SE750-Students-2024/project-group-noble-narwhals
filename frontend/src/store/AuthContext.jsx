@@ -21,6 +21,7 @@ export const AuthProvider = ({ children }) => {
           setIsLoggedIn(false);
         }
         console.log("current loggedin?", isLoggedIn )
+        
       })
       .catch((err) => {
         setIsLoggedIn(false);
