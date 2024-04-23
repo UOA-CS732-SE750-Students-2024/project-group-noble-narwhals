@@ -11,14 +11,17 @@ const PublicProfilePage = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(true); // suppose the user is logged in 
   const { userId } = useParams();
 
+  const [isLoading, setIsLoading] = useState(true); // check if the page is loading
+
+
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-
-
     //get user data from backend
     const fetchUser = async () => {
+
+      setIsLoading(true); // set loading to true
       
       try {
         console.log("userId: ", userId);
@@ -30,6 +33,7 @@ const PublicProfilePage = () => {
         const data = await response.json();
         console.log("data from public profile", data);
         setUser(data);
+        setIsLoading(false); // set loading to false when data is fetched
       } catch (e) {
         setError(e);
       }
@@ -44,9 +48,18 @@ const PublicProfilePage = () => {
     return <div>Error fetching data: {error.message}</div>;
   }
 
+  if (isLoading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <img src="/image/Spinner.svg" alt="Loading..." />
+      </div>
+    );
+  }
+  
+
   // if user is not found (is null)
   if (!user) {
-    return <div>User not found</div>;
+    return <div className="text-xl">User not found</div>;
   }
 
   const userName = `${user.name}`; 

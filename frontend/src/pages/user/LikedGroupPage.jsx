@@ -6,6 +6,9 @@ import UserGroupBar from "../../components/UserGroupBar";
 
 function LikedGroupPage() {
   const { userId } = useParams();
+
+  const [isLoading, setIsLoading] = useState(true); // check if the page is loading
+
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
 
@@ -13,7 +16,9 @@ function LikedGroupPage() {
 
     //get user data from backend
     const fetchUser = async () => {
-      
+
+      setIsLoading(true); // set loading to true
+
       try {
         console.log("userId: ", userId);
         const response = await fetch(`http://localhost:3000/api/user/likedGroups/${userId}`);
@@ -24,8 +29,9 @@ function LikedGroupPage() {
         }
      
         const data = await response.json();
-        console.log(" data", data);
+        console.log(" data from likedgroup", data);
         setUser(data);
+        setIsLoading(false); // set loading to false when data is fetched
       } catch (e) {
         setError(e);
       }
@@ -38,6 +44,13 @@ function LikedGroupPage() {
 
   if (error) {
     return <div>Error fetching data: {error.message}</div>;
+  }
+  if (isLoading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <img src="/image/Spinner.svg" alt="Loading..." />
+      </div>
+    );
   }
 
   // if user is not found (is null)

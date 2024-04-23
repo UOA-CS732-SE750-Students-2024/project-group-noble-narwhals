@@ -6,10 +6,15 @@ import UserGroupBar from "../../components/UserGroupBar";
 
 function ApplyInProgressPage() {
   const { userId } = useParams();
+  
+  const [isLoading, setIsLoading] = useState(true); // check if the page is loading
+
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
 
   useEffect(() => {
+
+    setIsLoading(true); // set loading to true
 
     //get user data from backend
     const fetchUser = async () => {
@@ -24,8 +29,9 @@ function ApplyInProgressPage() {
         }
      
         const data = await response.json();
-        console.log(" data", data);
+        console.log(" data from applied group", data);
         setUser(data);
+        setIsLoading(false); // set loading to false when data is fetched
       } catch (e) {
         setError(e);
       }
@@ -39,7 +45,14 @@ function ApplyInProgressPage() {
   if (error) {
     return <div>Error fetching data: {error.message}</div>;
   }
-
+  
+  if (isLoading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <img src="/image/Spinner.svg" alt="Loading..." />
+      </div>
+    );
+  }
   // if user is not found (is null)
   if (!user) {
     return <div>User not found</div>;

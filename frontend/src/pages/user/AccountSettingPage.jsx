@@ -8,12 +8,15 @@ import { IoClose } from "react-icons/io5";
 
 function AccountSettingsPage() {
   const { userId } = useParams();
+
+  const [isLoading, setIsLoading] = useState(true); // check if the page is loading
+
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
 
   const [username, setUsername] = useState("");
-  const [avatar, setAvatar] = useState(""); 
+  const [avatar, setAvatar] = useState("");
   const [gender, setGender] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -21,7 +24,7 @@ function AccountSettingsPage() {
   const [newTag, setNewTag] = useState("");
 
   useEffect(() => {
-
+    setIsLoading(true); // set loading to true
     //get user data from backend
     const fetchUser = async () => {
 
@@ -41,6 +44,7 @@ function AccountSettingsPage() {
         setGender(data.gender || "");
         setEmail(data.email || "");
         setPassword(data.password || "");
+        setIsLoading(false); // set loading to false when data is fetched
       } catch (e) {
         setError(e);
       }
@@ -53,6 +57,14 @@ function AccountSettingsPage() {
 
   if (error) {
     return <div>Error fetching data when fetching data: {error.message}</div>;
+  }
+
+  if (isLoading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <img src="/image/Spinner.svg" alt="Loading..." />
+      </div>
+    );
   }
 
   // if user is not found (is null)
@@ -83,23 +95,23 @@ function AccountSettingsPage() {
 
   const handleChangeAvatar = async () => {
     try {
-        const response = await fetch(`http://localhost:3000/api/user/regenerate-avatar/${userId}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' }
-        });
-        if (!response.ok) {
-            throw new Error(`HTTP error when avatar changes! Status: ${response.status}`);
-        }
-        const data = await response.json();
-      
-        setAvatar(data.avatar);
-        setUser(prevUser => ({ ...prevUser, avatar: data.avatar }));
+      const response = await fetch(`http://localhost:3000/api/user/regenerate-avatar/${userId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error when avatar changes! Status: ${response.status}`);
+      }
+      const data = await response.json();
 
-        console.log('Avatar changed successfully:', data.message);
+      setAvatar(data.avatar);
+      setUser(prevUser => ({ ...prevUser, avatar: data.avatar }));
+
+      console.log('Avatar changed successfully:', data.message);
     } catch (error) {
-        console.error('Failed to change avatar:', error);
+      console.error('Failed to change avatar:', error);
     }
-};
+  };
 
   const handleAddNewTag = async (newTagName) => {
     if (!newTagName.trim()) {
@@ -188,15 +200,15 @@ function AccountSettingsPage() {
             // 'Authorization': 'Bearer your-auth-token', if we need to authenticate
           }
         });
-  
+
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-  
+
         console.log('Account deleted successfully.');
         // Redirect to the login page or home page
         history.push('/login');
-  
+
       } catch (error) {
         console.error('Failed to delete account:', error);
       }
@@ -204,7 +216,7 @@ function AccountSettingsPage() {
       console.log('Account deletion canceled.');
     }
   };
-  
+
 
   return (
     <div className="w-4/5 m-4 p-4">
@@ -235,8 +247,8 @@ function AccountSettingsPage() {
               onChange={handleUsernameChange}
               disabled={!isEditing}
               className={`border rounded px-2 py-1 ${isEditing
-                  ? "border-black text-black"
-                  : "border-transparent text-gray-500"
+                ? "border-black text-black"
+                : "border-transparent text-gray-500"
                 }`}
             />
           </div>
@@ -300,8 +312,8 @@ function AccountSettingsPage() {
               onChange={handleEmailChange}
               disabled={!isEditing}
               className={`border rounded px-2 py-1 ${isEditing
-                  ? "border-black text-black"
-                  : "border-transparent text-gray-500"
+                ? "border-black text-black"
+                : "border-transparent text-gray-500"
                 }`}
             />
           </div>
@@ -317,8 +329,8 @@ function AccountSettingsPage() {
               value={password}
               disabled={!isEditing}
               className={`border rounded px-2 py-1 ${isEditing
-                  ? "border-black text-black"
-                  : "border-transparent text-gray-500"
+                ? "border-black text-black"
+                : "border-transparent text-gray-500"
                 }`}
               onChange={handlePasswordChange}
             />
@@ -342,8 +354,8 @@ function AccountSettingsPage() {
                   onChange={(e) => setNewTag(e.target.value)}
                   disabled={!isEditing}
                   className={`border-black border-2 rounded w-1/3 px-2 py-1 ${isEditing
-                      ? "border-black text-black"
-                      : "border-transparent text-gray-500"
+                    ? "border-black text-black"
+                    : "border-transparent text-gray-500"
                     }`}
                 />
 
@@ -361,8 +373,8 @@ function AccountSettingsPage() {
               <div
                 key={tag._id}
                 className={`mt-2 mr-2 pr-1 pl-1 rounded-3xl border-2 ${isEditing
-                    ? "text-black border-black"
-                    : "border-gray-500 text-gray-500"
+                  ? "text-black border-black"
+                  : "border-gray-500 text-gray-500"
                   } text-sm flex flex-row`}
               >
                 <div>{tag.name}</div>

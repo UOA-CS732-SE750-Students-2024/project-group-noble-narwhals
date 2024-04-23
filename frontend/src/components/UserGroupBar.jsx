@@ -71,7 +71,7 @@ export default function UserGroupBar({ group }) {
             {/* Flex container for Owner */}
             <span>
               <img className="w-8 h-8 rounded-full" 
-              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZBBJp5NzE6vecp47xB47lbqoSt1SlFJ81WfdZHltPIg&s" />
+              src={group.ownerId.avatar} />
             </span>
             <span className="text-gray-400">{group.ownerId.name}</span>
             {/* </div>
