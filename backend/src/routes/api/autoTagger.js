@@ -11,17 +11,17 @@ const promts = [
   {
     role: "system",
     content:
-      "Assistant is an AI chatbot that helps users turn a natural language list into JSON format. After users input a list they want in JSON format, it will provide suggested list of attribute labels if the user has not provided any, then ask the user to confirm them before creating the list.",
+      "Assistant is an AI chatbot that helps users turn a natural language list into JSON format. After users input a list they want in JSON format, it will provide suggested list of attribute labels if the user has not provided any, then ask the user to confirm them before creating the list. The attribute labels should be either single words or phrases connected with hyphens. No more than 5 attribute labels are allowed",
   },
   {
     role: "user",
     content:
-      "Enthusiastic Team Members Needed for COMPSCI 732 Project!\n\nHello fellow students,\n\nWe are currently forming a team for our upcoming project in the Computer Science 732 course and we’re looking for two more members who are eager to collaborate on a challenging yet exciting project centered around data analytics and machine learning.\n\nAbout the Project:\nThe project involves developing an application that utilizes machine learning algorithms to analyze and predict trends based on large datasets. The goal is to create a tool that can provide insightful analyses which could be beneficial for academic and commercial purposes.\n\nWho We Are Looking For:\n\nIndividuals who are taking COMPSCI 732 and are in good academic standing.\nSomeone with a strong interest or background in machine learning and data analysis.\nPreferably, someone who has experience with Python and machine learning libraries such as TensorFlow or PyTorch.\nExcellent communication skills and a commitment to meet project deadlines.\nWhat You Will Gain:\n\nHands-on experience working with real-world data sets.\nAn opportunity to enhance your data analysis and machine learning skills.\nA chance to work in a team-oriented environment where collaboration and knowledge exchange are encouraged.\nThe potential to contribute to a project that could be used as a reference for future job applications or academic research.",
+      "Enthusiastic Team Members Needed for COMPSCI732 Project!\n\nHello fellow students,\n\nWe are currently forming a team for our upcoming project in the Computer Science 732 course and we’re looking for two more members who are eager to collaborate on a challenging yet exciting project centered around data analytics and machine learning.\n\nAbout the Project:\nThe project involves developing an application that utilizes machine learning algorithms to analyze and predict trends based on large datasets. The goal is to create a tool that can provide insightful analyses which could be beneficial for academic and commercial purposes.\n\nWho We Are Looking For:\n\nIndividuals who are taking COMPSCI732 and are in good academic standing.\nSomeone with a strong interest or background in machine learning and data analysis.\nPreferably, someone who has experience with Python and machine learning libraries such as TensorFlow or PyTorch.\nExcellent communication skills and a commitment to meet project deadlines.\nWhat You Will Gain:\n\nHands-on experience working with real-world data sets.\nAn opportunity to enhance your data analysis and machine learning skills.\nA chance to work in a team-oriented environment where collaboration and knowledge exchange are encouraged.\nThe potential to contribute to a project that could be used as a reference for future job applications or academic research.",
   },
   {
     role: "assistant",
     content:
-      '{\n    "top_keywords": [\n        "COMPSCI 732",\n        "machine learning",\n        "data analytics",\n        "Python",\n        "project"\n    ]\n}\n',
+      '{  "top_keywords": [  "COMPSCI732",  "machine-learning", "data-analytics",  "Python", "project" ]}',
   },
   {
     role: "user",
@@ -31,7 +31,7 @@ const promts = [
   {
     role: "assistant",
     content:
-      '{\n    "keywords": [\n        "baking",\n        "recipes",\n        "collaborative project",\n        "guide creation",\n        "teamwork",\n    ]\n}\n',
+      '{    "keywords": [ "baking",  "recipes",  "collaborative-project", "guide-creation",   "teamwork"]}',
   },
   {
     role: "user",
@@ -41,7 +41,7 @@ const promts = [
   {
     role: "assistant",
     content:
-      '{\n    "keywords": [\n        "reading club",\n        "book discussion",\n        "literary genres",\n        "monthly meetings",\n        "critical thinking"\n    ]\n}',
+      '{    "keywords": [ "reading-club", "book-discussion",  "literary-genres", "monthly-meetings", "critical-thinking" ]}',
   },
 ];
 

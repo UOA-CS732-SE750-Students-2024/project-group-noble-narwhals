@@ -32,6 +32,15 @@ export default {
       fontFamily: {
         bungee: ["Bungee-Regular", "sans-serif"],
       },
+      animation: {
+        'spin-slow': 'spin 1s ease infinite',  // 定义动画名称和时长
+      },
+      keyframes: {
+        spin: {
+          from: { transform: 'rotate(0deg)' },
+          to: { transform: 'rotate(360deg)' },
+        }
+      }
     },
   },
   plugins: [],
