@@ -1,18 +1,29 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Button from "../../components/Button";
 import axios from "axios";
+import { useAuth } from "../../store/AuthContext";
 
 function CreatGroupPage() {
+  const { user } = useAuth();
   const [inputTitle, setInputTitle] = useState("");
   const [selectedButton, setSelectedButton] = useState("");
   const [tags, setTags] = useState([]); // Used to store all tags
   const [inputTag, setInputTag] = useState(""); //Used to store the value of the input box tag
   const [inputError, setInputError] = useState("");
   const [submitError, setSubmitError] = useState(""); // Used to store the error message when submit
-  const [inputMemNum, setInpuMemNum] = useState(0);
+  const [inputMemNum, setInpuMemNum] = useState();
   const [inputDueDate, setInputDueDate] = useState("");
   const [inputDescription, setInputDescription] = useState("");
   const apiUrl = import.meta.env.VITE_API_BASE_URL;
+
+  if (window.localStorage.getItem("isLoggedIn") == "false") {
+    window.location.href = "/login";
+  }
+
+  if (user && !user.isVerification) {
+    alert("Please verify your email before creating a group");
+    window.location.href = "/user/settings";
+  }
 
   // Handle title change event
   const handleChangeTitle = (e) => {
@@ -89,6 +100,7 @@ function CreatGroupPage() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
     // Simple form validation check
     if (
       tags.length === 0 ||

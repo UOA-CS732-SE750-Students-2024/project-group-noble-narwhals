@@ -21,6 +21,7 @@ function Navbar() {
       })
       .then(() => {
         setIsLoggedIn(false);
+        window.localStorage.setItem("isLoggedIn", false);
         setUser(null);
       });
   };

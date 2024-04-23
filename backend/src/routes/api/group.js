@@ -1,5 +1,6 @@
 import express from 'express';
 import Group from '../../models/groupModel.js'
+import User from '../../models/userModel.js';
 import { body, validationResult } from 'express-validator';
 import { getGroup } from '../../middleware/entityMiddleware.js';
 import { addGroupTag, checkTagExist } from '../../middleware/tagDAO.js';
@@ -53,7 +54,7 @@ router.post( '/creategroup',
             createDate: new Date(),
             deadlineDate: req.body.dueDate,
             numberOfGroupMember: req.body.members,
-            groupMembers: [], // add current user to the group, fix later
+            groupMembers: [], 
             groupDescription: req.body.description,
             groupTags: modifiedTags,
             ownerId: req.user._id, //fix later
@@ -63,6 +64,12 @@ router.post( '/creategroup',
 
         try {
             const newGroup = await group.save();
+
+            // add group to user's group list
+            const user = await User.findById(req.user._id);
+            user.participatingGroups.push(newGroup._id);
+            await user.save();
+
             res.status(201).json(newGroup);
         } catch (err) {
             console.log(err.message)
