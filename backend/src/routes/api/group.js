@@ -2,6 +2,7 @@ import express from 'express';
 import Group from '../../models/groupModel.js'
 import { body, validationResult } from 'express-validator';
 import { getGroup } from '../../middleware/entityMiddleware.js';
+import { addGroupTag } from '../../middleware/tagDAO.js';
 const router = express.Router();
 
 // get all groups
@@ -35,6 +36,14 @@ router.post( '/creategroup',
             return res.status(400).json({ errors: errors.array() });
         }
         console.log(req.body);
+
+        // add new tag
+        const modifiedTags = req.body.tags.map(tag => {
+            // 对每个 tag 执行一些操作
+            return tag;
+        });
+
+
 
         const group = new Group({
             groupName: req.body.title,
