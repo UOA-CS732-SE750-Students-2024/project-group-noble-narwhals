@@ -2,45 +2,13 @@ import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
+
+import { useUser } from "../../contexts/UserContext"
+
 import UserGroupBar from "../../components/UserGroupBar";
 
 function ApplyInProgressPage() {
-  const { userId } = useParams();
-  
-  const [isLoading, setIsLoading] = useState(true); // check if the page is loading
-
-  const [user, setUser] = useState(null);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-
-    setIsLoading(true); // set loading to true
-
-    //get user data from backend
-    const fetchUser = async () => {
-      
-      try {
-        console.log("userId: ", userId);
-        const response = await fetch(`http://localhost:3000/api/user/appliedGroups/${userId}`);
-        console.log(" response: ", response);
-        console.log(" !response.ok: ", !response.ok);
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-     
-        const data = await response.json();
-        console.log(" data from applied group", data);
-        setUser(data);
-        setIsLoading(false); // set loading to false when data is fetched
-      } catch (e) {
-        setError(e);
-      }
-    };
-    if (userId) {
-      fetchUser();
-    }
-
-  }, [userId]);
+  const { user, isLoggedIn, isLoading, error, fetchUserData } = useUser();
 
   if (error) {
     return <div>Error fetching data: {error.message}</div>;

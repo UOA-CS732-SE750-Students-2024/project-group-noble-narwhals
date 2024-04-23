@@ -1,49 +1,15 @@
 import React, { useState } from "react";
 import { useEffect } from "react";
-import { useParams } from "react-router-dom";
-import { GroupTableRow } from "../../components/GroupTableRow";
 import { IoMdMale } from "react-icons/io";
 import { IoMdFemale } from "react-icons/io";
+
+import { useUser } from "../../contexts/UserContext"
 
 import UserGroupBar from "../../components/UserGroupBar";
 
 const PublicProfilePage = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(true); // suppose the user is logged in 
-  const { userId } = useParams();
-
-  const [isLoading, setIsLoading] = useState(true); // check if the page is loading
-
-
-  const [user, setUser] = useState(null);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    //get user data from backend
-    const fetchUser = async () => {
-
-      setIsLoading(true); // set loading to true
-      
-      try {
-        console.log("userId: ", userId);
-        const response = await fetch(`http://localhost:3000/api/user/participatingGroups/${userId}`);
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-     
-        const data = await response.json();
-        console.log("data from public profile", data);
-        setUser(data);
-        setIsLoading(false); // set loading to false when data is fetched
-      } catch (e) {
-        setError(e);
-      }
-    };
-    if (userId) {
-      fetchUser();
-    }
-
-  }, [userId]);
-
+  const { user, isLoggedIn, isLoading, error, fetchUserData } = useUser();
+  console.log("user from publicprofile1: ", user);
   if (error) {
     return <div>Error fetching data: {error.message}</div>;
   }
@@ -54,27 +20,27 @@ const PublicProfilePage = () => {
         <img src="/image/Spinner.svg" alt="Loading..." />
       </div>
     );
+  }else{
+    console.log("user from publicprofile2: ", user);
   }
   
-
+  
   // if user is not found (is null)
   if (!user) {
     return <div className="text-xl">User not found</div>;
   }
 
-  const userName = `${user.name}`; 
-  const email = `${user.email}`; 
-  const avatar = `${user.avatar}`;
-  const gender = `${user.gender}`;
+  const userName = user.name; 
+  const email = user.email; 
+  const avatar = user.avatar;
+  const gender = user.gender;
   const tags = user.profileTags; 
   const participatingGroups = user.participatingGroups;
-  console.log("tags:", tags);
-  console.log("participatingGroups:", participatingGroups);
+  const likedGroups = user.likedGroups;
+  console.log("likedGroups: ", likedGroups);
+
+
   
-
-
-
-
   return (
     <div className="flex min-w-fit overflow-y-auto">
       <div className="pl-10 pr-10 bg-white flex flex-col flex-grow">

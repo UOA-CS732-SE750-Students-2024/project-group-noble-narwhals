@@ -8,39 +8,14 @@ import { IoSettingsSharp } from "react-icons/io5";
 import { MdPendingActions } from "react-icons/md";
 import { FaHeart } from "react-icons/fa";
 import { IoIosNotifications } from "react-icons/io";
-
+import { useUser } from "../contexts/UserContext";
 
 function UserPageSideBar() {
   const [selectedOption, setSelectedOption] = useState("");
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
   const [isOwner, setIsOwner] = useState(true);
-  const [user, setUser] = useState(null);
-  const [error, setError] = useState(null);
+  const { user, error, isLoggedIn } = useUser();
   const location = useLocation();
   const { userId } = useParams();
-
-  useEffect(() => {
-    //get user data from backend
-    const fetchUser = async () => {
-      try {
-        console.log("userId(sidebar): ", userId);
-        const response = await fetch(`http://localhost:3000/api/user/${userId}`);
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-     
-        const data = await response.json();
-        console.log(" data from usersidebar", data);
-        setUser(data);
-      } catch (e) {
-        setError(e);
-      }
-    };
-    if (userId) {
-      fetchUser();
-    }
-
-  }, [userId]);
 
   if (error) {
     return <div>Error fetching data: {error.message}</div>;
@@ -50,9 +25,6 @@ function UserPageSideBar() {
   if (!user) {
     return <div>User not found</div>;
   }
-
-
-
 
   const handleOptionClick = (option) => {
     setSelectedOption(option);
