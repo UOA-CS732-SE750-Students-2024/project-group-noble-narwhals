@@ -13,7 +13,12 @@ const tagSchema = new Schema({
     isGroupTag: {
         type: Boolean,
         default: false  
+    },
+    color: {
+        type: String,
+        default: 'hsl(156, 39%, 43%)'  
     }
+
 });
 
 const Tag = mongoose.model('Tag', tagSchema);

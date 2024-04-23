@@ -20,31 +20,40 @@ router.get('/:id', getGroup, (req, res) => {
 });
 
 // create a new group
-router.post( '/', 
+router.post( '/creategroup', 
     [
-        body('groupName').not().isEmpty().withMessage('group name cannot be empty'),
-        body('createDate').optional().isISO8601().toDate(),
-        body('deadlineDate').optional().isISO8601().toDate(),
-        // body('numberOfGroupMember').optional().isInt({ min: 1 }),
-        body('groupDescription').optional().isString(),
-        body('groupType').not().isEmpty().withMessage('group type cannot be empty'),
-        body('maxNumber').optional().isInt({ min: 1 }),
-        //body('groupStatus').optional().isIn(['available', 'closed', 'full']),
+        body('title').not().isEmpty().withMessage('group name cannot be empty'),
+        body('dueDate').optional().isISO8601().toDate(),
+        body('description').optional().isString(),
+        body('type').not().isEmpty().withMessage('group type cannot be empty'),
+        body('members').optional().isInt({ min: 1 }),
+        body('tags').optional().isArray(),
     ],
     async (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
+        console.log(req.body);
 
         const group = new Group({
-            ...req.body,
+            groupName: req.body.title,
+            createDate: new Date(),
+            deadlineDate: req.body.dueDate,
+            numberOfGroupMember: req.body.members,
+            groupMembers: [], // add current user to the group, fix later
+            groupDescription: req.body.description,
+            groupTags: req.body.tags,
+            ownerId: "660624c95d210ffadab318b9",   //req.user._id, //fix later
+            groupStatus: 'available',
+            groupType: req.body.type,
         });
 
         try {
             const newGroup = await group.save();
             res.status(201).json(newGroup);
         } catch (err) {
+            console.log(err.message)
             res.status(400).json({ message: err.message });
         }
     }

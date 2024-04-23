@@ -1,20 +1,39 @@
 import React, { useState } from "react";
 import Button from "../../components/Button";
+import axios from "axios";
 
 function CreatGroupPage() {
+  const [inputTitle, setInputTitle] = useState("");
   const [selectedButton, setSelectedButton] = useState("");
 
   const [tags, setTags] = useState([]); // Used to store all tags
-  const [input, setInput] = useState(""); //Used to store the value of the input box
+  const [inputTag, setInputTag] = useState(""); //Used to store the value of the input box tag
   const [inputError, setInputError] = useState("");
+  const [submitError, setSubmitError] = useState(""); // Used to store the error message when submit
+  const [inputMemNum, setInpuMemNum] = useState(0);
 
+  const [inputDueDate, setInputDueDate] = useState("");
+  const [inputDescription, setInputDescription] = useState("");
+
+  // Handle title change event
+  const handleChangeTitle = (e) => {
+    setInputTitle(e.target.value);
+  };
+
+  // Handle due date change event
+  const handleChangeDueDate = (e) => {
+    setInputDueDate(e.target.value);
+  };
+  // Handle description change event
+  const handleChangeDescription = (e) => {
+    setInputDescription(e.target.value);
+  };
   // Random color generation function
   const randomColor = () => {
     const h = Math.floor(Math.random() * 360);
     const s = 30 + Math.floor(Math.random() * 10);
     const l = 40 + Math.floor(Math.random() * 10);
     return `hsl(${h}, ${s}%, ${l}%)`;
-    
   };
   //Handle tag event
   const addTag = (e) => {
@@ -23,19 +42,30 @@ function CreatGroupPage() {
       setInputError("You can only add up to 6 tags");
       return;
     }
-    const trimInput = input.trim();
+    const trimInput = inputTag.trim();
 
     if (trimInput) {
       setTags([...tags, { text: trimInput, color: randomColor() }]);
-      setInput(""); // Clear input box
+      setInputTag(""); // Clear input box
       setInputError("");
     } else {
       setInputError("Please enter a tag");
     }
   };
-  // Change event handler of input box
-  const handleChange = (e) => {
-    setInput(e.target.value);
+  const handleChangeNum = (e) => {
+    const value = e.target.value;
+    // Check if value is a number and within range 0-99
+    if (
+      (!isNaN(value) && parseInt(value) >= 0 && parseInt(value) <= 99) ||
+      value == ""
+    ) {
+      setInpuMemNum(value);
+    }
+  };
+
+  // Change event handler of input box of tag
+  const handleChangeTag = (e) => {
+    setInputTag(e.target.value);
   };
   // Handle tag deletion events
   const removeTag = (index) => {
@@ -50,12 +80,52 @@ function CreatGroupPage() {
     }
   };
 
-  const handleCreate = async (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
+    // Simple form validation check
+    if (
+      tags.length === 0 ||
+      !inputMemNum ||
+      !inputTitle ||
+      !selectedButton ||
+      !inputDueDate ||
+      !inputDescription
+    ) {
+      setSubmitError("Please fill out all required fields");
+      return;
+    }
+    setSubmitError("");
+    // Prepare data object to send to server
+    const formData = {
+      title: inputTitle,
+      type: selectedButton,
+      dueDate: inputDueDate,
+      tags: tags,
+      members: inputMemNum,
+      description: inputDescription,
+    };
+    console.log(formData);
+    // Use Axios to POST request to server
+    try {
+      const apiUrl = import.meta.env.VITE_API_BASE_URL;
+      const newGroup = await axios.post(
+        `${apiUrl}/api/group/creategroup`,
+        formData
+      ).then((res) => {
+        alert("Group created successfully!");
+        window.location.href = `/group/${res.data._id}`;
+      });
+      
+    } catch (error) {
+      setSubmitError("Failed to create group")
+    }
   };
 
   const handleCancel = async (event) => {
     event.preventDefault();
+
+    // Redirect to the backward page
+    window.history.back();
   };
 
   return (
@@ -83,6 +153,8 @@ function CreatGroupPage() {
               type="text"
               className="border-2 border-primary w-3/5 rounded-full h-9 px-4"
               placeholder="Enter a title"
+              value={inputTitle}
+              onChange={handleChangeTitle}
             />
           </div>
           <div className="flex pb-8 w-4/5 mx-auto items-center">
@@ -119,6 +191,8 @@ function CreatGroupPage() {
             <input
               type="date"
               className="border-2 border-primary w-2/5 rounded-full h-9 px-4"
+              value={inputDueDate}
+              onChange={handleChangeDueDate}
             />
           </div>
           <div className="flex pb-2 w-4/5 mx-auto ">
@@ -134,8 +208,8 @@ function CreatGroupPage() {
             <div className="w-3/4">
               <input
                 type="text"
-                value={input}
-                onChange={handleChange}
+                value={inputTag}
+                onChange={handleChangeTag}
                 onKeyDown={handleKeyPress}
                 className="border-2 border-primary w-2/5 rounded-full h-9 px-4"
                 placeholder="Enter a tag"
@@ -180,6 +254,8 @@ function CreatGroupPage() {
               type="number"
               min={0}
               max={99}
+              value={inputMemNum}
+              onChange={handleChangeNum}
               className="border-2 border-primary w-1/6 rounded-full h-9 text-center p-0 appearance-none "
               placeholder="0"
             />
@@ -193,10 +269,15 @@ function CreatGroupPage() {
               className="border-2 border-primary w-3/5 rounded-2xl h-32 px-3"
               min={0}
               placeholder="Write a description of the group/activity"
+              value={inputDescription}
+              onChange={handleChangeDescription}
             />
           </div>
+          {submitError && (
+            <div className="text-red-500 text-xs italic">{submitError}</div>
+          )}
           <div className=" flex pb-12 w-1/2 mx-auto justify-between ">
-            <Button className="w-28" style_type="fill" onClick={handleCreate}>
+            <Button className="w-28" style_type="fill" onClick={handleSubmit}>
               Create
             </Button>
             <Button className="w-28" style_type="fill" onClick={handleCancel}>
