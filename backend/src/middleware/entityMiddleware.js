@@ -1,4 +1,3 @@
-
 import Application from '../models/applicationModel.js';
 import Group from '../models/groupModel.js';
 import Notification from '../models/notificationModel.js';

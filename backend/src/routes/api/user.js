@@ -7,7 +7,7 @@ import { getUserData } from '../../middleware/userPageDao.js';
 const router = express.Router();
 
 // Define the array of avatar styles
-const avatarStyles = ['thumbs', 'fun-emoji', 'adventurer', 'pixel-art-neutral', 'open-peeps', 'lorelei', 'croodles-neutral', 'croodles', 'miniavs', 'avataaars', 'bottts-neutra', 'icons', 'micah'];
+export const avatarStyles = ['thumbs', 'fun-emoji', 'adventurer', 'pixel-art-neutral', 'open-peeps', 'lorelei', 'croodles-neutral', 'croodles', 'miniavs', 'avataaars', 'bottts-neutra', 'icons', 'micah'];
 
 // get all users
 router.get('/', async (req, res) => {
