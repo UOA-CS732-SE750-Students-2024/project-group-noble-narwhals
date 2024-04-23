@@ -51,27 +51,14 @@ function CreatGroupPage() {
 
     if (trimInput) {
       //check if tag is already exist in DB
-      await axios
-      .post(`${apiUrl}/api/tag/check`, { name: trimInput })
-      .then((res) => {
-        if (res.data) {
-          setTags([...tags, {...res.data , color: randomColor()}]);
-          setInputTag(""); // Clear input box
-          setInputError("");
-        } else {
-          setTags([...tags, { name: trimInput, color: randomColor() }]);
-          setInputTag(""); // Clear input box
-          setInputError("");
-        }
-      })
-      .catch((err) => {
-        console.log("err", err.message);
-      });
+      setTags([...tags, { name: trimInput, color: randomColor() }]);
+      setInputTag("");
+      setInputError("");
     } else {
       setInputError("Please enter a tag");
     }
   };
-  
+
   const handleChangeNum = (e) => {
     const value = e.target.value;
     // Check if value is a number and within range 0-99
@@ -202,6 +189,7 @@ function CreatGroupPage() {
               Due Date
             </label>
             <input
+              min={new Date().toISOString().split("T")[0]}
               type="date"
               className="border-2 border-primary w-2/5 rounded-full h-9 px-4"
               value={inputDueDate}

@@ -7,7 +7,10 @@ async function addGroupTag(tag){
         color: tag.color
     });
     return await newTag.save();
-    
 }
 
-export {addGroupTag};
+async function checkTagExist(tagName){
+    return await Tag.findOne({name: tagName});
+}
+
+export {addGroupTag, checkTagExist};

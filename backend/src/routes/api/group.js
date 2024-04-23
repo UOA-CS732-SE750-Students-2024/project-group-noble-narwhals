@@ -2,7 +2,7 @@ import express from 'express';
 import Group from '../../models/groupModel.js'
 import { body, validationResult } from 'express-validator';
 import { getGroup } from '../../middleware/entityMiddleware.js';
-import { addGroupTag } from '../../middleware/tagDAO.js';
+import { addGroupTag, checkTagExist } from '../../middleware/tagDAO.js';
 const router = express.Router();
 
 // get all groups
@@ -38,8 +38,9 @@ router.post( '/creategroup',
 
         // add new tag
         const modifiedTags = await Promise.all( req.body.tags.map(async tag => {
-            if(tag._id){
-                return tag;
+            const tagExist = await checkTagExist(tag.name);
+            if(tagExist){
+                return tagExist;
             } else{
                 const tagNew = await addGroupTag(tag);
                 return tagNew;
