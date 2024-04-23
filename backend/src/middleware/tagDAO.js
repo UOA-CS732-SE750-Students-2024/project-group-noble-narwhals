@@ -1,12 +1,12 @@
-import Tag from "../models/tagModel";
+import Tag from "../models/tagModel.js";
 
-function addGroupTag(tag){
+async function addGroupTag(tag){
     const newTag = new Tag({
         name: tag.name,
         isGroupTag: true,
         color: tag.color
     });
-    return newTag.save();
+    return await newTag.save();
     
 }
 

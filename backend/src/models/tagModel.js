@@ -14,10 +14,6 @@ const tagSchema = new Schema({
         type: Boolean,
         default: false  
     },
-    color: {
-        type: String,
-        default: 'hsl(156, 39%, 43%)'  
-    }
 
 });
 

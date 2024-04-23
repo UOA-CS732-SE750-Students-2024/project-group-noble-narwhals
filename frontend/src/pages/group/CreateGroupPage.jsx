@@ -55,7 +55,7 @@ function CreatGroupPage() {
       .post(`${apiUrl}/api/tag/check`, { name: trimInput })
       .then((res) => {
         if (res.data) {
-          setTags([...tags, res.data]);
+          setTags([...tags, {...res.data , color: randomColor()}]);
           setInputTag(""); // Clear input box
           setInputError("");
         } else {
@@ -124,13 +124,11 @@ function CreatGroupPage() {
       members: inputMemNum,
       description: inputDescription,
     };
-    console.log(formData);
 
     // Use Axios to POST request to server
     await axios
       .post(`${apiUrl}/api/group/creategroup`, formData)
       .then((res) => {
-        alert("Group created successfully!");
         window.location.href = `/group/${res.data._id}`;
       })
       .catch((err) => {

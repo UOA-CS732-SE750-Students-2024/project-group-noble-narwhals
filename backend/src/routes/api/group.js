@@ -35,15 +35,16 @@ router.post( '/creategroup',
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
-        console.log(req.body);
 
         // add new tag
-        const modifiedTags = req.body.tags.map(tag => {
-            // 对每个 tag 执行一些操作
-            return tag;
-        });
-
-
+        const modifiedTags = await Promise.all( req.body.tags.map(async tag => {
+            if(tag._id){
+                return tag;
+            } else{
+                const tagNew = await addGroupTag(tag);
+                return tagNew;
+            }
+        }));
 
         const group = new Group({
             groupName: req.body.title,
@@ -52,7 +53,7 @@ router.post( '/creategroup',
             numberOfGroupMember: req.body.members,
             groupMembers: [], // add current user to the group, fix later
             groupDescription: req.body.description,
-            groupTags: req.body.tags,
+            groupTags: modifiedTags,
             ownerId: "660624c95d210ffadab318b9",   //req.user._id, //fix later
             groupStatus: 'available',
             groupType: req.body.type,
