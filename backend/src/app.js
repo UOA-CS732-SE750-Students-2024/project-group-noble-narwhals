@@ -26,16 +26,15 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
-
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
-      httpOnly: true, // 是否允许通过客户端脚本访问cookie，一般设置为true
-      secure: false, // 是否只通过https协议传输cookie
-      maxAge: 1000 * 60 * 60 * 24 * 7, // 设置 session cookie 的过期时间，例如1小时
+      httpOnly: true, 
+      secure: false, 
+      maxAge: 1000 * 60 * 60 * 24 * 7, 
     },
   })
 );
