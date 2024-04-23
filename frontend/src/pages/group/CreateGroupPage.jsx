@@ -59,7 +59,7 @@ function CreatGroupPage() {
       (!isNaN(value) && parseInt(value) >= 0 && parseInt(value) <= 99) ||
       value == ""
     ) {
-      setInpuMemNum(value);
+      setInpuMemNum(parseInt(value));
     }
   };
 
@@ -91,7 +91,7 @@ function CreatGroupPage() {
       !inputDueDate ||
       !inputDescription
     ) {
-      setSubmitError("Please fill out all required fields");
+      setSubmitError("Please fill out all fields");
       return;
     }
     setSubmitError("");
@@ -123,8 +123,6 @@ function CreatGroupPage() {
 
   const handleCancel = async (event) => {
     event.preventDefault();
-
-    // Redirect to the backward page
     window.history.back();
   };
 
@@ -222,7 +220,7 @@ function CreatGroupPage() {
                 Add
               </button>
               {inputError && (
-                <div className="text-red-500 text-xs italic">{inputError}</div>
+                <div className="text-red-500 text-xs italic pl-4">{inputError}</div>
               )}
               <div className="flex flex-wrap pt-2 gap-2 ">
                 {tags.map((tag, index) => (
@@ -237,7 +235,7 @@ function CreatGroupPage() {
                         e.preventDefault();
                         removeTag(index);
                       }}
-                      className=" text-black text-m  ml-2 p-0 w-3 h-3 flex justify-center"
+                      className=" text-white text-m  ml-2 p-0 w-3 h-3 flex justify-center"
                     >
                       &times;
                     </button>
@@ -260,7 +258,7 @@ function CreatGroupPage() {
               placeholder="0"
             />
           </div>
-          <div className=" flex pb-8 w-4/5 mx-auto">
+          <div className=" flex pb-6 w-4/5 mx-auto">
             <label className="text-xl text-primary font-title w-1/4 ">
               Description
             </label>
@@ -273,9 +271,7 @@ function CreatGroupPage() {
               onChange={handleChangeDescription}
             />
           </div>
-          {submitError && (
-            <div className="text-red-500 text-xs italic">{submitError}</div>
-          )}
+          <div className="text-red-500 text-xs italic mx-auto h-3 flex justify-center mb-3">{submitError}</div>
           <div className=" flex pb-12 w-1/2 mx-auto justify-between ">
             <Button className="w-28" style_type="fill" onClick={handleSubmit}>
               Create
