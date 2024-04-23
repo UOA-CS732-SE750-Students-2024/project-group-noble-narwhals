@@ -5,15 +5,14 @@ import axios from "axios";
 function CreatGroupPage() {
   const [inputTitle, setInputTitle] = useState("");
   const [selectedButton, setSelectedButton] = useState("");
-
   const [tags, setTags] = useState([]); // Used to store all tags
   const [inputTag, setInputTag] = useState(""); //Used to store the value of the input box tag
   const [inputError, setInputError] = useState("");
   const [submitError, setSubmitError] = useState(""); // Used to store the error message when submit
   const [inputMemNum, setInpuMemNum] = useState(0);
-
   const [inputDueDate, setInputDueDate] = useState("");
   const [inputDescription, setInputDescription] = useState("");
+  const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
   // Handle title change event
   const handleChangeTitle = (e) => {
@@ -36,22 +35,43 @@ function CreatGroupPage() {
     return `hsl(${h}, ${s}%, ${l}%)`;
   };
   //Handle tag event
-  const addTag = (e) => {
+  const addTag = async (e) => {
     e.preventDefault();
     if (tags.length >= 6) {
       setInputError("You can only add up to 6 tags");
       return;
     }
-    const trimInput = inputTag.trim();
+    const trimInput = inputTag.trim().toLowerCase();
+    const tagExists = tags.some((tag) => tag.name.toLowerCase() === trimInput);
+
+    if (tagExists) {
+      setInputError("Tag already exists");
+      return;
+    }
 
     if (trimInput) {
-      setTags([...tags, { text: trimInput, color: randomColor() }]);
-      setInputTag(""); // Clear input box
-      setInputError("");
+      //check if tag is already exist in DB
+      await axios
+      .post(`${apiUrl}/api/tag/check`, { name: trimInput })
+      .then((res) => {
+        if (res.data) {
+          setTags([...tags, res.data]);
+          setInputTag(""); // Clear input box
+          setInputError("");
+        } else {
+          setTags([...tags, { name: trimInput, color: randomColor() }]);
+          setInputTag(""); // Clear input box
+          setInputError("");
+        }
+      })
+      .catch((err) => {
+        console.log("err", err.message);
+      });
     } else {
       setInputError("Please enter a tag");
     }
   };
+  
   const handleChangeNum = (e) => {
     const value = e.target.value;
     // Check if value is a number and within range 0-99
@@ -105,20 +125,17 @@ function CreatGroupPage() {
       description: inputDescription,
     };
     console.log(formData);
+
     // Use Axios to POST request to server
-    try {
-      const apiUrl = import.meta.env.VITE_API_BASE_URL;
-      const newGroup = await axios.post(
-        `${apiUrl}/api/group/creategroup`,
-        formData
-      ).then((res) => {
+    await axios
+      .post(`${apiUrl}/api/group/creategroup`, formData)
+      .then((res) => {
         alert("Group created successfully!");
         window.location.href = `/group/${res.data._id}`;
+      })
+      .catch((err) => {
+        setSubmitError("Failed to create group");
       });
-      
-    } catch (error) {
-      setSubmitError("Failed to create group")
-    }
   };
 
   const handleCancel = async (event) => {
@@ -220,7 +237,9 @@ function CreatGroupPage() {
                 Add
               </button>
               {inputError && (
-                <div className="text-red-500 text-xs italic pl-4">{inputError}</div>
+                <div className="text-red-500 text-xs italic pl-4">
+                  {inputError}
+                </div>
               )}
               <div className="flex flex-wrap pt-2 gap-2 ">
                 {tags.map((tag, index) => (
@@ -229,7 +248,7 @@ function CreatGroupPage() {
                     className="flex items-center  flex-row px-2 rounded-full "
                     style={{ backgroundColor: tag.color }}
                   >
-                    <span className="rounded-full  text-white">{tag.text}</span>
+                    <span className="rounded-full  text-white">{tag.name}</span>
                     <button
                       onClick={(e) => {
                         e.preventDefault();
@@ -271,7 +290,9 @@ function CreatGroupPage() {
               onChange={handleChangeDescription}
             />
           </div>
-          <div className="text-red-500 text-xs italic mx-auto h-3 flex justify-center mb-3">{submitError}</div>
+          <div className="text-red-500 text-xs italic mx-auto h-3 flex justify-center mb-3">
+            {submitError}
+          </div>
           <div className=" flex pb-12 w-1/2 mx-auto justify-between ">
             <Button className="w-28" style_type="fill" onClick={handleSubmit}>
               Create
