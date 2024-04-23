@@ -67,11 +67,69 @@ export default function passportSetup(passport) {
     )
   );
 
-  passport.serializeUser((user, done) => done(null, user._id));
+  passport.serializeUser((user, done) => {
+    console.log('Serializing user:', user._id);  // 日志用户的 _id
+    done(null, user._id);
+  });
+
   passport.deserializeUser((id, done) => {
+    console.log('Deserializing user by id:', id);  // 日志用户的 _id
     User.findById(id)
+    .populate({
+      path: 'profileTags', 
+      model: 'Tag'
+    })
+    .populate({
+      path: 'participatingGroups', 
+      populate: [{
+        path: 'groupMembers',
+        model: 'User'
+      }, {
+        path: 'groupApplicants',
+        model: 'User'
+      }, {
+        path: 'groupTags',
+        model: 'Tag'
+      }, {
+        path: 'ownerId',
+        model: 'User',
+      }]
+    })
+    .populate({
+      path: 'likedGroups', 
+      populate: [{
+        path: 'groupMembers',
+        model: 'User'
+      }, {
+        path: 'groupApplicants',
+        model: 'User'
+      }, {
+        path: 'groupTags',
+        model: 'Tag'
+      }, {
+        path: 'ownerId',
+        model: 'User'
+      }]
+    })
+    .populate({
+      path: 'appliedGroups', 
+      populate: [{
+        path: 'groupMembers',
+        model: 'User'
+      }, {
+        path: 'groupApplicants',
+        model: 'User'
+      }, {
+        path: 'groupTags',
+        model: 'Tag'
+      }, {
+        path: 'ownerId',
+        model: 'User'
+      }]
+    })
       .then((user) => {
         const simplifiedUser = { ...user.toObject(), password: undefined };
+        console.log('Deserialized user:', simplifiedUser);  // 日志用户的信息
         return done(null, simplifiedUser);
       })
       .catch((err) => {

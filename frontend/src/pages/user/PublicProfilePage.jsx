@@ -1,18 +1,42 @@
-import React, { useState } from "react";
-import { useEffect } from "react";
-import { IoMdMale } from "react-icons/io";
-import { IoMdFemale } from "react-icons/io";
-
-import { useUser } from "../../contexts/UserContext"
-
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import axios from "axios";
+import { IoMdMale, IoMdFemale } from "react-icons/io";
+import { useAuth } from "../../store/AuthContext";
 import UserGroupBar from "../../components/UserGroupBar";
 
 const PublicProfilePage = () => {
-  const { user, isLoggedIn, isLoading, error, fetchUserData } = useUser();
-  console.log("user from publicprofile1: ", user);
-  if (error) {
-    return <div>Error fetching data: {error.message}</div>;
-  }
+  const { isLoggedIn, user: loggedInUser, setIsLoggedIn } = useAuth();
+  const { userId } = useParams();
+  const [user, setUser] = useState(null); // 更改此处的 setUser 不冲突了
+  const [isLoading, setIsLoading] = useState(true);
+  const [groups, setGroups] = useState([]);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        console.log("userId: ", userId)
+        const { data } = await axios.get(`http://localhost:3000/api/user/userData/${userId}`);
+        setUser(data);
+        console.log("data from user route: ", data);
+        setGroups(data.groups); // 假设返回的数据中包含用户信息和群组信息
+      } catch (error) {
+        console.error("Failed to fetch user data:", error);
+      }
+      setIsLoading(false);
+    };
+
+    if (isLoggedIn && userId === loggedInUser._id) {
+      console.log("isLoggedIn? ", isLoggedIn);
+      console.log("isLoggedIn is true? ", userId === loggedInUser._id);
+      setUser(loggedInUser);
+      setGroups(loggedInUser.participatingGroups); // 这里假设 participatingGroups 已在登录时加载
+      setIsLoading(false);
+    } else {
+      console.log("isLoggedIn is false ");
+      fetchUserData();
+    }
+  }, [userId, isLoggedIn, loggedInUser]);
 
   if (isLoading) {
     return (
@@ -20,27 +44,12 @@ const PublicProfilePage = () => {
         <img src="/image/Spinner.svg" alt="Loading..." />
       </div>
     );
-  }else{
-    console.log("user from publicprofile2: ", user);
   }
-  
-  
-  // if user is not found (is null)
+
   if (!user) {
-    return <div className="text-xl">User not found</div>;
+    return <div>User not found.</div>;
   }
 
-  const userName = user.name; 
-  const email = user.email; 
-  const avatar = user.avatar;
-  const gender = user.gender;
-  const tags = user.profileTags; 
-  const participatingGroups = user.participatingGroups;
-  const likedGroups = user.likedGroups;
-  console.log("likedGroups: ", likedGroups);
-
-
-  
   return (
     <div className="flex min-w-fit overflow-y-auto">
       <div className="pl-10 pr-10 bg-white flex flex-col flex-grow">
@@ -48,25 +57,24 @@ const PublicProfilePage = () => {
           <div className="flex items-center mb-2">
             <img
               className="w-40 h-40 rounded-full mr-4"
-              src={avatar}
+              src={user.avatar}
               alt="User Avatar"
             />
             <div>
               <div className="flex flex-row">
-                <p className="text-xl font-bold m-5">{userName}</p>
-                {gender === "male" && (
+                <p className="text-xl font-bold m-5">{user.name}</p>
+                {user.gender === "male" && (
                   <IoMdMale className="fill-sky-500 text-2xl mt-5" />
                 )}
-                {gender === "female" && (
+                {user.gender === "female" && (
                   <IoMdFemale className="fill-pink-500 text-2xl mt-5" />
                 )}
               </div>
-              <div className="ml-5 mr-5 mb-5 ">Email: {email}</div>
+              <div className="ml-5 mr-5 mb-5 ">Email: {user.email}</div>
               <div className="flex ml-5 mr-5 mb-5">
-                {tags && tags.map((tag) => (
+                {user.tags && user.tags.map((tag) => (
                   <ProfileTags key={tag._id} tagName={tag.name} />
                 ))}
-
               </div>
             </div>
           </div>
@@ -74,9 +82,12 @@ const PublicProfilePage = () => {
         {/* Groups section */}
         <div className="text-3xl mb-8">Groups</div>
         {isLoggedIn ? (
-          participatingGroups && participatingGroups.map((group) => (
+           groups && groups.length > 0 ? groups.map((group) => (
             <UserGroupBar key={group._id} group={group} />
-          ))
+          )): (
+            <p>No groups found.</p>
+          )
+          
         ) : (
           <div className="text-lg text-gray-400 ">Please log in first.</div>
         )}

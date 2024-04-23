@@ -75,7 +75,7 @@ router.patch('/:id', getTag, async (req, res) => {
 // Delete a tag
 router.delete('/:id', getTag, async (req, res) => {
     try {
-        await res.tag.remove();
+        await res.tag.deleteOne();
         res.json({ message: 'Deleted Tag' });
     } catch (err) {
         res.status(500).json({ message: err.message });

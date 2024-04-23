@@ -1,63 +1,42 @@
-import React, { useState } from "react";
-import { useEffect } from "react";
-import { useParams } from "react-router-dom";
-import { useLocation } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useParams, useLocation } from "react-router-dom";
 import { Link } from "react-router-dom";
+import axios from "axios";
 import { CgProfile } from "react-icons/cg";
 import { IoSettingsSharp } from "react-icons/io5";
 import { MdPendingActions } from "react-icons/md";
 import { FaHeart } from "react-icons/fa";
 import { IoIosNotifications } from "react-icons/io";
-import { useUser } from "../contexts/UserContext";
+import { useAuth } from "../store/AuthContext";
 
 function UserPageSideBar() {
-  const [selectedOption, setSelectedOption] = useState("");
-  const [isOwner, setIsOwner] = useState(true);
-  const { user, error, isLoggedIn } = useUser();
-  const location = useLocation();
+  const { isLoggedIn, user: loggedInUser } = useAuth();
   const { userId } = useParams();
+  const location = useLocation();
+  const [selectedOption, setSelectedOption] = useState("");
+  const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  if (error) {
-    return <div>Error fetching data: {error.message}</div>;
-  }
+  useEffect(() => {
+    if (!isLoggedIn || loggedInUser?._id !== userId) {
+      // Fetch user data from API if not logged in or viewing another user's profile
+      axios.get(`http://localhost:3000/api/user/userData/${userId}`)
+        .then(response => {
+          setUser(response.data);
+          setIsLoading(false);
+        })
+        .catch(error => {
+          console.error('Error fetching user data:', error);
+          setIsLoading(false);
+        });
+    } else {
+      // Use logged in user data if viewing own profile
+      setUser(loggedInUser);
+      setIsLoading(false);
+    }
+  }, [userId, isLoggedIn, loggedInUser]);
 
-  // if user is not found (is null)
-  if (!user) {
-    return <div>User not found</div>;
-  }
-
-  const handleOptionClick = (option) => {
-    setSelectedOption(option);
-  };
-
-
-  const options = isOwner ? [
-    {
-      label: "Public Profile",
-      icon: <CgProfile className="mr-2 w-6 h-6" />,
-      to: `/user/profile/${userId}`,
-    },
-    {
-      label: "Account settings",
-      icon: <IoSettingsSharp className="mr-2 w-6 h-6" />,
-      to: `/user/settings/${userId}`,
-    },
-    {
-      label: "Apply in progress",
-      icon: <MdPendingActions className="mr-2 w-6 h-6" />,
-      to: `/user/apply-in-progress/${userId}`,
-    },
-    {
-      label: "Liked groups",
-      icon: <FaHeart className="mr-2 w-6 h-6" />,
-      to: `/user/liked/${userId}`,
-    },
-    {
-      label: "Notification",
-      icon: <IoIosNotifications className="mr-2 w-6 h-6" />,
-      to: `/user/notification/${userId}`,
-    },
-  ] : [
+  const options = [
     {
       label: "Public Profile",
       icon: <CgProfile className="mr-2 w-6 h-6" />,
@@ -65,20 +44,53 @@ function UserPageSideBar() {
     }
   ];
 
+  if (isLoggedIn && userId === loggedInUser?._id) {
+    // Add more options if the user is logged in and viewing their own profile
+    options.push(
+      {
+        label: "Account settings",
+        icon: <IoSettingsSharp className="mr-2 w-6 h-6" />,
+        to: `/user/settings/${userId}`,
+      },
+      {
+        label: "Apply in progress",
+        icon: <MdPendingActions className="mr-2 w-6 h-6" />,
+        to: `/user/apply-in-progress/${userId}`,
+      },
+      {
+        label: "Liked groups",
+        icon: <FaHeart className="mr-2 w-6 h-6" />,
+        to: `/user/liked/${userId}`,
+      },
+      {
+        label: "Notification",
+        icon: <IoIosNotifications className="mr-2 w-6 h-6" />,
+        to: `/user/notification/${userId}`,
+      }
+    );
+  }
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!user) {
+    return <div>User not found.</div>;
+  }
+
   return (
     <div className="w-sideBarWidth min-w-sideBarWidth overflow-y-auto bg-primary flex flex-col items-center ">
-      <div>
-        {/*users' avatar and username*/}
-        <div className="flex flex-col items-center justify-center p-8">
-          <img
-            className="w-24 h-24 rounded-full mb-2"
-            src={user.avatar}
-            alt="User Avatar"
-          />
-          <div>
+      <div className="flex flex-col items-center justify-center p-8">
+        {user && (
+          <>
+            <img
+              className="w-24 h-24 rounded-full mb-2"
+              src={user.avatar}
+              alt={`${user.name}'s Avatar`}
+            />
             <p className="text-xl text-white font-bold">{user.name}</p>
-          </div>
-        </div>
+          </>
+        )}
       </div>
       <div className="w-full">
         {options.map((option) => (
@@ -88,7 +100,7 @@ function UserPageSideBar() {
             icon={option.icon}
             to={option.to}
             isActive={location.pathname === option.to}
-            handleClick={handleOptionClick}
+            handleClick={setSelectedOption}
           />
         ))}
       </div>
@@ -101,7 +113,6 @@ function SidebarOption({ icon, label, to, handleClick, isActive }) {
   return (
     <div
       className={`p-3 flex items-center justify-center hover:bg-secondary text-white cursor-pointer ${activeClass} transition-colors duration-100`}
-  
       onClick={() => handleClick(label)}
     >
       <Link to={to} className="flex items-center w-full justify-start pl-4">

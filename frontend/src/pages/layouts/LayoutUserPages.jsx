@@ -3,13 +3,16 @@ import { Outlet } from "react-router-dom";
 import UserPageSideBar from "../../components/UserPageSideBar.jsx";
 import Navbar from "../../components/Navbar.jsx";
 
-import { UserProvider } from "../../contexts/UserContext.jsx";
+// import { UserProvider } from "../../contexts/UserContext.jsx";
+import { AuthProvider } from "../../store/AuthContext.jsx";
 
 export default function LayoutUserPages() {
+
   return (
     <>
-      <Navbar isLogged={false} />
-      <UserProvider>
+      {/* <AuthProvider> */}
+        <Navbar />
+        {/* <UserProvider> */}
         <div className="overflow-y-auto">
           <div className="flex overflow-y-auto min-h-[calc(100vh-theme(spacing.navHeight))]">
             {" "}
@@ -20,7 +23,8 @@ export default function LayoutUserPages() {
             </div>
           </div>
         </div >
-      </UserProvider>
+      {/* </AuthProvider> */}
+      {/* </UserProvider> */}
     </>
   );
 }

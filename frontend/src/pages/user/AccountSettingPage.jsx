@@ -2,17 +2,16 @@ import React from "react";
 import "../../index.css";
 import Button from "../../components/Button";
 import { useState, useEffect } from "react";
+import { useNavigate  } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { IoClose } from "react-icons/io5";
-
+import { useAuth } from "../../store/AuthContext";
 
 function AccountSettingsPage() {
   const { userId } = useParams();
+  const navigate = useNavigate();
+  const { user, setUser, isLoading, setIsLoading, isLoggedIn} = useAuth();
 
-  const [isLoading, setIsLoading] = useState(true); // check if the page is loading
-
-  const [user, setUser] = useState(null);
-  const [error, setError] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
 
   const [username, setUsername] = useState("");
@@ -24,40 +23,23 @@ function AccountSettingsPage() {
   const [newTag, setNewTag] = useState("");
 
   useEffect(() => {
-    setIsLoading(true); // set loading to true
-    //get user data from backend
-    const fetchUser = async () => {
-
-      try {
-        console.log("userId: ", userId);
-        const response = await fetch(`http://localhost:3000/api/user/${userId}`);
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        console.log("fetch user data from database", data);
-        setUser(data);
-        setTags(data.profileTags || []);
-        setUsername(data.name || "");
-        setAvatar(data.avatar || "");
-        setGender(data.gender || "");
-        setEmail(data.email || "");
-        setPassword(data.password || "");
-        setIsLoading(false); // set loading to false when data is fetched
-      } catch (e) {
-        setError(e);
-      }
-    };
-    if (userId) {
-      fetchUser();
+    if (!isLoading && (!isLoggedIn || user._id !== userId)) {
+      // 如果用户未登录，或者登录了但不是要查看的用户ID
+      navigate('/'); // 重定向到主页
     }
+    if (!isLoading) { // 确保数据已经加载
+      setUsername(user.name);
+      setAvatar(user.avatar);
+      setGender(user.gender);
+      setEmail(user.email);
+      setPassword(user.password || "");
+      setTags(user.profileTags || []);
+      
+    }
+  }, [user, isLoading]);
 
-  }, [userId]);
 
-  if (error) {
-    return <div>Error fetching data when fetching data: {error.message}</div>;
-  }
+
 
   if (isLoading) {
     return (
@@ -72,6 +54,7 @@ function AccountSettingsPage() {
     return <div>User not found</div>;
   }
 
+  const isGoogleAccount = user.accountType === "google";
 
   const handleEditClick = () => {
     setIsEditing(!isEditing); // toggle isEditing state
@@ -124,70 +107,81 @@ function AccountSettingsPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: newTagName.trim(), isProfileTag: true, isGroupTag: false })
       });
-
+  
       if (!response.ok) {
         const errorData = await response.json();
         console.error('Failed to add tag:', errorData.errors);
         return;
       }
-
+  
       const newTag = await response.json();
-      setTags([...tags, newTag]);
-
+      setTags(prevTags => [...prevTags, newTag]); // 使用函数形式的 setState 确保使用最新的 state
+      console.log('Tag added successfully, now tags are:', tags);
+      setNewTag(''); // 清空输入框
     } catch (error) {
       console.error('Failed to add tag:', error);
     }
   };
+  
+  
 
 
-  const handleDeleteTag = async (tagId) => {
-    try {
-      await fetch(`http://localhost:3000/api/tag/${tagId}`, {
-        method: 'DELETE'
-      });
-      setTags(tags.filter(tag => tag._id !== tagId));
-    } catch (error) {
-      console.error('Failed to delete tag:', error);
+const handleDeleteTag = async (tagId) => {
+  try {
+    const response = await fetch(`http://localhost:3000/api/tag/${tagId}`, {
+      method: 'DELETE'
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();  // 确保能获取错误详情
+      throw new Error(`Failed to delete tag: ${errorData.message || 'Unknown error'}`);
     }
-  };
+
+    setTags(prevTags => prevTags.filter(tag => tag._id !== tagId)); // 使用函数式更新确保使用最新的状态
+  } catch (error) {
+    console.error('Failed to delete tag:', error.message); // 输出错误的 message 而不是整个 Error 对象
+  }
+};
+
+  
 
 
   const handleSubmit = async () => {
-    setIsEditing(false); // 首先停止编辑状态
-
-    // 准备发送到服务器的数据
+    setIsEditing(false); // Stop editing
     const updatedUserData = {
       name: username,
       gender: gender,
       email: email,
-      password: password,
       profileTags: tags,
     };
-
+  
+    if (!isGoogleAccount) {
+      updatedUserData.password = password;
+    }
+  
     try {
-      const response = await fetch(`http://localhost:3000/api/user/update/${userId}`, {
+      const response = await fetch(`http://localhost:3000/api/user/update/${user._id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
-          // 'Authorization': 'Bearer your-auth-token', if we need to authenticate
         },
         body: JSON.stringify(updatedUserData)
       });
-
+  
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-
+  
       const data = await response.json();
       console.log('Update user data successful:', data);
-      setUser(data);
-
-
+      setUser(data); // Update user in auth context
+      setTags(data.profileTags || []); // Ensure tags are updated in component state
+  
     } catch (error) {
       console.error('Update failed:', error);
-
     }
   };
+  
 
   const deleteAccount = async () => {
     // Confirm the user's intention to delete the account
@@ -319,23 +313,17 @@ function AccountSettingsPage() {
           </div>
         </div>
 
-        <div>
-          {" "}
-          {/**Password */}
-          <p className="font-bold text-xl mb-3">Password</p>
-          <div className="flex flex-row mb-3 items-center">
-            <input
-              type="password"
-              value={password}
-              disabled={!isEditing}
-              className={`border rounded px-2 py-1 ${isEditing
-                ? "border-black text-black"
-                : "border-transparent text-gray-500"
-                }`}
-              onChange={handlePasswordChange}
-            />
-          </div>
+        {/* Password - Hidden for Google accounts */}
+      {!isGoogleAccount && (
+        <div className="mb-3">
+          <p className="font-bold text-xl">Password</p>
+          <input type="password" 
+          value={password} 
+          onChange={handlePasswordChange} 
+          disabled={!isEditing} 
+          className="border rounded px-2 py-1" />
         </div>
+      )}
 
         <div>
           {" "}
@@ -369,9 +357,9 @@ function AccountSettingsPage() {
           <div className="max-w-lg mr-4 flex flex-row">
             {" "}
             {/**user's tags list */}
-            {tags.map((tag) => (
+            {tags && tags.map((tag,index) => (
               <div
-                key={tag._id}
+                key={index}
                 className={`mt-2 mr-2 pr-1 pl-1 rounded-3xl border-2 ${isEditing
                   ? "text-black border-black"
                   : "border-gray-500 text-gray-500"

@@ -1,18 +1,25 @@
 import React from "react";
-import { useState } from "react";
-import { useEffect } from "react";
-import { useParams } from "react-router-dom";
 import UserGroupBar from "../../components/UserGroupBar";
-
-import { useUser } from '../../contexts/UserContext';
+import { useState } from "react";
+import { useParams } from "react-router-dom";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../store/AuthContext";
+// import { useUser } from '../../contexts/UserContext';
 
 function LikedGroupPage() {
+  const { userId } = useParams();
   console.log("enter likegrouppage: ");
-  const { user, isLoggedIn, isLoading, error, fetchUserData } = useUser();
+  const { user, setUser, isLoading, setIsLoading, isLoggedIn} = useAuth();
+  const navigate = useNavigate();
   console.log("user from likedgroup: ", user);
-  if (error) {
-    return <div>Error fetching data: {error.message}</div>;
-  }
+
+  useEffect(() => {
+    if (!isLoading && (!isLoggedIn || user._id !== userId)) {
+      // 如果用户未登录，或者登录了但不是要查看的用户ID
+      navigate('/'); // 重定向到主页
+    }
+  },[]);
   if (isLoading) {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
