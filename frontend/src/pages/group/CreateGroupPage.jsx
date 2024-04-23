@@ -76,7 +76,7 @@ function CreatGroupPage() {
 
   const generateTag = async (e) => {
     e.preventDefault();
-    
+
     //  ** how to get automate tags from openAI API **
     // get the content of the textarea
     const content = document.getElementsByName("content")[0].value;
@@ -91,14 +91,15 @@ function CreatGroupPage() {
             console.log(1, AItags);
             setGenerateStatus(false);
 
-            const newTags = AItags.map(element => ({
+            const newTags = AItags.map((element) => ({
               name: element.toLowerCase(),
-              color: randomColor()
+              color: randomColor(),
             }));
             setTags([...newTags]);
+            setInputError("");
           });
       } catch (error) {
-        setInputError("Failed to generate tags")
+        setInputError("Failed to generate tags");
         setGenerateStatus(false);
         return;
       }
@@ -304,10 +305,11 @@ function CreatGroupPage() {
                   className="flex flex-row items-center h-9 px-4 pr-3 rounded-full bg-openai text-white ml-2 p-0 hover:bg-pink-600"
                   onClick={generateTag}
                 >
-                  <span>AI Tag 
-                    </span>
-                    <WiStars className="inline-block" />
-                    {generateStatus && (<AiOutlineLoading className="ml-1 animate-spin-slow" /> )}
+                  <span>AI Tag</span>
+                  <WiStars className="inline-block" />
+                  {generateStatus && (
+                    <AiOutlineLoading className="ml-1 animate-spin-slow" />
+                  )}
                 </button>
               </div>
               {inputError && (
