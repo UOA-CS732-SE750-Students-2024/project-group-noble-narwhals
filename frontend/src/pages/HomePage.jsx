@@ -1,9 +1,13 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import backgroundImage from "../../public/image/homePage_search_bg.jpg";
 import LongSearchingBar from "../components/LongSearchingBar";
 import Gallery from "../components/Gallery";
+import axios from "axios";
 
 function HomePage() {
+  const [groupData, setGroupData] = useState([]);
+  const isLogged = false;
+  const isFavorite = false;
   const dummyData = [
     {
       title: "Let's test",
@@ -54,6 +58,60 @@ function HomePage() {
         "Type in the group name or course name you are looking for. Type in the group name or course name you are looking for. Type in the group name or course name you are looking for. Type in the group name or course name you are looking for.",
     },
   ];
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+  useEffect(() => {
+    const getGroups = async () => {
+      try {
+        const response = await axios.get(`${API_BASE_URL}/api/group`);
+        const groups = response.data;
+        console.log(groups);
+        const detailedGroups = await Promise.all(
+          groups.map(async (group) => {
+            const deadlineDate = group.deadlineDate;
+            const now = new Date();
+            const deadlineDateObj = new Date(deadlineDate);
+            const dayNum = Math.floor(
+              (deadlineDateObj - now) / (1000 * 60 * 60 * 24)
+            );
+
+            const imageLink = getGroupImageLink(group);
+            return {
+              ...group,
+              dayNum: dayNum,
+              imageLink: imageLink,
+              isFavorite: false,
+            };
+          })
+        );
+        setGroupData(detailedGroups);
+        console.log(detailedGroups);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    getGroups();
+  }, []);
+  async function getGroupImageLink(group) {
+    const groupMembers = group.groupMembers;
+    const imageLink = await Promise.all(
+      groupMembers.map(async (memberId) => {
+        const response = await axios.get(
+          `${API_BASE_URL}/api/user/${memberId}`
+        );
+        const user = response.data;
+        return user.avatar;
+      })
+    );
+    return imageLink;
+  }
+  // 获取groupData中type为group的数据
+  const groupDataGroup = groupData.filter((item) => item.groupType === "group");
+  const top3GroupDataGroup = groupDataGroup.slice(0, 3);
+  // 获取groupData中type为activity的数据
+  const groupDataActivity = groupData.filter(
+    (item) => item.groupType === "activity"
+  );
+  const top3GroupDataActivity = groupDataActivity.slice(0, 3);
   return (
     <>
       <div id="main_content" className="">
