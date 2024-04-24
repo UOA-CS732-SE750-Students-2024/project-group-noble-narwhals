@@ -19,13 +19,26 @@ router.get('/', async (req, res) => {
 router.get('/:id', getGroup, async (req, res) => {
     try {
         const group = await Group.findById(req.params.id)
-            .populate('groupMembers', 'name avatar')
-            .populate('groupApplicants', 'name message avatar')
-            .populate('groupTags', 'name')
-            .populate('ownerId', 'name avatar');
-
-            console.log('Fetched group with populated fields:', group); // Detailed log
-
+            .populate({
+              path: 'groupMembers',
+              select: 'name avatar' 
+            })
+            .populate({
+              path: 'groupApplicants',
+              select: 'name message avatar',  
+            })
+            .populate({
+              path: 'application',  
+              populate: {           
+                path: 'applicantId',
+                select: 'name avatar'  
+              }
+            })
+            .populate('groupTags', 'name')  
+            .populate({
+              path: 'ownerId',
+              select: 'name avatar'  
+            });
 
         if (!group) {
             return res.status(404).send('Group not found');
@@ -37,6 +50,7 @@ router.get('/:id', getGroup, async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 });
+
 
 
 // create a new group
@@ -124,8 +138,6 @@ router.patch('/remove-member/:id', getGroup, async (req, res) => {
 
 
 
-    
-
 
 
 // Join group by applying to it
@@ -137,9 +149,6 @@ router.post('/join/:id', getGroup, async (req, res) => {
         return res.status(400).json({ message: 'User already in the group' });
     }
 
-    // Add user to the group applicants
-    res.group.groupApplicants.push(userId);
-
     try {
         // Create a new application
         const newApplication = new Application({
@@ -150,15 +159,21 @@ router.post('/join/:id', getGroup, async (req, res) => {
             applicationDate: new Date() // Current date as the application date
         });
         await newApplication.save(); // Save the new application
-        console.log('New application:', newApplication);
-        console.log('message', req.body.message);
+       
 
-        await res.group.save(); // Save the group with the updated applicants list
+        // Add the new application ID to the application array in the group
+        res.group.application.push(newApplication._id);
+
+        // Add user to the group applicants
+        res.group.groupApplicants.push(userId);
+
+        await res.group.save(); // Save the group with the updated applicants and application list
         res.json({ message: 'User added to the group successfully', applicationId: newApplication._id });
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
 });
+
 
 router.get('/:groupId/has-applied', async (req, res) => {
     const { userId } = req.query;

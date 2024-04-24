@@ -14,6 +14,11 @@ const groupSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'User'  
     }],
+    application:[{
+        type: Schema.Types.ObjectId,
+        ref: 'Application'
+    }],
+    
     groupDescription: String,
     groupTags:[{
         type: Schema.Types.ObjectId,

@@ -8,7 +8,7 @@ import Description from "../../components/Description";
 import HeaderContent from "../../components/HeaderContent";
 import axios from "axios";
 import { useParams } from 'react-router-dom';
-import {useAuth} from "../../store/AuthContext";
+import { useAuth } from "../../store/AuthContext";
 
 function GroupInfoPage() {
   const { groupId } = useParams();
@@ -23,15 +23,15 @@ function GroupInfoPage() {
         const data = response.data || {};
         const tagsText = data.groupTags ? data.groupTags.map(tag => tag.name).join(', ') : 'No tags';
         const ownerId = data.ownerId ? data.ownerId._id : null;
-        
+
         const isCurrentUserHost = user && user._id === ownerId;
 
         let members = data.groupMembers || [];
         if (ownerId && !members.some(member => member._id === ownerId)) {
           members.unshift({
-              _id: ownerId,
-              name: data.ownerId.name,
-              avatar: data.ownerId.avatar
+            _id: ownerId,
+            name: data.ownerId.name,
+            avatar: data.ownerId.avatar
           });
         }
 
@@ -49,16 +49,16 @@ function GroupInfoPage() {
     };
 
     fetchGroupDetails();
-  }, [groupId, user]); 
+  }, [groupId, user]);
 
   if (!groupDetails) {
     return <div>Loading...</div>;
   }
 
   return (
-    
+
     <div className="content">
-      
+
       <HeaderContent
         groupName={groupDetails.groupName}
         groupTags={groupDetails.tagsText}
@@ -74,19 +74,19 @@ function GroupInfoPage() {
         isCurrentUserHost={groupDetails.isCurrentUserHost}
         groupId={groupId}
       />
-      <ApplicantList 
-      applicants={groupDetails.groupApplicants || []} 
-      isCurrentUserHost={groupDetails.isCurrentUserHost} 
-      groupId={groupId}
-    />
+      <ApplicantList
+        applications={groupDetails.application || []}
+        isCurrentUserHost={groupDetails.isCurrentUserHost}
+        groupId={groupId}
+      />
     </div>
   );
 }
 
 
-function MemberList({ members, ownerId,isCurrentUserHost,groupId  }) {
- 
-  
+function MemberList({ members, ownerId, isCurrentUserHost, groupId}) {
+
+
   return (
     <div className="member-list p-6 mt-2">
       <div className="flex justify-between items-center mb-4">
@@ -95,10 +95,10 @@ function MemberList({ members, ownerId,isCurrentUserHost,groupId  }) {
         </h3>
       </div>
       <div className="flex justify space-x-2 overflow-x-auto">
-      {members.map((member) => (
-          <Member 
-            key={member._id} 
-            username={member.name} 
+        {members.map((member) => (
+          <Member
+            key={member._id}
+            username={member.name}
             avatar={member.avatar}
             role={member._id === ownerId ? 'Host' : 'Member'}
             ownerId={ownerId}
@@ -112,27 +112,28 @@ function MemberList({ members, ownerId,isCurrentUserHost,groupId  }) {
   );
 }
 
-function ApplicantList({ applicants, isCurrentUserHost, groupId }) {
-  console.log("Applicants data:", applicants);
+function ApplicantList({ applications, isCurrentUserHost, groupId}) {
+  console.log("Applicants data:", applications);
   return (
-      <div className="applicant-list p-6 mt-6">
-          <div className="flex justify-between items-center mb-4 sticky top-0 bg-white">
-              <h3 className="font-semibold text-2xl">Applicants<span className="ml-2 text-gray-500">{applicants.length}</span></h3>
-          </div>
-          <div className="flex overflow-x-auto">
-              {applicants.map((applicant) => (
-                  <Applicant
-                      key={applicant._id}  
-                      username={applicant.name}
-                      message={applicant.message}
-                      avatar={applicant.avatar}
-                      isHost={isCurrentUserHost}
-                      applicationId={applicant._id} 
-                      groupId={groupId}
-                  />
-              ))}
-          </div>
+    <div className="applicant-list p-6 mt-6">
+      <div className="flex justify-between items-center mb-4 sticky top-0 bg-white">
+        <h3 className="font-semibold text-2xl">Applicants<span className="ml-2 text-gray-500">{applications.length}</span></h3>
       </div>
+      <div className="flex overflow-x-auto">
+        {applications.map((application) => (
+          <Applicant
+            key={application._id}
+            username={application.applicantId.name} 
+            message={application.message} 
+            avatar={application.applicantId.avatar} 
+            isHost={isCurrentUserHost}
+            applicationId={application._id} 
+            groupId={groupId}
+          />
+        ))}
+
+      </div>
+    </div>
   );
 }
 
