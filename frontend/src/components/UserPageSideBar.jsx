@@ -111,15 +111,10 @@ function UserPageSideBar() {
 function SidebarOption({ icon, label, to, handleClick, isActive }) {
   const activeClass = isActive ? "bg-secondary" : "";
   return (
-    <div
-      className={`p-3 flex items-center justify-center hover:bg-secondary text-white cursor-pointer ${activeClass} transition-colors duration-100`}
-      onClick={() => handleClick(label)}
-    >
-      <Link to={to} className="flex items-center w-full justify-start pl-4">
+      <Link to={to} className={`p-3 pl-4 flex items-center justify-start hover:bg-secondary text-white cursor-pointer ${activeClass} transition-colors duration-100 w-full`}  onClick={() => handleClick(label)}>
         {icon}
         {label}
       </Link>
-    </div>
   );
 }
 
