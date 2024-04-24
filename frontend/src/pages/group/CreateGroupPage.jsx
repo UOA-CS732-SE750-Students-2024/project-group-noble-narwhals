@@ -321,7 +321,7 @@ function CreatGroupPage() {
                 {tags.map((tag, index) => (
                   <div
                     key={index}
-                    className="flex items-center  flex-row px-2 rounded-full "
+                    className="flex flex-row px-2 rounded-full items-baseline"
                     style={{ backgroundColor: tag.color }}
                   >
                     <span className="rounded-full  text-white">{tag.name}</span>
@@ -330,7 +330,7 @@ function CreatGroupPage() {
                         e.preventDefault();
                         removeTag(index);
                       }}
-                      className=" text-white text-m  ml-2 p-0 w-3 h-3 flex justify-center"
+                      className=" text-white text-m  ml-1 p-0 w-3 h-3 flex justify-center"
                     >
                       &times;
                     </button>

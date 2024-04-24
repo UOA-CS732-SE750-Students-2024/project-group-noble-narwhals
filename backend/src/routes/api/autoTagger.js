@@ -41,7 +41,16 @@ const promts = [
   {
     role: "assistant",
     content:
-      '{    "keywords": [ "reading-club", "book-discussion",  "literary-genres", "monthly-meetings", "critical-thinking" ]}',
+      '{    "keywords": [ "reading", "book-discussion",   "critical-thinking" ]}',
+  },
+  {
+    role: "user",
+    content:
+      "hi, we are looking for someone interesting in fashion.",
+  },
+  {
+    role: "assistant",
+    content: '{    "keywords": [ "fashion"]}',
   },
 ];
 

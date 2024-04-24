@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Button from "./Button";
 import { IoAdd } from "react-icons/io5";
 import { IoMdNotificationsOutline } from "react-icons/io";
@@ -9,6 +9,7 @@ import { useAuth } from "../store/AuthContext";
 import axios from "axios";
 
 function Navbar() {
+  const navigate = useNavigate();
   const { isLoggedIn, user, setIsLoggedIn, setUser } = useAuth();
   const [showSearch, setShowSearch] = useState(true);
   const location = useLocation();
@@ -23,6 +24,7 @@ function Navbar() {
         setIsLoggedIn(false);
         window.localStorage.setItem("isLoggedIn", false);
         setUser(null);
+        navigate("/");
       });
   };
 
