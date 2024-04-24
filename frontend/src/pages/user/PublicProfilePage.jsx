@@ -19,7 +19,9 @@ const PublicProfilePage = () => {
         const { data } = await axios.get(`http://localhost:3000/api/user/userData/${userId}`);
         setUser(data);
         console.log("data from user route: ", data);
-        setGroups(data.groups); // 假设返回的数据中包含用户信息和群组信息
+        if (data && data.participatingGroups && data.participatingGroups.length > 0) {
+          setGroups(data.participatingGroups); 
+        }
       } catch (error) {
         console.error("Failed to fetch user data:", error);
       }
@@ -52,7 +54,7 @@ const PublicProfilePage = () => {
 
   return (
     <div className="flex min-w-fit overflow-y-auto">
-      <div className="pl-10 pr-10 bg-white flex flex-col flex-grow">
+      <div className="m-4 p-4  bg-white flex flex-col flex-grow">
         <div className="py-8">
           <div className="flex items-center mb-2">
             <img
@@ -63,16 +65,16 @@ const PublicProfilePage = () => {
             <div>
               <div className="flex flex-row">
                 <p className="text-xl font-bold m-5">{user.name}</p>
-                {user.gender === "male" && (
+                {user.gender === "Male" && (
                   <IoMdMale className="fill-sky-500 text-2xl mt-5" />
                 )}
-                {user.gender === "female" && (
+                {user.gender === "Female" && (
                   <IoMdFemale className="fill-pink-500 text-2xl mt-5" />
                 )}
               </div>
               <div className="ml-5 mr-5 mb-5 ">Email: {user.email}</div>
               <div className="flex ml-5 mr-5 mb-5">
-                {user.tags && user.tags.map((tag) => (
+                {user.profileTags && user.profileTags.map((tag) => (
                   <ProfileTags key={tag._id} tagName={tag.name} />
                 ))}
               </div>
@@ -81,16 +83,18 @@ const PublicProfilePage = () => {
         </div>
         {/* Groups section */}
         <div className="text-3xl mb-8">Groups</div>
-        {isLoggedIn ? (
-           groups && groups.length > 0 ? groups.map((group) => (
-            <UserGroupBar key={group._id} group={group} />
-          )): (
-            <p>No groups found.</p>
-          )
-          
-        ) : (
-          <div className="text-lg text-gray-400 ">Please log in first.</div>
-        )}
+        <div className="">
+          {isLoggedIn ? (
+            groups && groups.length > 0 ? groups.map((group) => (
+              <UserGroupBar key={group._id} group={group} />
+            )) : (
+              <p>No groups found.</p>
+            )
+
+          ) : (
+            <div className="text-lg text-gray-400 ">Please log in first.</div>
+          )}
+        </div>
       </div>
     </div>
   );

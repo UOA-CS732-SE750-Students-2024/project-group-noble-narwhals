@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt';
 import User from '../../models/userModel.js';
 import { getUser } from '../../middleware/entityMiddleware.js';
 import { getUserData } from '../../middleware/userPageDao.js';
+import  isLoggedIn  from '../../middleware/authMiddleware.js';
 
 const router = express.Router();
 
@@ -123,10 +124,16 @@ router.patch('/update/:id', getUser, async (req, res) => {
 });
 
 // delete user
-router.delete('/delete/:id', getUser, async (req, res) => {
+router.delete('/delete/:id', isLoggedIn, getUser, async (req, res) => {
     try {
-        await res.user.remove();
-        res.json({ message: 'Deleted User' });
+        console.log("delete user", res.user)
+        await res.user.deleteOne();
+        console.log("user has been deleted")
+        req.logout(function(err) {
+            if (err) { return next(err); }
+            console.log("user has been logged out");
+            res.json({ message: 'Deleted User' });  // 发送成功消息
+          });
     } catch (err) {
         res.status(500).json({ message: err.message });
     }

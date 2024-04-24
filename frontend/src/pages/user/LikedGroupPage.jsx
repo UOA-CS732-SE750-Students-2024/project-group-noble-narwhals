@@ -40,7 +40,7 @@ function LikedGroupPage() {
 
 
   return (
-    <div className="w-4/5 flex flex-col m-4 p-4">
+    <div className="flex flex-col m-4 p-4">
       <div className="text-3xl mb-8">Liked Groups</div>
       {/* Groups table */}
       {likedGroups && likedGroups.length > 0 ? likedGroups.map((group) => (

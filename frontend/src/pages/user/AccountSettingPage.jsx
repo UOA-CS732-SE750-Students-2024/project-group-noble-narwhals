@@ -2,15 +2,16 @@ import React from "react";
 import "../../index.css";
 import Button from "../../components/Button";
 import { useState, useEffect } from "react";
-import { useNavigate  } from "react-router-dom";
 import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { IoClose } from "react-icons/io5";
 import { useAuth } from "../../store/AuthContext";
+import axios from "axios";
 
 function AccountSettingsPage() {
   const { userId } = useParams();
   const navigate = useNavigate();
-  const { user, setUser, isLoading, setIsLoading, isLoggedIn} = useAuth();
+  const { user, setUser, isLoading, setIsLoading, isLoggedIn } = useAuth();
 
   const [isEditing, setIsEditing] = useState(false);
 
@@ -21,24 +22,25 @@ function AccountSettingsPage() {
   const [password, setPassword] = useState("");
   const [tags, setTags] = useState([]);
   const [newTag, setNewTag] = useState("");
+  const [isPasswordChanged, setIsPasswordChanged] = useState(false);
+
 
   useEffect(() => {
     if (!isLoading && (!isLoggedIn || user._id !== userId)) {
-      // 如果用户未登录，或者登录了但不是要查看的用户ID
-      navigate('/'); // 重定向到主页
+      // if the user is not logged in, or logged in but not the user ID to be viewed
+      // then he/she should be redirected to the home page
+      navigate('/');
     }
-    if (!isLoading) { // 确保数据已经加载
+    if (!isLoading) {
       setUsername(user.name);
       setAvatar(user.avatar);
       setGender(user.gender);
       setEmail(user.email);
       setPassword(user.password || "");
-      setTags(user.profileTags || []);
-      
+      setTags(user.profileTags);
+
     }
-  }, [user, isLoading]);
-
-
+  }, [user, isLoading, isLoggedIn]);
 
 
   if (isLoading) {
@@ -47,6 +49,9 @@ function AccountSettingsPage() {
         <img src="/image/Spinner.svg" alt="Loading..." />
       </div>
     );
+  } else {
+    console.log("user from accountsetting: ", user);
+    console.log("password: ", password)
   }
 
   // if user is not found (is null)
@@ -55,6 +60,7 @@ function AccountSettingsPage() {
   }
 
   const isGoogleAccount = user.accountType === "google";
+  console.log("isGoogleAccount: ", isGoogleAccount);
 
   const handleEditClick = () => {
     setIsEditing(!isEditing); // toggle isEditing state
@@ -68,13 +74,11 @@ function AccountSettingsPage() {
     setGender(event.target.value); // for updating gender
   };
 
-  const handleEmailChange = (event) => {
-    setEmail(event.target.value); // for updating email
+  const handlePasswordChange = (event) => {
+    setPassword(event.target.value);
+    setIsPasswordChanged(true); // User has modified the password field
   };
 
-  const handlePasswordChange = (event) => {
-    setPassword(event.target.value); // for updating password
-  };
 
   const handleChangeAvatar = async () => {
     try {
@@ -107,58 +111,54 @@ function AccountSettingsPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: newTagName.trim(), isProfileTag: true, isGroupTag: false })
       });
-  
+
       if (!response.ok) {
         const errorData = await response.json();
         console.error('Failed to add tag:', errorData.errors);
         return;
       }
-  
+
       const newTag = await response.json();
-      setTags(prevTags => [...prevTags, newTag]); // 使用函数形式的 setState 确保使用最新的 state
+      setTags(prevTags => [...prevTags, newTag]);
       console.log('Tag added successfully, now tags are:', tags);
-      setNewTag(''); // 清空输入框
+      setNewTag('');
     } catch (error) {
       console.error('Failed to add tag:', error);
     }
   };
-  
-  
 
-
-const handleDeleteTag = async (tagId) => {
-  try {
-    const response = await fetch(`http://localhost:3000/api/tag/${tagId}`, {
-      method: 'DELETE'
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();  // 确保能获取错误详情
-      throw new Error(`Failed to delete tag: ${errorData.message || 'Unknown error'}`);
+  const handleDeleteTag = async (tagId) => {
+    try {
+      setTags(prevTags => prevTags.filter(tag => tag._id !== tagId));
+    } catch (error) {
+      console.error('Failed to delete tag:', error.message);
     }
-
-    setTags(prevTags => prevTags.filter(tag => tag._id !== tagId)); // 使用函数式更新确保使用最新的状态
-  } catch (error) {
-    console.error('Failed to delete tag:', error.message); // 输出错误的 message 而不是整个 Error 对象
-  }
-};
-
-  
-
+  };
 
   const handleSubmit = async () => {
     setIsEditing(false); // Stop editing
     const updatedUserData = {
       name: username,
-      gender: gender,
-      email: email,
       profileTags: tags,
     };
-  
-    if (!isGoogleAccount) {
-      updatedUserData.password = password;
+    console.log("gender is changed to ", gender)
+
+    if (gender !== 'Not specified') {
+      updatedUserData.gender = gender;
     }
-  
+
+    if (isPasswordChanged) {
+      if (password.length < 8) {
+        setIsLoading(false);
+        alert('Password must be at least 8 characters long.');
+        return;
+      } else {
+        updatedUserData.password = password;
+      }
+    }
+    console.log('Updated user data is:', updatedUserData)
+
+
     try {
       const response = await fetch(`http://localhost:3000/api/user/update/${user._id}`, {
         method: 'PATCH',
@@ -167,28 +167,59 @@ const handleDeleteTag = async (tagId) => {
         },
         body: JSON.stringify(updatedUserData)
       });
-  
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-  
-      const data = await response.json();
-      console.log('Update user data successful:', data);
-      setUser(data); // Update user in auth context
-      setTags(data.profileTags || []); // Ensure tags are updated in component state
-  
+
+      // const data = await response.json();
+      // console.log('Update user data successful:', data);
+      // setUser(data); // Update user in auth context
+      // setEmail(data.email);
+      // setGender(data.gender || 'Not specified'); // Update gender state with the new value or fallback
+      // setTags(data.profileTags);
+
+      if (isPasswordChanged) {
+        setPassword(''); // Reset password field after successful update
+        setIsPasswordChanged(false); // Reset password changed state
+      }
+      await fetchUserData(); // 重新获取用户数据的函数
     } catch (error) {
       console.error('Update failed:', error);
     }
   };
-  
+
+  // Fetch user data from the server (in case of unable to get user data from AuthContext)
+  const fetchUserData = async () => {
+    try {
+      const res = await axios.get(`http://localhost:3000/api/user/userData/${user._id}`);
+      setUser(res.data);
+    } catch (error) {
+      console.error('Failed to fetch user data:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+    setUsername(user.name);
+    setAvatar(user.avatar);
+    setGender(user.gender || 'Not specified');
+    setPassword(''); // Reset password field
+    setTags(user.profileTags || []);
+    setIsPasswordChanged(false);
+  };
+
 
   const deleteAccount = async () => {
     // Confirm the user's intention to delete the account
+    console.log('Delete account clicked.account ID: ', userId);
     if (window.confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
       try {
         const response = await fetch(`http://localhost:3000/api/user/delete/${userId}`, {
           method: 'DELETE',
+          credentials: 'include',
           headers: {
             'Content-Type': 'application/json',
             // 'Authorization': 'Bearer your-auth-token', if we need to authenticate
@@ -201,7 +232,7 @@ const handleDeleteTag = async (tagId) => {
 
         console.log('Account deleted successfully.');
         // Redirect to the login page or home page
-        history.push('/login');
+        navigate('/login');
 
       } catch (error) {
         console.error('Failed to delete account:', error);
@@ -225,9 +256,9 @@ const handleDeleteTag = async (tagId) => {
               className="w-24 h-24 rounded-full mb-2"
               src={avatar}
             />
-            {isEditing && ( // when editing is active, show the change avatar button}
-              <Button className="mt-6 ml-6" onClick={handleChangeAvatar}> Change Avatar</Button>
-            )}
+
+            <Button className="mt-6 ml-6" onClick={handleChangeAvatar}> Change Avatar</Button>
+
           </div>
         </div>
         <div>
@@ -297,33 +328,26 @@ const handleDeleteTag = async (tagId) => {
 
         <div>
           {" "}
-          {/**Email */}
+          {/**Email - not allowed to change*/}
           <p className="font-bold text-xl mb-3">Email</p>
           <div className="flex flex-row mb-3 items-center">
-            <input
-              type="email"
-              value={email}
-              onChange={handleEmailChange}
-              disabled={!isEditing}
-              className={`border rounded px-2 py-1 ${isEditing
-                ? "border-black text-black"
-                : "border-transparent text-gray-500"
-                }`}
-            />
+            <p className="px-2 py-1 border-transparent text-gray-500 cursor-not-allowed"
+            >{email}</p>
           </div>
         </div>
 
         {/* Password - Hidden for Google accounts */}
-      {!isGoogleAccount && (
-        <div className="mb-3">
-          <p className="font-bold text-xl">Password</p>
-          <input type="password" 
-          value={password} 
-          onChange={handlePasswordChange} 
-          disabled={!isEditing} 
-          className="border rounded px-2 py-1" />
-        </div>
-      )}
+        {!isGoogleAccount && (
+          <div className="mb-3">
+            <p className="font-bold text-xl">Password</p>
+            <input type="password"
+              value={password}
+              onChange={handlePasswordChange}
+              disabled={!isEditing}
+              minLength="8"
+              className="border rounded px-2 py-1" />
+          </div>
+        )}
 
         <div>
           {" "}
@@ -357,7 +381,7 @@ const handleDeleteTag = async (tagId) => {
           <div className="max-w-lg mr-4 flex flex-row">
             {" "}
             {/**user's tags list */}
-            {tags && tags.map((tag,index) => (
+            {tags && tags.map((tag, index) => (
               <div
                 key={index}
                 className={`mt-2 mr-2 pr-1 pl-1 rounded-3xl border-2 ${isEditing
@@ -383,6 +407,11 @@ const handleDeleteTag = async (tagId) => {
         >
           {isEditing ? "Update profile" : "Edit Profile"}
         </Button>
+        {isEditing && (
+          <Button onClick={handleCancelEdit} className="mt-6 ml-2">
+            Cancel
+          </Button>
+        )}
         <div>
           <Button
             onClick={deleteAccount}

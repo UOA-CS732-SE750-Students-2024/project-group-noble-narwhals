@@ -42,8 +42,8 @@ export default function UserGroupBar({ group }) {
     <>
       <div className="flex flex-col border-2 border-hmblue-100 m-1 rounded-lg px-4 py-2 overflow-hidden cursor-pointer"
       onClick={handleGroupClick}>
-        <div className="flex flex-row justify-between items-center">
-          <div className="flex flex-col min-w-0">
+        <div className="flex flex-row justify-between gap-2 items-center">
+          <div className="flex flex-col w-2/3">
             <div id="statusAndTitle" className="flex flex-row items-center">
               <div
                 className={`${statusColor} flex items-center justify-center font-thin text-xs text-white p-[2px] w-14 text-center rounded-md mr-1`}
@@ -54,11 +54,13 @@ export default function UserGroupBar({ group }) {
               <div className="font-bold ml-1 truncate">{group.groupName}</div>
             </div>
 
-            <div className="flex justify-start space-x-1 text-xs mt-2 overflow-hidden">
+            <div className="flex flex-wrap gap-1 justify-start space-x-1 text-xs mt-2 overflow-hidden">
               {group.groupTags && group.groupTags.map((tag) => (
                 <span
                   key={tag._id}
-                  className="rounded-full px-2 py-1 h-auto bg-hmblue-100 text-hmblue-800 border-hmblue-800 border-[1px]"
+                  className="truncate rounded-full px-2 py-1 h-auto bg-hmblue-100
+                   text-hmblue-800 border-hmblue-800 border-[1px]
+                   whitespace-nowrap overflow-hidden"
                 >
                   {tag.name}
                 </span>
@@ -66,11 +68,11 @@ export default function UserGroupBar({ group }) {
             </div>
           </div>
 
-          <div className="flex flex-row items-center gap-2 w-1/3 ">
+          <div className="flex flex-row items-center gap-3 w-1/3 ">
             {" "}
             {/* Flex container for Owner */}
             <span>
-              <img className="w-8 h-8 rounded-full" 
+              <img className="w-10 h-10 rounded-full" 
               src={group.ownerId.avatar} />
             </span>
             <span className="text-gray-400">{group.ownerId.name}</span>

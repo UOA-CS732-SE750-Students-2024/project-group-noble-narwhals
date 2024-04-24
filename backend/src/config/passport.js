@@ -20,6 +20,7 @@ export default function passportSetup(passport) {
               user = new User({
                 googleId: profile.id,
                 email: profile.emails[0].value,
+                gender: "Not specified",
                 isVerification: true,
                 name: profile.displayName,
                 accountType: "google",
