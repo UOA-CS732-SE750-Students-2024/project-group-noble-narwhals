@@ -12,6 +12,7 @@ export const getUser = getEntityMiddleware(User, 'User');
 
 function getEntityMiddleware(Model, entityName) {
     return async function(req, res, next) {
+        
         let entity;
         try {
             entity = await Model.findById(req.params.id);
@@ -26,5 +27,6 @@ function getEntityMiddleware(Model, entityName) {
         next();
     };
 }
+
 
 export default getEntityMiddleware;
