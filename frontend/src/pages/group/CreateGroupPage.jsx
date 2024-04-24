@@ -56,7 +56,7 @@ function CreatGroupPage() {
       setInputError("You can only add up to 6 tags");
       return;
     }
-    const trimInput = inputTag.trim().toLowerCase();
+    const trimInput = inputTag.trim().replace(/\s+/g, '-').toLowerCase();
     const tagExists = tags.some((tag) => tag.name.toLowerCase() === trimInput);
 
     if (tagExists) {
