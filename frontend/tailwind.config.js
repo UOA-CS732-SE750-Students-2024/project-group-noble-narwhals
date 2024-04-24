@@ -34,7 +34,7 @@ export default {
         bungee: ["Bungee-Regular", "sans-serif"],
       },
       animation: {
-        'spin-slow': 'spin 1s ease infinite',  // 定义动画名称和时长
+        'spin-slow': 'spin 1s ease infinite',  
       },
       keyframes: {
         spin: {
