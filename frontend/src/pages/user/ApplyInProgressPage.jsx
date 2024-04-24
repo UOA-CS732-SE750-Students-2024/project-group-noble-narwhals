@@ -12,8 +12,9 @@ function ApplyInProgressPage() {
 
   useEffect(() => {
     if (!isLoading && (!isLoggedIn || user._id !== userId)) {
-      // 如果用户未登录，或者登录了但不是要查看的用户ID
-      navigate('/'); // 重定向到主页
+      // if the user is not logged in, or logged in but not the user ID to be viewed
+      // redirect to the main page
+      navigate('/'); 
     }
   },[]);
 

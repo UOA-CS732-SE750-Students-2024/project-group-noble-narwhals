@@ -69,12 +69,12 @@ export default function passportSetup(passport) {
   );
 
   passport.serializeUser((user, done) => {
-    console.log('Serializing user:', user._id);  // 日志用户的 _id
+    console.log('Serializing user:', user._id);  
     done(null, user._id);
   });
 
   passport.deserializeUser((id, done) => {
-    console.log('Deserializing user by id:', id);  // 日志用户的 _id
+    console.log('Deserializing user by id:', id);  
     User.findById(id)
     .populate({
       path: 'profileTags', 
@@ -130,7 +130,7 @@ export default function passportSetup(passport) {
     })
       .then((user) => {
         const simplifiedUser = { ...user.toObject(), password: undefined };
-        console.log('Deserialized user:', simplifiedUser);  // 日志用户的信息
+        console.log('Deserialized user:', simplifiedUser);  
         return done(null, simplifiedUser);
       })
       .catch((err) => {

@@ -59,6 +59,8 @@ function AccountSettingsPage() {
     return <div>User not found</div>;
   }
 
+  /* if the user's account type is "google", then the password field should be hidden,
+   because google account doesn't need password */
   const isGoogleAccount = user.accountType === "google";
   console.log("isGoogleAccount: ", isGoogleAccount);
 
@@ -76,7 +78,11 @@ function AccountSettingsPage() {
 
   const handlePasswordChange = (event) => {
     setPassword(event.target.value);
-    setIsPasswordChanged(true); // User has modified the password field
+    setIsPasswordChanged(true);
+    // User has modified the password field
+    // this is a flag to check if the user has changed the password field to prevent user submitting mistakenly
+    // but now I have added a restriction to the password length, so this flag is not necessary
+    // it remains because it hard to find all the places where it is used
   };
 
 
@@ -172,24 +178,18 @@ function AccountSettingsPage() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      // const data = await response.json();
-      // console.log('Update user data successful:', data);
-      // setUser(data); // Update user in auth context
-      // setEmail(data.email);
-      // setGender(data.gender || 'Not specified'); // Update gender state with the new value or fallback
-      // setTags(data.profileTags);
-
       if (isPasswordChanged) {
         setPassword(''); // Reset password field after successful update
         setIsPasswordChanged(false); // Reset password changed state
       }
-      await fetchUserData(); // 重新获取用户数据的函数
+      // Fetch user data from the server (in case of unable to get user data from AuthContext)
+      await fetchUserData();
     } catch (error) {
       console.error('Update failed:', error);
     }
   };
 
-  // Fetch user data from the server (in case of unable to get user data from AuthContext)
+
   const fetchUserData = async () => {
     try {
       const res = await axios.get(`http://localhost:3000/api/user/userData/${user._id}`);
@@ -337,6 +337,8 @@ function AccountSettingsPage() {
         </div>
 
         {/* Password - Hidden for Google accounts */}
+        {/* if the user's account type is "google", then the password field should be hidden,
+        because google account doesn't need password */}
         {!isGoogleAccount && (
           <div className="mb-3">
             <p className="font-bold text-xl">Password</p>

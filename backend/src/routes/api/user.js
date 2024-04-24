@@ -30,16 +30,6 @@ router.get('/userData/:id', getUserData(User, "User"), (req, res) => {
 });
 
 
-// router.get('/participatingGroups/:id', getUserParticipatingGroups(User, 'User'), (req, res) => {
-//     res.json(res.user);
-// });
-// router.get('/likedGroups/:id', getUserLikedGroups(User, 'User'), (req, res) => {
-//     res.json(res.user);
-// });
-// router.get('/appliedGroups/:id', getUserAppliedGroups(User, 'User'), (req, res) => {
-//     res.json(res.user);
-// });
-
 router.post('/', async (req, res) => {
     try {
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
@@ -132,7 +122,7 @@ router.delete('/delete/:id', isLoggedIn, getUser, async (req, res) => {
         req.logout(function(err) {
             if (err) { return next(err); }
             console.log("user has been logged out");
-            res.json({ message: 'Deleted User' });  // 发送成功消息
+            res.json({ message: 'Deleted User' });  
           });
     } catch (err) {
         res.status(500).json({ message: err.message });

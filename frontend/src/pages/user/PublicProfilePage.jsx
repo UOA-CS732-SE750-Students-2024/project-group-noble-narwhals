@@ -14,6 +14,7 @@ const PublicProfilePage = () => {
 
   useEffect(() => {
     const fetchUserData = async () => {
+      // Fetch user data from API, if the user is not logged in or viewing another user's profile
       try {
         console.log("userId: ", userId)
         const { data } = await axios.get(`http://localhost:3000/api/user/userData/${userId}`);
@@ -29,10 +30,11 @@ const PublicProfilePage = () => {
     };
 
     if (isLoggedIn && userId === loggedInUser._id) {
+      // Use logged in user data if viewing own profile
       console.log("isLoggedIn? ", isLoggedIn);
       console.log("isLoggedIn is true? ", userId === loggedInUser._id);
       setUser(loggedInUser);
-      setGroups(loggedInUser.participatingGroups); // 这里假设 participatingGroups 已在登录时加载
+      setGroups(loggedInUser.participatingGroups); 
       setIsLoading(false);
     } else {
       console.log("isLoggedIn is false ");
