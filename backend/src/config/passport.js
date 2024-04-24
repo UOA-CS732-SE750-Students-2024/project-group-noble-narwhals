@@ -2,48 +2,64 @@ import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import { Strategy as LocalStrategy } from "passport-local";
 import User from "../models/userModel.js";
 import bcrypt from "bcrypt";
+import mongoose from "mongoose";
+
 
 export default function passportSetup(passport) {
-  // Google OAuth Strategy
-  passport.use(
-    new GoogleStrategy(
-      {
-        clientID: process.env.GOOGLE_CLIENT_ID,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        callbackURL: "/auth/google/callback",
-      },
-      (accessToken, refreshToken, profile, done) => {
-        console.log("1Google it!!!", profile);
-        User.findOne({ googleId: profile.id })
-          .then((user) => {
-            if (!user) {
-              user = new User({
-                googleId: profile.id,
-                email: profile.emails[0].value,
-                gender: "Not specified",
-                isVerification: true,
-                name: profile.displayName,
-                accountType: "google",
-                avatar: profile.photos[0].value,
-              });
-              user.save().catch((err) => done(err, user));
-              return done(null, user);
-            } else {
-              const simplifiedUser = {
-                ...user.toObject(),
-                password: undefined,
-              };
-              return done(null, simplifiedUser);
-            }
-          })
-          .catch((err) => {
-            return done(err);
-          });
-
+  passport.use(new GoogleStrategy({
+    clientID: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL: "/auth/google/callback",
+    passReqToCallback: true  // pass req to callback for req.user
+  }, async (req, accessToken, refreshToken, profile, done) => {
+    console.log('Type of req.user before modification:', req.user instanceof mongoose.Document);
+    if (req.user) {
+      console.log('User is already logged in,here is req.user:', req.user);
+      // check if the user has a googleId
+      if (!req.user.googleId) {
+        console.log('No googleId found, linking Google account...');
+        // if no googleId, link the account with Google
+        req.user.googleId = profile.id;
+        req.user.isVerification = true;
+        console.log('req.user after linking:', req.user);
+        console.log('Is Mongoose Document???:', req.user instanceof mongoose.Document);
+        await req.user.save();
+        return done(null, req.user, { message: 'Google account linked and verified!' });
+      } else {
+        // if googleId exists, check if the googleId matches the profile id
+        if (req.user.googleId === profile.id) {
+          req.user.isVerification = true;
+    
+          await req.user.save();
+          return done(null, req.user, { message: 'Google account verified!' });
+        } else {
+          return done(null, false, { message: 'Google account does not match the linked account.' });
+        }
       }
-    )
-  );
-
+    } else {
+      // if user is not logged in, check if the user exists in the database
+      const user = await User.findOne({ googleId: profile.id });
+      if (!user) {
+        // if user does not exist, create a new user
+        const newUser = new User({
+          googleId: profile.id,
+          email: profile.emails[0].value,
+          gender: "Not specified",
+          isVerification: true,
+          name: profile.displayName,
+          accountType: "google",
+          avatar: profile.photos[0].value,
+        });
+        await newUser.save();
+        return done(null, newUser);
+      } else {
+        // if user exists, return the user
+        return done(null, user);
+      }
+    }
+  }));
+  
+  
   // Local Strategy
   passport.use(
     new LocalStrategy(
@@ -69,72 +85,74 @@ export default function passportSetup(passport) {
   );
 
   passport.serializeUser((user, done) => {
-    console.log('Serializing user:', user._id);  
+    console.log('Serializing user:', user._id);
     done(null, user._id);
   });
 
   passport.deserializeUser((id, done) => {
-    console.log('Deserializing user by id:', id);  
+    console.log('Deserializing user by id:', id);
     User.findById(id)
-    .populate({
-      path: 'profileTags', 
-      model: 'Tag'
-    })
-    .populate({
-      path: 'participatingGroups', 
-      populate: [{
-        path: 'groupMembers',
-        model: 'User'
-      }, {
-        path: 'groupApplicants',
-        model: 'User'
-      }, {
-        path: 'groupTags',
+      .populate({
+        path: 'profileTags',
         model: 'Tag'
-      }, {
-        path: 'ownerId',
-        model: 'User',
-      }]
-    })
-    .populate({
-      path: 'likedGroups', 
-      populate: [{
-        path: 'groupMembers',
-        model: 'User'
-      }, {
-        path: 'groupApplicants',
-        model: 'User'
-      }, {
-        path: 'groupTags',
-        model: 'Tag'
-      }, {
-        path: 'ownerId',
-        model: 'User'
-      }]
-    })
-    .populate({
-      path: 'appliedGroups', 
-      populate: [{
-        path: 'groupMembers',
-        model: 'User'
-      }, {
-        path: 'groupApplicants',
-        model: 'User'
-      }, {
-        path: 'groupTags',
-        model: 'Tag'
-      }, {
-        path: 'ownerId',
-        model: 'User'
-      }]
-    })
+      })
+      .populate({
+        path: 'participatingGroups',
+        populate: [{
+          path: 'groupMembers',
+          model: 'User'
+        }, {
+          path: 'groupApplicants',
+          model: 'User'
+        }, {
+          path: 'groupTags',
+          model: 'Tag'
+        }, {
+          path: 'ownerId',
+          model: 'User',
+        }]
+      })
+      .populate({
+        path: 'likedGroups',
+        populate: [{
+          path: 'groupMembers',
+          model: 'User'
+        }, {
+          path: 'groupApplicants',
+          model: 'User'
+        }, {
+          path: 'groupTags',
+          model: 'Tag'
+        }, {
+          path: 'ownerId',
+          model: 'User'
+        }]
+      })
+      .populate({
+        path: 'appliedGroups',
+        populate: [{
+          path: 'groupMembers',
+          model: 'User'
+        }, {
+          path: 'groupApplicants',
+          model: 'User'
+        }, {
+          path: 'groupTags',
+          model: 'Tag'
+        }, {
+          path: 'ownerId',
+          model: 'User'
+        }]
+      })
       .then((user) => {
-        const simplifiedUser = { ...user.toObject(), password: undefined };
-        console.log('Deserialized user:', simplifiedUser);  
-        return done(null, simplifiedUser);
+        // we directly return the user object, no need to convert to JSON
+        // because we are using Mongoose document, and only Mongoose document can be saved to session
+        console.log('Deserialized user:', user);
+        return done(null, user);
       })
       .catch((err) => {
         return done(err);
       });
   });
+
 }

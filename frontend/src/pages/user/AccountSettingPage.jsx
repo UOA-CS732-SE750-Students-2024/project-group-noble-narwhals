@@ -242,10 +242,23 @@ function AccountSettingsPage() {
     }
   };
 
+  const handleVerifyAccount = async() => {
+    console.log('Verify account clicked.');
+    window.location.href = `${import.meta.env.VITE_API_BASE_URL}/auth/google`;
+  };
+
 
   return (
     <div className="w-4/5 m-4 p-4">
       <div className="text-3xl mb-5">Account Settings</div>
+      {user.isVerification ? (
+        <p className="text-gray-400 mb-2">Your account has been verified</p>
+      ) : (
+        <div className="flex flex-row mb-2 gap-2">
+          <Button className="" onClick={handleVerifyAccount}>Verify Account</Button>
+          <p className="mt-2 text-gray-400">Verifying your account can allow you create groups at HeyMate.</p>
+        </div>
+      )}
       <div>
         <div>
           {" "}

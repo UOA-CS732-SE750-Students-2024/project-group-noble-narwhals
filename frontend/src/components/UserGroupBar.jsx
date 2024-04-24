@@ -7,7 +7,7 @@ dayjs.extend(relativeTime);
 
 export default function UserGroupBar({ group }) {
   const navigate = useNavigate();
-  console.log("enter userGroupBar, group: ", group);
+  // console.log("enter userGroupBar, group: ", group);
   const pickStatusColor = () => {
     switch (group.groupStatus) {
       case "available":
@@ -72,7 +72,7 @@ export default function UserGroupBar({ group }) {
             {" "}
             {/* Flex container for Owner */}
             <span>
-              <img className="w-10 h-10 rounded-full" 
+              <img className="w-8 h-8 rounded-full" 
               src={group.ownerId.avatar} />
             </span>
             <span className="text-gray-400">{group.ownerId.name}</span>

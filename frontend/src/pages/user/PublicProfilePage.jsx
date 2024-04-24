@@ -21,7 +21,7 @@ const PublicProfilePage = () => {
         setUser(data);
         console.log("data from user route: ", data);
         if (data && data.participatingGroups && data.participatingGroups.length > 0) {
-          setGroups(data.participatingGroups); 
+          setGroups(data.participatingGroups);
         }
       } catch (error) {
         console.error("Failed to fetch user data:", error);
@@ -34,7 +34,7 @@ const PublicProfilePage = () => {
       console.log("isLoggedIn? ", isLoggedIn);
       console.log("isLoggedIn is true? ", userId === loggedInUser._id);
       setUser(loggedInUser);
-      setGroups(loggedInUser.participatingGroups); 
+      setGroups(loggedInUser.participatingGroups);
       setIsLoading(false);
     } else {
       console.log("isLoggedIn is false ");
@@ -73,14 +73,26 @@ const PublicProfilePage = () => {
                 {user.gender === "Female" && (
                   <IoMdFemale className="fill-pink-500 text-2xl mt-5" />
                 )}
+                {user.isVerification ? (
+                  <div className="mt-6 ml-2 h-fit w-16 rounded-full text-center bg-primary text-white text-xs">Verified</div>
+                ) : (
+                  <div className="mt-6 ml-2 h-fit w-16 rounded-full text-center bg-gray-400 text-white text-xs">Unverified</div>
+                )}
               </div>
+
               <div className="ml-5 mr-5 mb-5 ">Email: {user.email}</div>
               <div className="flex ml-5 mr-5 mb-5">
                 {user.profileTags && user.profileTags.map((tag) => (
                   <ProfileTags key={tag._id} tagName={tag.name} />
                 ))}
               </div>
+              {!user.isVerification && (
+                <div className="ml-3 border-2 rounded-full p-2 border-amber-300 bg-amber-200 text-xs text-gray-400">Your account is not verified. Unverified accounts may not create a group in HeyMate.
+                 Please go to Settings.</div>
+              )}
+
             </div>
+
           </div>
         </div>
         {/* Groups section */}
