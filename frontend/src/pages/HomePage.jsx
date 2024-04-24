@@ -3,11 +3,13 @@ import backgroundImage from "../../public/image/homePage_search_bg.jpg";
 import LongSearchingBar from "../components/LongSearchingBar";
 import Gallery from "../components/Gallery";
 import axios from "axios";
+import { useAuth } from "../store/AuthContext";
 
 function HomePage() {
+  const { isLoggedIn, user } = useAuth();
+  console.log("login状态", isLoggedIn);
+  console.log("user", user);
   const [groupData, setGroupData] = useState([]);
-  const isLogged = false;
-  const isFavorite = false;
   const dummyData = [
     {
       title: "Let's test",
@@ -63,28 +65,7 @@ function HomePage() {
     const getGroups = async () => {
       try {
         const response = await axios.get(`${API_BASE_URL}/api/group`);
-        const groups = response.data;
-        console.log(groups);
-        const detailedGroups = await Promise.all(
-          groups.map(async (group) => {
-            const deadlineDate = group.deadlineDate;
-            const now = new Date();
-            const deadlineDateObj = new Date(deadlineDate);
-            const dayNum = Math.floor(
-              (deadlineDateObj - now) / (1000 * 60 * 60 * 24)
-            );
-
-            const imageLink = getGroupImageLink(group);
-            return {
-              ...group,
-              dayNum: dayNum,
-              imageLink: imageLink,
-              isFavorite: false,
-            };
-          })
-        );
-        setGroupData(detailedGroups);
-        console.log(detailedGroups);
+        setGroupData(response.data);
       } catch (error) {
         console.error(error);
       }
@@ -92,26 +73,94 @@ function HomePage() {
     getGroups();
   }, []);
   async function getGroupImageLink(group) {
+    if (!group || !group.groupMembers) {
+      console.error("Invalid group data");
+      return []; // Return an empty array if there's no group data or members
+    }
+
     const groupMembers = group.groupMembers;
-    const imageLink = await Promise.all(
+    const members_imageLink = await Promise.all(
       groupMembers.map(async (memberId) => {
-        const response = await axios.get(
-          `${API_BASE_URL}/api/user/${memberId}`
-        );
-        const user = response.data;
-        return user.avatar;
+        try {
+          const response = await axios.get(
+            `${API_BASE_URL}/api/user/${memberId}`
+          );
+          const user = response.data;
+
+          // Check if user data exists and has the avatar property
+          if (user && user.avatar) {
+            return user.avatar;
+          } else {
+            console.warn(`No avatar found for user: ${memberId}`);
+            return ""; // Return empty string if no avatar
+          }
+        } catch (error) {
+          console.error(
+            `Error retrieving user data for memberId: ${memberId}`,
+            error
+          );
+          return ""; // Return empty string if the request fails
+        }
       })
     );
-    return imageLink;
+
+    console.log("members_imageLink", members_imageLink);
+    return members_imageLink; // This will be an array of strings, each being an avatar URL or an empty string
   }
-  // 获取groupData中type为group的数据
-  const groupDataGroup = groupData.filter((item) => item.groupType === "group");
-  const top3GroupDataGroup = groupDataGroup.slice(0, 3);
-  // 获取groupData中type为activity的数据
-  const groupDataActivity = groupData.filter(
-    (item) => item.groupType === "activity"
+
+  // handle the groupData to make it like dummyData structure
+  function handleGroupData(groupData) {
+    let isFavorite = false;
+    const data = groupData.map((group) => {
+      const deadlineDate = group.deadlineDate;
+      const now = new Date();
+      const deadlineDateObj = new Date(deadlineDate);
+      const dayNum =
+        (deadlineDateObj - now) / (1000 * 60 * 60 * 24) > 0
+          ? Math.floor((deadlineDateObj - now) / (1000 * 60 * 60 * 24))
+          : 0;
+
+      const imageLink = getGroupImageLink(group);
+      const num = group.groupMembers.length;
+      if (isLoggedIn) {
+        // find user's likedGroups property to check if the group id is in the likedGroups
+        isFavorite = user.likedGroups.includes(group._id);
+      }
+      return {
+        title: group.groupName,
+        id: group._id,
+        dayNum: dayNum,
+        isFavorite: isFavorite,
+        imageLink: imageLink,
+        num: num,
+        description: group.description,
+        groupType: group.groupType,
+        groupTags: group.groupTags,
+        numLimit: group.number0fGroupMember,
+        groupStatus: group.groupStatus,
+      };
+    });
+    return data;
+  }
+  console.log("handleGroupData", handleGroupData(groupData));
+  // get the data in groupData which type is group and status is available
+  const groupDataGroup = handleGroupData(groupData).filter(
+    (item) => item.groupType === "group" && item.groupStatus === "available"
   );
-  const top3GroupDataActivity = groupDataActivity.slice(0, 3);
+  // get the top 3 data in groupDataGroup by dayNum
+  const top3GroupDataGroup = groupDataGroup
+    .sort((a, b) => a.dayNum - b.dayNum)
+    .slice(0, 3);
+  // get the data in groupData which type is activity and status is available
+  const groupDataActivity = handleGroupData(groupData).filter(
+    (item) => item.groupType === "activity" && item.groupStatus === "available"
+  );
+  // get the top 3 data in groupDataActivity by dayNum
+  const top3GroupDataActivity = groupDataActivity
+    .sort((a, b) => a.dayNum - b.dayNum)
+    .slice(0, 3);
+  console.log("top3GroupDataGroup", top3GroupDataGroup);
+  console.log("top3GroupDataActivity", top3GroupDataActivity);
   return (
     <>
       <div id="main_content" className="">
