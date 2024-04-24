@@ -154,11 +154,11 @@ function AccountSettingsPage() {
 
     if (isPasswordChanged && password.length < 8) {
       alert('Password must be at least 8 characters long.');
-      return; // 保持在编辑模式，不关闭编辑器，不提交数据
+      return; 
     }
     console.log('Updated user data is:', updatedUserData)
 
-    setIsEditing(false); // 假设其他验证都通过，停止编
+    setIsEditing(false); // Disable editing mode after submitting the form
 
     try {
       const response = await fetch(`import /api/user/update/${user._id}`, {

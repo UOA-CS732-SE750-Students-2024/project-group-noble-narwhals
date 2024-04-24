@@ -8,7 +8,7 @@ import UserGroupBar from "../../components/UserGroupBar";
 const PublicProfilePage = () => {
   const { isLoggedIn, user: loggedInUser, setIsLoggedIn } = useAuth();
   const { userId } = useParams();
-  const [user, setUser] = useState(null); // 更改此处的 setUser 不冲突了
+  const [user, setUser] = useState(null); // add user state
   const [isLoading, setIsLoading] = useState(true);
   const [groups, setGroups] = useState([]);
 

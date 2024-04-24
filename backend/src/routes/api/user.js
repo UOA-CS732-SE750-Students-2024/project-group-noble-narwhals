@@ -116,7 +116,7 @@ router.patch('/update/:id', getUser, async (req, res) => {
 
 // delete user
 router.delete('/delete/:id', isLoggedIn, getUser, async (req, res) => {
-    const userId = req.params.id; // 获取用户ID
+    const userId = req.params.id; // get the user ID from the request
     try {
         console.log("delete user", res.user)
         // delete all the groups owned by the user
