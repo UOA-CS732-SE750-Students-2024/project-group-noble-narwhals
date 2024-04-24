@@ -81,11 +81,11 @@ export default function UserGroupBar({ group }) {
 
 
           <div className="flex flex-col items-center font-thin text-gray-400 text-sm gap-4"> Flex container for Members */}
-            <span>{`[${group.groupMembers.length}/${group.maxNumber}]`}</span>
+            <span className='text-gray-400'>{`[${group.groupMembers.length}/${group.maxNumber}]`}</span>
             <div className="flex flex-col items-center">
               {" "}
               {/* Flex container for Deadline */}
-              <span>{timeLeft}</span>
+              <span className='text-gray-400'>{timeLeft}</span>
             </div>
           </div>
         </div>
