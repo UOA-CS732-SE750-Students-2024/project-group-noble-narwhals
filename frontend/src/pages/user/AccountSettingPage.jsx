@@ -88,7 +88,7 @@ function AccountSettingsPage() {
 
   const handleChangeAvatar = async () => {
     try {
-      const response = await fetch(`http://localhost:3000/api/user/regenerate-avatar/${userId}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/user/regenerate-avatar/${userId}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
       });
@@ -112,7 +112,7 @@ function AccountSettingsPage() {
       return;
     }
     try {
-      const response = await fetch('http://localhost:3000/api/tag', {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/tag`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: newTagName.trim(), isProfileTag: true, isGroupTag: false })
@@ -142,7 +142,6 @@ function AccountSettingsPage() {
   };
 
   const handleSubmit = async () => {
-    setIsEditing(false); // Stop editing
     const updatedUserData = {
       name: username,
       profileTags: tags,
@@ -153,20 +152,16 @@ function AccountSettingsPage() {
       updatedUserData.gender = gender;
     }
 
-    if (isPasswordChanged) {
-      if (password.length < 8) {
-        setIsLoading(false);
-        alert('Password must be at least 8 characters long.');
-        return;
-      } else {
-        updatedUserData.password = password;
-      }
+    if (isPasswordChanged && password.length < 8) {
+      alert('Password must be at least 8 characters long.');
+      return; // 保持在编辑模式，不关闭编辑器，不提交数据
     }
     console.log('Updated user data is:', updatedUserData)
 
+    setIsEditing(false); // 假设其他验证都通过，停止编
 
     try {
-      const response = await fetch(`http://localhost:3000/api/user/update/${user._id}`, {
+      const response = await fetch(`import /api/user/update/${user._id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -192,7 +187,7 @@ function AccountSettingsPage() {
 
   const fetchUserData = async () => {
     try {
-      const res = await axios.get(`http://localhost:3000/api/user/userData/${user._id}`);
+      const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/user/userData/${user._id}`);
       setUser(res.data);
     } catch (error) {
       console.error('Failed to fetch user data:', error);
@@ -206,7 +201,7 @@ function AccountSettingsPage() {
     setUsername(user.name);
     setAvatar(user.avatar);
     setGender(user.gender || 'Not specified');
-    setPassword(''); // Reset password field
+    setPassword(user.password); // Reset password field
     setTags(user.profileTags || []);
     setIsPasswordChanged(false);
   };
@@ -217,7 +212,7 @@ function AccountSettingsPage() {
     console.log('Delete account clicked.account ID: ', userId);
     if (window.confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
       try {
-        const response = await fetch(`http://localhost:3000/api/user/delete/${userId}`, {
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/user/delete/${userId}`, {
           method: 'DELETE',
           credentials: 'include',
           headers: {

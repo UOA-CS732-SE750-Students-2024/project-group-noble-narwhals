@@ -1,9 +1,10 @@
 import express from 'express';
 import bcrypt from 'bcrypt';
 import User from '../../models/userModel.js';
+import Group from '../../models/groupModel.js';
 import { getUser } from '../../middleware/entityMiddleware.js';
 import { getUserData } from '../../middleware/userPageDao.js';
-import  isLoggedIn  from '../../middleware/authMiddleware.js';
+import isLoggedIn from '../../middleware/authMiddleware.js';
 
 const router = express.Router();
 
@@ -46,7 +47,7 @@ router.post('/', async (req, res) => {
             participatingGroups: req.body.participatingGroups || [],
             likedGroups: req.body.likedGroups || [],
             appliedGroups: req.body.appliedGroups || [],
-            
+
         });
 
         // First saving the user to generate the MongoDB _id
@@ -72,7 +73,7 @@ router.post('/', async (req, res) => {
                 gender: user.gender,
                 accountType: user.accountType,
                 isVerification: user.isVerification,
-                avatar: user.avatar, 
+                avatar: user.avatar,
                 profileTags: user.profileTags,
             },
         });
@@ -115,15 +116,33 @@ router.patch('/update/:id', getUser, async (req, res) => {
 
 // delete user
 router.delete('/delete/:id', isLoggedIn, getUser, async (req, res) => {
+    const userId = req.params.id; // 获取用户ID
     try {
         console.log("delete user", res.user)
+        // delete all the groups owned by the user
+        const ownedGroupsDeletion = Group.deleteMany({ ownerId: userId });
+        console.log("Groups owned by the user have been deleted.");
+        // remove the user from the groupMembers and groupApplicants arrays in all groups
+        const removeFromMembers = Group.updateMany(
+            { groupMembers: userId },
+            { $pull: { groupMembers: userId } }
+        );
+        const removeFromApplicants = Group.updateMany(
+            { groupApplicants: userId },
+            { $pull: { groupApplicants: userId } }
+        );
+        console.log("User has been removed from groupMembers and groupApplicants arrays in all groups.");
+        // wait for all the promises to resolve
+        await Promise.all([ownedGroupsDeletion, removeFromMembers, removeFromApplicants]);
+        console.log("Groups owned and references in other groups have been updated.");
+        // delete the user
         await res.user.deleteOne();
-        console.log("user has been deleted")
-        req.logout(function(err) {
+        console.log("User has been deleted");
+        req.logout(function (err) {
             if (err) { return next(err); }
             console.log("user has been logged out");
-            res.json({ message: 'Deleted User' });  
-          });
+            res.json({ message: 'Deleted User' });
+        });
     } catch (err) {
         res.status(500).json({ message: err.message });
     }

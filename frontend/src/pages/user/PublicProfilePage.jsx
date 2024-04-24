@@ -17,7 +17,7 @@ const PublicProfilePage = () => {
       // Fetch user data from API, if the user is not logged in or viewing another user's profile
       try {
         console.log("userId: ", userId)
-        const { data } = await axios.get(`http://localhost:3000/api/user/userData/${userId}`);
+        const { data } = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/user/userData/${userId}`);
         setUser(data);
         console.log("data from user route: ", data);
         if (data && data.participatingGroups && data.participatingGroups.length > 0) {

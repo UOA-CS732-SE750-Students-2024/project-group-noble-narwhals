@@ -20,7 +20,7 @@ function UserPageSideBar() {
   useEffect(() => {
     if (!isLoggedIn || loggedInUser?._id !== userId) {
       // Fetch user data from API if not logged in or viewing another user's profile
-      axios.get(`http://localhost:3000/api/user/userData/${userId}`)
+      axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/user/userData/${userId}`)
         .then(response => {
           setUser(response.data);
           setIsLoading(false);
@@ -71,7 +71,7 @@ function UserPageSideBar() {
   }
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div></div>;
   }
 
   if (!user) {
