@@ -4,7 +4,7 @@ import User from '../../models/userModel.js';
 import { body, validationResult } from 'express-validator';
 import { getGroup } from '../../middleware/entityMiddleware.js';
 import { addGroupTag, checkTagExist } from '../../middleware/tagDAO.js';
-import isLoggedIn from '../../middleware/authMiddleware.js';
+import isLoggedIn, {isVerifiedUser} from '../../middleware/authMiddleware.js';
 const router = express.Router();
 
 // get all groups
@@ -31,12 +31,13 @@ router.post( '/creategroup',
         body('type').not().isEmpty().withMessage('group type cannot be empty'),
         body('members').optional().isInt({ min: 1 }),
         body('tags').optional().isArray(),
-    ], isLoggedIn,
+    ], isVerifiedUser,
     async (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
+        
 
         // add new tag
         const modifiedTags = await Promise.all( req.body.tags.map(async tag => {
