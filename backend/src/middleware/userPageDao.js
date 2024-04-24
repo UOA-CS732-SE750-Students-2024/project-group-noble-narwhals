@@ -1,3 +1,5 @@
+// this file is for getting user data from the database
+// in case of unable to find the user from auth middleware
 function getUserData(Model, entityName) {
   return async function (req, res, next) {
     try {
