@@ -255,7 +255,7 @@ function AccountSettingsPage() {
       ) : (
         <div className="flex flex-row mb-2 gap-2">
           <Button className="" onClick={handleVerifyAccount}>Verify Account</Button>
-          <p className="mt-2 text-gray-400">Verifying your account can allow you create groups at HeyMate.</p>
+          <p className="ml-2 w-32 text-gray-400 text-xs">Verifying your account with your UoA google account can allow you create groups at HeyMate.</p>
         </div>
       )}
       <div>
