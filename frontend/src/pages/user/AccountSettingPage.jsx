@@ -161,7 +161,7 @@ function AccountSettingsPage() {
     setIsEditing(false); // Disable editing mode after submitting the form
 
     try {
-      const response = await fetch(`import /api/user/update/${user._id}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/user/update/${user._id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
