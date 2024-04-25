@@ -7,7 +7,8 @@ dayjs.extend(relativeTime);
 
 export default function UserGroupBar({ group }) {
   const navigate = useNavigate();
-  // console.log("enter userGroupBar, group: ", group);
+  console.log("enter userGroupBar, group: ", group);
+
   const pickStatusColor = () => {
     switch (group.groupStatus) {
       case "available":
