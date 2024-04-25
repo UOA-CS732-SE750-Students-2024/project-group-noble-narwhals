@@ -119,6 +119,10 @@ router.delete('/delete/:id', isLoggedIn, getUser, async (req, res) => {
     const userId = req.params.id; // get the user ID from the request
     try {
         console.log("delete user", res.user)
+        //first find all the groups owned by the user
+        const ownedGroups = await Group.find({ ownerId: userId }).select('_id');
+        const ownedGroupIds = ownedGroups.map(group => group._id);
+
         // delete all the groups owned by the user
         const ownedGroupsDeletion = Group.deleteMany({ ownerId: userId });
         console.log("Groups owned by the user have been deleted.");
@@ -131,9 +135,13 @@ router.delete('/delete/:id', isLoggedIn, getUser, async (req, res) => {
             { groupApplicants: userId },
             { $pull: { groupApplicants: userId } }
         );
+        const removeFromLiked = Group.updateMany(
+            { likedGroups: { $in: ownedGroupIds } },
+            { $pull: { likedGroups: { $in: ownedGroupIds } } }
+        );
         console.log("User has been removed from groupMembers and groupApplicants arrays in all groups.");
         // wait for all the promises to resolve
-        await Promise.all([ownedGroupsDeletion, removeFromMembers, removeFromApplicants]);
+        await Promise.all([ownedGroupsDeletion, removeFromMembers, removeFromApplicants, removeFromLiked]);
         console.log("Groups owned and references in other groups have been updated.");
         // delete the user
         await res.user.deleteOne();
