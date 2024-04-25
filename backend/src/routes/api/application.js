@@ -1,5 +1,6 @@
 import express from 'express';
 import Application from '../../models/applicationModel.js';
+import mongoose from 'mongoose';
 import Group from '../../models/groupModel.js';
 import { body, validationResult } from 'express-validator';
 import { getApplication } from '../../middleware/entityMiddleware.js';
@@ -21,134 +22,116 @@ router.get('/', async (req, res) => {
 router.get('/:id', getApplication, (req, res) => {
     res.json(res.application);
 });
-
 // create a new application
 router.post('/',
     [
         body('applicantId').not().isEmpty().withMessage('Applicant ID is required'),
         body('groupId').not().isEmpty().withMessage('Group ID is required'),
-        body('message').optional(),
+        body('message').not().isEmpty().withMessage('Message is required'),
         body('applicationDate').optional().isISO8601().toDate(),
     ],
     async (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            console.log('Validation errors:', errors.array());
             return res.status(400).json({ errors: errors.array() });
         }
-
-        const session = await mongoose.startSession();
         try {
-            session.startTransaction();
-            console.log('Starting transaction for new application...');
-
             const newApplication = new Application({
                 applicantId: req.body.applicantId,
                 groupId: req.body.groupId,
-                message: req.body.message || '',
+                message: req.body.message,
                 applicationDate: req.body.applicationDate || new Date()
             });
-
-
-            const savedApplication = await newApplication.save({ session });
-
-            // Fetch the group and update it
-            const group = await Group.findById(req.body.groupId).session(session);
-
-            if (!group) {
-                console.log('No group found with ID:', req.body.groupId);
-                throw new Error('Group not found');
-            }
-
-            // Check if the applicant's ID is already in the groupApplicants array
-            if (!group.groupApplicants.includes(req.body.applicantId)) {
-                group.groupApplicants.push(req.body.applicantId);
-                console.log('Updated group applicants:', group.groupApplicants);
-            }
-            // Add the application's ID to the application array
-            group.application.push(savedApplication._id);
-
-            await group.save({ session });
-
-            await session.commitTransaction();
-
-            session.endSession();
+            await newApplication.save();
             res.status(201).json(newApplication);
         } catch (err) {
-            console.error('Error during transaction:', err);
-            await session.abortTransaction();
-            session.endSession();
-            res.status(500).json({ message: err.message });
+            res.status(400).json({ message: err.message });
         }
     }
 );
 
 
 
-
-
 // update application by id
-router.patch('/applications-with-details/:id', getApplication, async (req, res) => {
-    if (!res.application) {
-        return res.status(404).json({ message: "Application not found" });
-    }
+router.patch('/:id', getApplication, async (req, res) => {
+    const updates = Object.keys(req.body);
+    const allowedUpdates = ['applicationStatus', 'message']; // only allow these fields to be updated
+    const isValidOperation = updates.every((update) => allowedUpdates.includes(update));
 
-    const application = res.application;
-    const updates = req.body;
-    const allowedUpdates = ['applicationStatus', 'message'];
-    const updateFields = Object.keys(updates);
-
-    const isValidOperation = updateFields.every(field => allowedUpdates.includes(field));
-    console.log('applicant', application.applicantId);
-    console.log('application', application);
     if (!isValidOperation) {
-        return res.status(400).json({ message: "Invalid updates, only 'applicationStatus' and 'message' are allowed." });
+        return res.status(400).send({ error: 'Invalid updates!' });
     }
-
-    updateFields.forEach(field => {
-        application[field] = updates[field];
-    });
 
     try {
-        await application.save();
+        updates.forEach((update) => {
+            res.application[update] = req.body[update];
+        });
+        const updatedApplication = await res.application.save();
+        res.json(updatedApplication);
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+});
 
-        // if application is accepted, add the applicant to the group
-        if (application.applicationStatus === 'accepted') {
-            const group = await Group.findById(application.groupId);
-            if (group) {
-                group.groupMembers.push(application.applicantId); // add to group members
-                group.groupApplicants.pull(application.applicantId); // remove from group applicants
-                await group.save();
-            }
+
+
+// update application by id in group info page
+router.patch('/applications-with-details/:id', getApplication, async (req, res) => {
+    const session = await mongoose.startSession();
+
+    try {
+        session.startTransaction();  // Start the transaction
+
+        if (!res.application) {
+            return res.status(404).json({ message: "Application not found" });
         }
 
-        // delete application if it is accepted or rejected
+        const application = res.application;
+        const updates = req.body;
+        const allowedUpdates = ['applicationStatus', 'message'];
+        const updateFields = Object.keys(updates);
+
+        if (!updateFields.every(field => allowedUpdates.includes(field))) {
+            await session.abortTransaction();  // Abort transaction if updates are invalid
+            session.endSession();
+            return res.status(400).json({ message: "Invalid updates, only 'applicationStatus' and 'message' are allowed." });
+        }
+
+        // Apply updates to the application
+        updateFields.forEach(field => {
+            application[field] = updates[field];
+        });
+        await application.save({ session });
+
+        // If application is accepted, add the applicant to the group and remove from applicants
         if (application.applicationStatus === 'accepted' || application.applicationStatus === 'rejected') {
-            await Application.findByIdAndDelete(application._id);
+            const group = await Group.findById(application.groupId).session(session);
+            if (group) {
+                if (application.applicationStatus === 'accepted') {
+                    group.groupMembers.push(application.applicantId);
+                    group.groupApplicants.pull(application.applicantId);
+                    group.application.pull(application._id);  // also remove the application reference
+                }
+                await group.save({ session });
+            }
+
+            // Remove the application record
+            await Application.findByIdAndDelete(application._id, { session });
+
+            // Commit all changes if everything above was successful
+            await session.commitTransaction();
+            session.endSession();
             res.json({ message: 'Application processed and deleted successfully' });
         } else {
-            const applicationWithDetails = await Application.aggregate([
-                { $match: { _id: application._id } },
-                {
-                    $lookup: {
-                        from: "users",
-                        localField: "applicantId",
-                        foreignField: "_id",
-                        as: "applicantDetails"
-                    }
-                },
-                { $unwind: "$applicantDetails" }
-            ]);
-
-            if (applicationWithDetails.length > 0) {
-                res.json(applicationWithDetails[0]);
-            } else {
-                res.status(404).json({ message: "Application not found after update." });
-            }
+            await session.abortTransaction();
+            session.endSession();
+            res.status(500).json({ message: "Unexpected status value" });
         }
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: "Server error while updating and deleting application." });
+        await session.abortTransaction();  // Roll back any changes made before the error
+        session.endSession();
+        console.error('Server error while updating and deleting application:', err);
+        res.status(500).json({ message: "Server error while updating and deleting application.", error: err });
     }
 });
 

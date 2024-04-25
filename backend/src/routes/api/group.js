@@ -14,9 +14,12 @@ router.get('/', async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 });
-
+// get group by id
+router.get('/:id', getGroup, (req, res) => {
+    res.json(res.group);
+});
 // get group by id with  details populated
-router.get('/:id', getGroup, async (req, res) => {
+router.get('/:id/detail', getGroup, async (req, res) => {
     try {
         const group = await Group.findById(req.params.id)
             .populate({
@@ -138,14 +141,35 @@ router.patch('/remove-member/:id', getGroup, async (req, res) => {
 
 
 
-
-
-// Join group by applying to it
+// join group by id
 router.post('/join/:id', getGroup, async (req, res) => {
-    const userId = req.user._id; // Ensure user authentication is properly configured to fetch userId
+    const userId = req.user._id;
+
+    // check if user is already in the group
+    if (res.group.groupMembers.includes(userId)) {
+        return res.status(400).json({ message: 'User already in the group' });
+    }
+
+    // add user to the group
+    res.group.groupMembers.push(userId);
+
+    try {
+        await res.group.save();
+        res.json({ message: 'User added to the group successfully' });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+
+
+
+// Join group by applying to it at group info
+router.post('/join/:id/group', getGroup, async (req, res) => {
+    const userId = req.user._id; 
 
     // Check if user has already applied
-    if (res.group.groupApplicants.includes(userId)) {
+    if (res.group.groupMembers.includes(userId)) {
         return res.status(400).json({ message: 'User already in the group' });
     }
 
@@ -154,14 +178,12 @@ router.post('/join/:id', getGroup, async (req, res) => {
         const newApplication = new Application({
             applicantId: userId,
             groupId: req.params.id,
-            message: req.body.message, // Ensure 'message' is being passed in the request body
-            applicationStatus: 'pending', // Default application status
-            applicationDate: new Date() // Current date as the application date
+            message: req.body.message, 
+            applicationStatus: 'pending', 
+            applicationDate: new Date() 
         });
-        await newApplication.save(); // Save the new application
+        await newApplication.save(); 
        
-
-        // Add the new application ID to the application array in the group
         res.group.application.push(newApplication._id);
 
         // Add user to the group applicants
@@ -174,18 +196,75 @@ router.post('/join/:id', getGroup, async (req, res) => {
     }
 });
 
-
+// check if user has applied to a group
 router.get('/:groupId/has-applied', async (req, res) => {
     const { userId } = req.query;
     const { groupId } = req.params;
     try {
-      const application = await Application.findOne({ groupId, applicantId: userId });
-      res.json({ hasApplied: !!application });
+        const application = await Application.findOne({
+            groupId, 
+            applicantId: userId
+        }).select('applicationStatus');
+        if (!application) {
+            return res.json({ hasApplied: false, applicationStatus: 'none' });
+        }
+        return res.json({ hasApplied: true, applicationStatus: application.applicationStatus });
     } catch (err) {
-      res.status(500).json({ message: 'Failed to check application status', error: err });
+        res.status(500).json({ message: 'Failed to check application status', error: err });
     }
-  });
-  
+});
+
+
+
+
+
+// Cancel application to a group
+router.post('/cancel-application/:groupId', async (req, res) => {
+    const { userId } = req.body;
+    const { groupId } = req.params;
+
+    try {
+        // Find the application by groupId and userId
+        const application = await Application.findOne({
+            groupId: groupId,
+            applicantId: userId
+        });
+
+        if (!application) {
+            return res.status(404).json({ message: 'Application not found' });
+        }
+
+        // Remove the application document
+        await Application.findByIdAndDelete(application._id);
+
+        // Update the group document
+        const group = await Group.findById(groupId);
+        if (!group) {
+            return res.status(404).json({ message: 'Group not found' });
+        }
+
+        // Remove the user from groupApplicants
+        const applicantIndex = group.groupApplicants.indexOf(userId);
+        if (applicantIndex > -1) {
+            group.groupApplicants.splice(applicantIndex, 1);
+        }
+
+        // Remove the application from the application array
+        const applicationIndex = group.application.indexOf(application._id);
+        if (applicationIndex > -1) {
+            group.application.splice(applicationIndex, 1);
+        }
+
+        await group.save();
+        res.json({ message: 'Application cancelled successfully' });
+    } catch (err) {
+        console.error('Failed to cancel application:', err);
+        res.status(500).json({ message: 'Failed to cancel application', error: err });
+    }
+});
+
+
+
 
 
 

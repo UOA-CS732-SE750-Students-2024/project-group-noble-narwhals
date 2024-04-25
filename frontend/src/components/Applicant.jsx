@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Button from './Button';
 import axios from 'axios';
 
-function Applicant({ username, message='', avatar, isHost, applicationId }) {
+function Applicant({ username, message='', avatar, isHost, applicationId,onApplicationHandled }) {
   const [hover, setHover] = useState(false);
   const isLongMessage = message.length > 50;
 
@@ -12,6 +12,7 @@ function Applicant({ username, message='', avatar, isHost, applicationId }) {
             applicationStatus: 'accepted'
         });
         alert('Application accepted successfully!');
+        onApplicationHandled(applicationId, 'accepted');
     } catch (error) {
         alert('Failed to accept application: ' + (error.response?.data?.message || error.message));
     }
@@ -23,6 +24,7 @@ function Applicant({ username, message='', avatar, isHost, applicationId }) {
             applicationStatus: 'rejected'
         });
         alert('Application rejected successfully!');
+        onApplicationHandled(applicationId, 'rejected'); 
     } catch (error) {
         alert('Failed to reject application: ' + (error.response?.data?.message || error.message));
     }

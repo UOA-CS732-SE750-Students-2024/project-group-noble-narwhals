@@ -13,12 +13,13 @@ import { useAuth } from "../../store/AuthContext";
 function GroupInfoPage() {
   const { groupId } = useParams();
   const [groupDetails, setGroupDetails] = useState(null);
+  const [applications, setApplications] = useState([]);
   const { user } = useAuth();
 
   useEffect(() => {
     const fetchGroupDetails = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/api/groups/${groupId}`);
+        const response = await axios.get(`http://localhost:3000/api/groups/${groupId}/detail`);
         console.log('response:', response.data)
         const data = response.data || {};
         const tagsText = data.groupTags ? data.groupTags.map(tag => tag.name).join(', ') : 'No tags';
@@ -34,6 +35,11 @@ function GroupInfoPage() {
             avatar: data.ownerId.avatar
           });
         }
+        if (data.application) {
+          setApplications(data.application);
+        }
+
+       
 
         const activityDetails = [
           { icon: <IoMdTime />, text: new Date(data.deadlineDate).toLocaleDateString() },
@@ -48,8 +54,15 @@ function GroupInfoPage() {
       }
     };
 
+    
     fetchGroupDetails();
   }, [groupId, user]);
+
+  const handleApplicationUpdate = (applicationId, status) => {
+    setApplications(prevApplications => prevApplications.filter(app => app._id !== applicationId));
+    console.log(`Application ${applicationId} was ${status}.`);
+  };
+
 
   if (!groupDetails) {
     return <div>Loading...</div>;
@@ -78,13 +91,14 @@ function GroupInfoPage() {
         applications={groupDetails.application || []}
         isCurrentUserHost={groupDetails.isCurrentUserHost}
         groupId={groupId}
+        onApplicationHandled={handleApplicationUpdate}
       />
     </div>
   );
 }
 
 
-function MemberList({ members, ownerId, isCurrentUserHost, groupId}) {
+function MemberList({ members, ownerId, isCurrentUserHost, groupId }) {
 
 
   return (
@@ -112,8 +126,8 @@ function MemberList({ members, ownerId, isCurrentUserHost, groupId}) {
   );
 }
 
-function ApplicantList({ applications, isCurrentUserHost, groupId}) {
-  console.log("Applicants data:", applications);
+function ApplicantList({ applications, isCurrentUserHost, onApplicationHandled, groupId }) {
+
   return (
     <div className="applicant-list p-6 mt-6">
       <div className="flex justify-between items-center mb-4 sticky top-0 bg-white">
@@ -123,12 +137,13 @@ function ApplicantList({ applications, isCurrentUserHost, groupId}) {
         {applications.map((application) => (
           <Applicant
             key={application._id}
-            username={application.applicantId.name} 
-            message={application.message} 
-            avatar={application.applicantId.avatar} 
+            username={application.applicantId.name}
+            message={application.message}
+            avatar={application.applicantId.avatar}
             isHost={isCurrentUserHost}
-            applicationId={application._id} 
+            applicationId={application._id}
             groupId={groupId}
+            onApplicationHandled={onApplicationHandled}
           />
         ))}
 
