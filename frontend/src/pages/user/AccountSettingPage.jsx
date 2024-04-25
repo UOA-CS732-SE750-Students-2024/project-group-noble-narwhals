@@ -98,6 +98,7 @@ function AccountSettingsPage() {
       const data = await response.json();
 
       setAvatar(data.avatar);
+      console.log('Avatar changed to:', data.avatar);
       setUser(prevUser => ({ ...prevUser, avatar: data.avatar }));
 
       console.log('Avatar changed successfully:', data.message);
@@ -177,6 +178,8 @@ function AccountSettingsPage() {
         setPassword(''); // Reset password field after successful update
         setIsPasswordChanged(false); // Reset password changed state
       }
+
+      alert('Profile updated successfully!')
       // Fetch user data from the server (in case of unable to get user data from AuthContext)
       await fetchUserData();
     } catch (error) {
@@ -227,6 +230,7 @@ function AccountSettingsPage() {
 
         console.log('Account deleted successfully.');
         // Redirect to the login page or home page
+        alert('Account deleted successfully. Redirecting to the login page.');
         navigate('/login');
 
       } catch (error) {

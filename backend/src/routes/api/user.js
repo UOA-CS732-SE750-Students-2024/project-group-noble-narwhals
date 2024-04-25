@@ -9,7 +9,7 @@ import isLoggedIn from '../../middleware/authMiddleware.js';
 const router = express.Router();
 
 // Define the array of avatar styles
-export const avatarStyles = ['thumbs', 'fun-emoji', 'adventurer', 'pixel-art-neutral', 'open-peeps', 'lorelei', 'croodles-neutral', 'croodles', 'miniavs', 'avataaars', 'bottts-neutra', 'icons', 'micah'];
+export const avatarStyles = ['thumbs', 'fun-emoji', 'adventurer', 'pixel-art-neutral', 'open-peeps', 'lorelei', 'croodles-neutral', 'croodles', 'miniavs', 'avataaars', 'bottts-neutral', 'icons', 'micah'];
 
 // get all users
 router.get('/', async (req, res) => {
