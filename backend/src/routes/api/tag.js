@@ -82,6 +82,18 @@ router.delete('/:id', getTag, async (req, res) => {
     }
 });
 
+//Check if tag name is existed
+router.post('/check', async (req, res) => {
+    try {
+        console.log(req.body.name)
+        const tag = await Tag.findOne({ name: req.body.name});
+        console.log("0",tag);
+        res.json(tag);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
 
 
 export default router;

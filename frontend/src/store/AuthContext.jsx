@@ -21,22 +21,22 @@ export const AuthProvider = ({ children }) => {
         if (res.data.isLoggedIn) {
           setIsLoggedIn(res.data.isLoggedIn);
           setUser(res.data.user);
-         
+          setIsLoggedIn(true);
+          window.localStorage.setItem("isLoggedIn", true);
         } else {
           console.log("ready to set loggedIn to false")
           setIsLoggedIn(false);
           setUser(null);
+          window.localStorage.setItem("isLoggedIn", false);
         }
-        setIsLoading(false);  // set loading status to false
+        setIsLoading(false);
       })
       .catch((err) => {
         setIsLoggedIn(false);
-        setIsLoading(false);  // set loading status to false
-      })
-      .finally(() => {
-        setIsLoading(false); // 无论成功还是失败，加载结束后设置为false
+        setIsLoading(false);
+        window.localStorage.setItem("isLoggedIn", false);
       });
-  }, []); 
+  }, []);
 
   useEffect(() => {
     console.log("当前登录状态:", isLoggedIn);

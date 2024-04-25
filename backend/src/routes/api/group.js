@@ -1,7 +1,10 @@
 import express from 'express';
 import Group from '../../models/groupModel.js'
+import User from '../../models/userModel.js';
 import { body, validationResult } from 'express-validator';
 import { getGroup } from '../../middleware/entityMiddleware.js';
+import { addGroupTag, checkTagExist } from '../../middleware/tagDAO.js';
+import isLoggedIn, { isVerifiedUser } from '../../middleware/authMiddleware.js';
 const router = express.Router();
 
 // get all groups
@@ -20,38 +23,62 @@ router.get('/:id', getGroup, (req, res) => {
 });
 
 // create a new group
-router.post('/', [
-    body('groupName').not().isEmpty().withMessage('Group name cannot be empty'),
-    body('createDate').optional().isISO8601().toDate(),
-    body('deadlineDate').optional().isISO8601().toDate(),
-    body('groupDescription').optional().isString(),
-    body('groupTags').optional().isArray(),
-    body('ownerId').not().isEmpty().withMessage('Owner ID is required'),
-    body('groupStatus').optional().isIn(['available', 'closed', 'full']),
-    body('maxNumber').optional().isInt({ min: 1 }).withMessage('Max number must be at least 1'),
-    body('likeNumber').optional().isInt({ min: 0 }).withMessage('Like number must be at least 0'),
-    body('groupMembers').optional().isArray(),
-    body('groupApplicants').optional().isArray(),
-], async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-    }
+router.post('/creategroup',
+    [
+        body('title').not().isEmpty().withMessage('group name cannot be empty'),
+        body('dueDate').optional().isISO8601().toDate(),
+        body('description').optional().isString(),
+        body('type').not().isEmpty().withMessage('group type cannot be empty'),
+        body('members').optional().isInt({ min: 1 }),
+        body('tags').optional().isArray(),
+    ], isVerifiedUser,
+    async (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
 
-    try {
+
+        // add new tag
+        const modifiedTags = await Promise.all(req.body.tags.map(async tag => {
+            const tagExist = await checkTagExist(tag.name);
+            if (tagExist) {
+                return tagExist;
+            } else {
+                const tagNew = await addGroupTag(tag);
+                return tagNew;
+            }
+        }));
+
+
         const group = new Group({
-            ...req.body,
-            groupMembers: req.body.groupMembers || [],
-            groupApplicants: req.body.groupApplicants || [],
-            groupTags: req.body.groupTags || [],
+            groupName: req.body.title,
+            createDate: new Date(),
+            deadlineDate: req.body.dueDate,
+            numberOfGroupMember: req.body.members,
+            groupMembers: [req.user._id],
+            groupDescription: req.body.description,
+            groupTags: modifiedTags,
+            ownerId: req.user._id, //fix later
+            groupStatus: 'available',
+            groupType: req.body.type,
         });
 
-        const newGroup = await group.save();
-        res.status(201).json(newGroup);
-    } catch (err) {
-        res.status(400).json({ message: err.message });
-    }
-});
+        try {
+            const newGroup = await group.save();
+
+            // add group to user's group list
+            const user = await User.findById(req.user._id);
+            user.participatingGroups.push(newGroup._id);
+            await user.save();
+
+            res.status(201).json(newGroup);
+        } catch (err) {
+            console.log(err.message)
+            res.status(400).json({ message: err.message });
+        }
+
+    });
 
 
 // update group by id
