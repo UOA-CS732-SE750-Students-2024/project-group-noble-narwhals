@@ -31,7 +31,7 @@ const groupSchema = new Schema({
    
     groupStatus: {
         type: String,
-        enum: ['available', 'closed', 'full']
+        enum: ['available', 'closed', 'dismissed','full']
     },
     maxNumber: Number,
     likeNumber: Number,

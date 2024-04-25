@@ -103,6 +103,7 @@ router.patch('/update/:id', getGroup, async (req, res) => {
     }
 });
 
+
 // delete group by id
 router.delete('/delete/:id', getGroup, async (req, res) => {
     try {
@@ -139,8 +140,6 @@ router.patch('/remove-member/:id', getGroup, async (req, res) => {
 });
 
 
-
-
 // join group by id
 router.post('/join/:id', getGroup, async (req, res) => {
     const userId = req.user._id;
@@ -161,7 +160,28 @@ router.post('/join/:id', getGroup, async (req, res) => {
     }
 });
 
+// quit group by id
+router.post('/quit/:groupId', async (req, res) => {
+    const { groupId } = req.params;
+    const userId = req.user._id; // User ID from authentication/session
 
+    try {
+        const group = await Group.findById(groupId);
+        if (!group) {
+            return res.status(404).json({ message: "Group not found" });
+        }
+        if (!group.groupMembers.includes(userId)) {
+            return res.status(400).json({ message: "User not in group" });
+        }
+
+        // Remove the user from the groupMembers array
+        group.groupMembers.pull(userId);
+        await group.save();
+        res.status(200).json({ message: "Successfully quit the group" });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
 
 
 // Join group by applying to it at group info
@@ -214,10 +234,6 @@ router.get('/:groupId/has-applied', async (req, res) => {
     }
 });
 
-
-
-
-
 // Cancel application to a group
 router.post('/cancel-application/:groupId', async (req, res) => {
     const { userId } = req.body;
@@ -260,6 +276,37 @@ router.post('/cancel-application/:groupId', async (req, res) => {
     } catch (err) {
         console.error('Failed to cancel application:', err);
         res.status(500).json({ message: 'Failed to cancel application', error: err });
+    }
+});
+
+
+router.patch('/dismiss/:groupId', async (req, res) => {
+    const { groupId } = req.params;
+    const userId = req.user._id;  // Assuming you have user ID from session or token
+
+    try {
+        const group = await Group.findById(groupId);
+
+        // Ensure the group exists
+        if (!group) {
+            return res.status(404).json({ message: "Group not found." });
+        }
+
+        // Check if the user is the host and the group isn't full
+        if (group.ownerId.toString() === userId.toString() && group.groupMembers.length < group.maxNumber) {
+            // Setting group status to 'closed' and clearing members and applicants
+            group.groupStatus = 'dismissed';
+            group.groupMembers = []; // Clear all members
+            group.groupApplicants = []; // Clear all applicants
+
+            await group.save();
+            res.status(200).json({ message: "Group successfully dismissed and all members and applicants have been removed." });
+        } else {
+            res.status(403).json({ message: "You are not authorized to dismiss this group or group is full." });
+        }
+    } catch (error) {
+        console.error('Error dismissing the group:', error);
+        res.status(500).json({ message: 'Internal server error' });
     }
 });
 

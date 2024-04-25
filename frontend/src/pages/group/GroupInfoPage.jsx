@@ -79,6 +79,9 @@ function GroupInfoPage() {
         activityDetails={groupDetails.activityDetails}
         isHost={groupDetails.isCurrentUserHost}
         groupId={groupId}
+        groupMembers={groupDetails.groupMembers}
+        deadlineDate={groupDetails.deadlineDate}
+        groupStatus={groupDetails.groupStatus}
       />
       <Description description={groupDetails.groupDescription} />
       <MemberList
