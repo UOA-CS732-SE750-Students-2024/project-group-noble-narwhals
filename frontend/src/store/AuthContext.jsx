@@ -17,13 +17,15 @@ export const AuthProvider = ({ children }) => {
         if (res.data.isLoggedIn) {
           setUser(res.data.user);
           setIsLoggedIn(true);
+          window.localStorage.setItem("isLoggedIn", true);
         } else {
           setIsLoggedIn(false);
+          window.localStorage.setItem("isLoggedIn", false);
         }
-        console.log("current loggedin?", isLoggedIn )
       })
       .catch((err) => {
         setIsLoggedIn(false);
+        window.localStorage.setItem("isLoggedIn", false);
       });
   }, []);
 
