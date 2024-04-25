@@ -55,7 +55,7 @@ const PublicProfilePage = () => {
   }
 
   return (
-    <div className="flex min-w-fit overflow-y-auto">
+    <div className="flex overflow-y-auto">
       <div className="m-4 p-4  bg-white flex flex-col flex-grow">
         <div className="py-8">
           <div className="flex items-center mb-2">
