@@ -38,7 +38,7 @@ export default function passportSetup(passport) {
       }
     } else {
       // if user is not logged in, check if the user exists in the database
-      const user = await User.findOne({ googleId: profile.id });
+      const user = await User.findOne({ googleId: profile.id, accountType: 'google'});
       if (!user) {
         // if user does not exist, create a new user
         const newUser = new User({

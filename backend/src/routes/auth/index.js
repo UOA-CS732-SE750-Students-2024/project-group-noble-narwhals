@@ -36,6 +36,7 @@ router.post("/signup", async (req, res) => {
   const email = req.body.email;
 
   try {
+    
     let checkUser = await User.findOne({ email });
     if (checkUser) {
       return res
