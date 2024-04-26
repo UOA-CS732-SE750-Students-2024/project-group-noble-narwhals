@@ -13,13 +13,11 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     console.log("initialize useEffect in AuthContext.jsx");
-    // .get(`${import.meta.env.VITE_API_BASE_URL}/auth/check-session`)
     axios
       .get(`${import.meta.env.VITE_API_BASE_URL}/auth/check-session`)
       .then((res) => {
         console.log("res.data", res.data)
         if (res.data.isLoggedIn) {
-          setIsLoggedIn(res.data.isLoggedIn);
           setUser(res.data.user);
           setIsLoggedIn(true);
           window.localStorage.setItem("isLoggedIn", true);
@@ -39,10 +37,9 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    console.log("当前登录状态:", isLoggedIn);
-    console.log("当前用户数据:", user);
-    // 在这里，你可以根据最新状态进行一些操作，比如导航重定向等
-  }, [isLoggedIn, user]); // 监听 isLoggedIn 和 user 的变化
+    console.log("current login status:", isLoggedIn);
+    console.log("curent user data from AuthContext:", user);
+  }, [isLoggedIn, user]); 
 
   return (
     <AuthContext.Provider value={{ isLoggedIn, user, setUser, setIsLoggedIn, isLoading, setIsLoading }}>
