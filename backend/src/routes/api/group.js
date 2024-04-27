@@ -186,8 +186,7 @@ router.delete("/delete/:id", getGroup, async (req, res) => {
 router.patch("/remove-member/:id", getGroup, async (req, res) => {
   const memberId = req.body.memberId;
   const group = res.group;
-  console.log(`Group ID from URL: ${req.params.id}`); // Check if ID is received correctly
-  console.log(`Group from middleware: ${req.group}`); // Check what the middleware found
+ 
 
   if (!group) {
     return res.status(404).send({ message: "Group not found" });
@@ -219,6 +218,11 @@ router.post("/join/:id", getGroup, async (req, res) => {
 
   // add user to the group
   res.group.groupMembers.push(userId);
+
+  //check if group is full
+  if (res.group.groupMembers.length  >= res.group.maxNumber) {
+    res.group.groupStatus = 'full';
+  }
 
   try {
     await res.group.save();
@@ -254,10 +258,20 @@ router.post("/quit/:groupId", async (req, res) => {
 // Join group by applying to it at group info
 router.post("/join/:id/group", getGroup, async (req, res) => {
   const userId = req.user._id;
+  console.log(`User ID: ${userId}`);
+  console.log(`Group ID: ${req.params.id}`);
+  console.log(`Current Members: ${res.group.groupMembers.length}, Max Members: ${res.group.maxNumber}`);
 
-  // Check if user has already applied
+  // Check if the user is already a member of the group
   if (res.group.groupMembers.includes(userId)) {
+    console.log("User already in the group.");
     return res.status(400).json({ message: "User already in the group" });
+  }
+
+  // Check if the group is already full
+  if (res.group.groupMembers.length >= res.group.maxNumber) {
+    console.log("Group is full before adding a new member.");
+    return res.status(400).json({ message: "Group is already full" });
   }
 
   try {
@@ -267,24 +281,38 @@ router.post("/join/:id/group", getGroup, async (req, res) => {
       groupId: req.params.id,
       message: req.body.message,
       applicationStatus: "pending",
-      applicationDate: new Date(),
+      applicationDate: new Date()
     });
     await newApplication.save();
 
+    // Add the user to group applicants and the application list
+    res.group.groupApplicants.push(userId);
     res.group.application.push(newApplication._id);
 
-    // Add user to the group applicants
-    res.group.groupApplicants.push(userId);
+    // Add the user to the group members
+    res.group.groupMembers.push(userId);
 
-    await res.group.save(); // Save the group with the updated applicants and application list
+    // Check if adding this member has filled the group
+    if (res.group.groupMembers.length >= res.group.maxNumber) {
+      res.group.groupStatus = 'full';
+      console.log(`Group status updated to full.`);
+    }
+
+    await res.group.save();
+    console.log(`Group saved with ${res.group.groupMembers.length} members.`);
+
     res.json({
       message: "User added to the group successfully",
-      applicationId: newApplication._id,
+      groupStatus: res.group.groupStatus,
+      applicationId: newApplication._id
     });
   } catch (err) {
+    console.error("Failed to join group:", err);
     res.status(500).json({ message: err.message });
   }
 });
+
+
 
 // check if user has applied to a group
 router.get("/:groupId/has-applied", async (req, res) => {

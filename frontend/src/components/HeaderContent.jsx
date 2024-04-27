@@ -215,16 +215,16 @@ function HeaderContent({ groupName, groupTags, postedDate, activityDetails, isHo
         </>
       )}
       {(groupStatus === 'closed' || groupStatus === 'dismissed' || groupStatus === 'full') && (
-        <Button className="py-3 px-16" style_type="border" onClick={() => navigate('/')}>
+        <div className="py-3 px-16" style_type="border">
           {groupStatus === 'closed' ? 'This group is closed' : (groupStatus === 'dismissed' ? 'This group is dismissed' : 'This group is full')}
-        </Button>
+        </div>
       )}
     </>
   )}
   {!isHost && groupStatus !== 'available' && (
-    <Button className="py-3 px-16" style_type="border" onClick={() => navigate('/')}>
+    <div className="py-3 px-16" style_type="border" >
       This group is {groupStatus}
-    </Button>
+    </div>
   )}
   {!isHost  && groupStatus === 'available' && (
     <>
