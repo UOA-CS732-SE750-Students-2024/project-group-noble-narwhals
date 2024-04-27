@@ -13,7 +13,6 @@ export default function passportSetup(passport) {
         callbackURL: "/auth/google/callback",
       },
       (accessToken, refreshToken, profile, done) => {
-        console.log("1Google it!!!", profile);
         User.findOne({ googleId: profile.id })
           .then((user) => {
             if (!user) {

@@ -6,6 +6,7 @@ export default {
       colors: {
         primary: "#00467f",
         secondary: "#0080a7",
+        openai: "#739d92",
         hmblue: {
           50: "#e5f3ff",
           100: "#b2dcff",
@@ -32,6 +33,15 @@ export default {
       fontFamily: {
         bungee: ["Bungee-Regular", "sans-serif"],
       },
+      animation: {
+        'spin-slow': 'spin 1s ease infinite',  
+      },
+      keyframes: {
+        spin: {
+          from: { transform: 'rotate(0deg)' },
+          to: { transform: 'rotate(360deg)' },
+        }
+      }
     },
   },
   plugins: [],

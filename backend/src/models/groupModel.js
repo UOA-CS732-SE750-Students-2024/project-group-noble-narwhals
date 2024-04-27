@@ -28,6 +28,10 @@ const groupSchema = new Schema({
         type: String,
         enum: ['available', 'closed', 'full']
     },
+    groupType: {
+        type: String,
+        enum: ['group', 'activity']
+    },
     maxNumber: Number,
     likeNumber: Number,
 });
