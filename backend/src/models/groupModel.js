@@ -5,7 +5,6 @@ const groupSchema = new Schema({
     groupName: String,
     createDate: Date,  
     deadlineDate: Date,
-    numberOfGroupMember: Number,
     groupMembers: [{  
         type: Schema.Types.ObjectId,
         ref: 'User'  
@@ -27,6 +26,10 @@ const groupSchema = new Schema({
     groupStatus: {
         type: String,
         enum: ['available', 'closed', 'full']
+    },
+    groupType: {
+        type: String,
+        enum: ['group', 'activity']
     },
     maxNumber: Number,
     likeNumber: Number,

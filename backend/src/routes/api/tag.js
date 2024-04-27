@@ -2,7 +2,7 @@
 import express from 'express';
 import { body, validationResult } from 'express-validator';
 import Tag from '../../models/tagModel.js';
-import { getTag } from '../../middleware/entityMiddleware.js';  
+import { getTag } from '../../middleware/entityMiddleware.js';
 const router = express.Router();
 
 // Get all tags
@@ -30,14 +30,21 @@ router.post('/', [
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
     }
-
-    const tag = new Tag({
-        name: req.body.name,
-        isProfileTag: req.body.isProfileTag,
-        isGroupTag: req.body.isGroupTag
-    });
-
     try {
+        // find if the tag already exists
+        const existingTag = await Tag.findOne({ name: req.body.name });
+        if (existingTag) {
+            // if the tag already exists, return the existing tag
+            return res.status(200).json(existingTag);
+        }
+
+        // if the tag does not exist, create a new tag and save it
+        const tag = new Tag({
+            name: req.body.name,
+            isProfileTag: req.body.isProfileTag,
+            isGroupTag: req.body.isGroupTag
+        });
+
         const newTag = await tag.save();
         res.status(201).json(newTag);
     } catch (err) {
@@ -68,8 +75,20 @@ router.patch('/:id', getTag, async (req, res) => {
 // Delete a tag
 router.delete('/:id', getTag, async (req, res) => {
     try {
-        await res.tag.remove();
+        await res.tag.deleteOne();
         res.json({ message: 'Deleted Tag' });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+//Check if tag name is existed
+router.post('/check', async (req, res) => {
+    try {
+        console.log(req.body.name)
+        const tag = await Tag.findOne({ name: req.body.name});
+        console.log("0",tag);
+        res.json(tag);
     } catch (err) {
         res.status(500).json({ message: err.message });
     }

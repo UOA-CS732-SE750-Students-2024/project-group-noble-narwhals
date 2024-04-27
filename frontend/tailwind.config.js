@@ -6,6 +6,7 @@ export default {
       colors: {
         primary: "#00467f",
         secondary: "#0080a7",
+        openai: "#739d92",
         hmblue: {
           50: "#e5f3ff",
           100: "#b2dcff",
@@ -21,8 +22,10 @@ export default {
       },
       spacing: {
         mainContent: "1280px",
-        navHeight: "60px",
+        navHeight: '60px',
+        createImageHeight: 'calc(100vh - 60px)',
         sideBarWidth: "230px",
+
       },
       boxShadow: {
         basic: "0 0px 10px -4px rgba(0, 0, 0, 0.3)",
@@ -30,6 +33,15 @@ export default {
       fontFamily: {
         bungee: ["Bungee-Regular", "sans-serif"],
       },
+      animation: {
+        'spin-slow': 'spin 1s ease infinite',  
+      },
+      keyframes: {
+        spin: {
+          from: { transform: 'rotate(0deg)' },
+          to: { transform: 'rotate(360deg)' },
+        }
+      }
     },
   },
   plugins: [],

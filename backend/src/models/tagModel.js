@@ -13,7 +13,8 @@ const tagSchema = new Schema({
     isGroupTag: {
         type: Boolean,
         default: false  
-    }
+    },
+
 });
 
 const Tag = mongoose.model('Tag', tagSchema);
