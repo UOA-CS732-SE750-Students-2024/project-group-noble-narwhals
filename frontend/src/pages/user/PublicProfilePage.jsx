@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
+import  Button  from "../../components/Button";
 import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { IoMdMale, IoMdFemale } from "react-icons/io";
 import { useAuth } from "../../store/AuthContext";
@@ -11,6 +13,8 @@ const PublicProfilePage = () => {
   const [user, setUser] = useState(null); // add user state
   const [isLoading, setIsLoading] = useState(true);
   const [groups, setGroups] = useState([]);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -58,6 +62,16 @@ const PublicProfilePage = () => {
     <div className="flex overflow-y-auto">
       <div className="m-4 p-4  bg-white flex flex-col flex-grow">
         <div className="py-8">
+          {/* Add new feature for tags reminder */}
+        {isLoggedIn && userId === loggedInUser._id && (!user.profileTags || user.profileTags.length === 0) && (
+          <div className="fixed w-[280px] right-10 top-120 p-4 bg-blue-100 rounded-lg shadow-lg">
+            <p className="">It seems you haven't added any tags in your profile! Tag yourself can make people find you easily!</p>
+            <Button className="mt-2"
+              onClick={() => navigate(`/user/settings/${user._id}`)}>
+              Go to Settings
+            </Button>
+          </div>
+        )}
           <div className="flex items-center mb-2">
             <img
               className="w-40 h-40 rounded-full mr-4"
@@ -86,8 +100,9 @@ const PublicProfilePage = () => {
                   <ProfileTags key={tag._id} tagName={tag.name} />
                 ))}
               </div>
-              {!user.isVerification && (
-                <div className="ml-3 border-2 rounded-full p-2 border-amber-300 bg-amber-200 text-xs text-gray-400">Your account is not verified. Unverified accounts may not create a group in HeyMate.
+              {isLoggedIn && userId === loggedInUser._id && !user.isVerification && (
+                <div className="ml-3 border-2 rounded-full p-2 border-amber-300 bg-amber-200 text-xs text-gray-400">
+                  Your account is not verified. Unverified accounts may not create a group in HeyMate.
                  Please go to Settings.</div>
               )}
 
