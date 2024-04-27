@@ -112,11 +112,22 @@ function AccountSettingsPage() {
       console.error('Tag name is required.');
       return;
     }
+    // Format input: trim whitespace, replace spaces with hyphens, convert to lower case
+    const formattedTag = newTagName.trim().replace(/\s+/g, '-').toLowerCase();
+    if (tags.length >= 6) {
+      alert('You can only have 6 tags maximum.');
+      return;
+    }
+    // Check if the formatted tag is already in the profileTags
+  if (tags.some(tag => tag.name.toLowerCase() === formattedTag)) {
+    alert('Please add a unique tag.');
+    return;
+  }
     try {
       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/tag`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: newTagName.trim(), isProfileTag: true, isGroupTag: false })
+        body: JSON.stringify({ name: formattedTag, isProfileTag: true, isGroupTag: false })
       });
 
       if (!response.ok) {
@@ -155,7 +166,7 @@ function AccountSettingsPage() {
 
     if (isPasswordChanged && password.length < 8) {
       alert('Password must be at least 8 characters long.');
-      return; 
+      return;
     }
     console.log('Updated user data is:', updatedUserData)
 
@@ -241,14 +252,14 @@ function AccountSettingsPage() {
     }
   };
 
-  const handleVerifyAccount = async() => {
+  const handleVerifyAccount = async () => {
     console.log('Verify account clicked.');
     window.location.href = `${import.meta.env.VITE_API_BASE_URL}/auth/google`;
   };
 
 
   return (
-    <div className="w-4/5 m-4 p-4">
+    <div className=" m-4 p-4">
       <div className="text-3xl mb-5">Account Settings</div>
       {user.isVerification ? (
         <p className="text-gray-400 mb-2">Your account has been verified</p>
@@ -392,7 +403,7 @@ function AccountSettingsPage() {
             </>
           )}
           {/**user's current tags */}
-          <div className="max-w-lg mr-4 flex flex-row">
+          <div className="mr-4 flex flex-row">
             {" "}
             {/**user's tags list */}
             {tags && tags.map((tag, index) => (
