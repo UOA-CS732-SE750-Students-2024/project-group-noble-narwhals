@@ -1,8 +1,8 @@
 /**getTagByIds
- * 通过标签 ID 获取标签名称
- * @param {Array} tagIds - 标签 ID 数组
- * @param {String} baseUrl - Strapi API 的基本 URL
- * @returns {Array} - 包含标签名称的数组
+ * get tag name by tag id
+ * @param {Array} tagIds - tag ID array
+ * @param {String} baseUrl - Strapi API base URL
+ * @returns {Array} - Array of tag names
  * example:
  * const tagIds = [1, 2, 3];
  * const baseUrl = "http://localhost:1337";
@@ -13,7 +13,7 @@ import axios from "axios";
 async function getTagsByIds(tagIds, baseUrl) {
   if (!tagIds || tagIds.length === 0) {
     console.error("Invalid or empty tag IDs");
-    return []; // 返回一个空数组，如果没有标签 ID
+    return []; // return an empty array if there are no tag IDs
   }
   try {
     const tagPromises = tagIds.map(async (tagId) => {
@@ -24,17 +24,17 @@ async function getTagsByIds(tagIds, baseUrl) {
           return tag.name;
         } else {
           console.warn(`No tagName found for tag: ${tagId}`);
-          return ""; // 返回空字符串或者选择不返回任何内容
+          return ""; // return empty string or choose not to return anything
         }
       } catch (error) {
         console.error(`Error retrieving tag data for tagId: ${tagId}`, error);
-        return ""; // 处理错误情况下返回空字符串或者相应的错误信息
+        return ""; // handle error cases by returning an empty string or appropriate error message
       }
     });
 
-    // 使用 Promise.all 等待所有 Promise 完成
+    // use Promise.all to wait for all Promises to complete
     const tags = await Promise.all(tagPromises);
-    return tags.filter((tag) => tag); // 过滤掉空字符串或不正确的值
+    return tags.filter((tag) => tag); // filter out empty strings or incorrect values
   } catch (error) {
     console.error("Error processing tags", error);
     return [];

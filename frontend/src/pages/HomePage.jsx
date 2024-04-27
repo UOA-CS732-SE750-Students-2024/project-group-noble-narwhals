@@ -6,78 +6,153 @@ import axios from "axios";
 import { useAuth } from "../store/AuthContext";
 import getTagsByIds from "../functions/getTagsByIds";
 import getAllTags from "../functions/getAllTags";
-import getSimilarityTags from "../functions/getSimilarityTags";
+import getSimilarityTags from "../functions/tagSimulator";
 
 function HomePage() {
   const { isLoggedIn, user } = useAuth();
-  console.log("login状态", isLoggedIn);
-  console.log("user", user);
   const [groupData, setGroupData] = useState([]);
-  const dummyData = [
-    {
-      title: "Let's test",
-      id: "1kes",
-      dayNum: 5,
-      isFavorite: true,
-      imageLink: [
-        "https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-        "https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.25&w=256&h=256&q=80",
-        "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-      ],
-      num: 5,
-      description:
-        "Type in the group name or course name you are looking for. Type in the group name or course name you are looking for. Type in the group name or course name you are looking for. Type in the group name or course name you are looking for.",
-    },
-    {
-      title: "Go to fishing",
-      id: "4hjdh",
-      dayNum: 1,
-      isFavorite: false,
-      imageLink: [
-        "https://i.pravatar.cc/250?u=mail@ashallendesign.co.uk",
-        "https://www.gravatar.com/avatar/2c7d99fe281ecd3bcd65ab915bac6dd5?s=250",
-        "https://eu.ui-avatars.com/api/?name=John+Doe&size=250",
-        "https://api.dicebear.com/7.x/adventurer-neutral/svg?seed=mail@ashallendesign.co.uk",
-        "https://robohash.org/mail@ashallendesign.co.uk",
-      ],
-      num: 5,
-      description:
-        "Type in the group name or course name you are looking for. Type in the group name or course name you are looking for. Type in the group name or course name you are looking for. Type in the group name or course name you are looking for.",
-    },
-    {
-      title: "Final lucky",
-      id: "3hjdh",
-      dayNum: 3,
-      isFavorite: true,
-      imageLink: [
-        "https://i.pravatar.cc/250?u=mail@ashallendesign.co.uk",
-        "https://www.gravatar.com/avatar/2c7d99fe281ecd3bcd65ab915bac6dd5?s=250",
-        "https://eu.ui-avatars.com/api/?name=John+Doe&size=250",
-        "https://api.dicebear.com/7.x/adventurer-neutral/svg?seed=mail@ashallendesign.co.uk",
-        "https://robohash.org/mail@ashallendesign.co.uk",
-        "https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-      ],
-      num: 6,
-      description:
-        "Type in the group name or course name you are looking for. Type in the group name or course name you are looking for. Type in the group name or course name you are looking for. Type in the group name or course name you are looking for.",
-    },
-  ];
-  const [recommendation, setRecommendation] = useState(null);
-
+  const [allTags, setAllTags] = useState([]);
+  const [userTags, setUserTags] = useState([]);
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   useEffect(() => {
     const getGroups = async () => {
       try {
         const response = await axios.get(`${API_BASE_URL}/api/group`);
-        setGroupData(response.data);
+        const groupsWithImagesAndTags = await Promise.all(
+          response.data.map(async (group) => {
+            const imageLinks = await getGroupImageLink(group, API_BASE_URL);
+            const groupTags = await getTagsByIds(group.groupTags, API_BASE_URL);
+            return { ...group, imageLinks, groupTags };
+          })
+        );
+        setGroupData(
+          handleGroupData(groupsWithImagesAndTags, isLoggedIn, user)
+        );
       } catch (error) {
         console.error(error);
       }
     };
+
+    const fetchAllTags = async () => {
+      try {
+        const tags = await getAllTags(API_BASE_URL);
+        setAllTags(tags);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    const fetchUserTags = async () => {
+      if (user && isLoggedIn && user.profileTags) {
+        try {
+          const tags = await getTagsByIds(user.profileTags, API_BASE_URL);
+          setUserTags(tags);
+        } catch (error) {
+          console.error("Error fetching user tags:", error);
+        }
+      }
+    };
+    fetchUserTags();
     getGroups();
-  }, []);
-  async function getGroupImageLink(group) {
+    fetchAllTags();
+  }, [isLoggedIn, user]);
+  // get the data in groupData which type is group and status is available
+  const groupDataGroup = groupData.filter(
+    (item) => item.groupType === "group" && item.groupStatus === "available"
+  );
+  // get the latest 3 data in groupDataGroup by dayNum
+  const latest3GroupDataGroups = [...groupDataGroup]
+    .sort((a, b) => a.dayNum - b.dayNum)
+    .slice(0, 3);
+  // get the data in groupData which type is activity and status is available
+  const groupDataActivity = groupData.filter(
+    (item) => item.groupType === "activity" && item.groupStatus === "available"
+  );
+  // get the top 3 data in groupDataActivity by dayNum
+  const latest3GroupDataActivities = [...groupDataActivity]
+    .sort((a, b) => a.dayNum - b.dayNum)
+    .slice(0, 3);
+
+  const popularGroupData = groupData
+    .filter((item) => item.groupStatus === "available")
+    .map((item) => {
+      const popular =
+        item.likeNumber * 0.5 +
+        item.num * 0.3 +
+        0.2 / (item.dayNum === 0 ? 1 : item.dayNum);
+      return {
+        ...item,
+        popular: popular,
+      };
+    });
+  // Get the top three groups with the highest popularity
+  const top3PopularGroupData = popularGroupData
+    .sort((a, b) => b.popular - a.popular)
+    .slice(0, 3);
+
+  const [tagRecommendation, setTagRecommendation] = useState([]);
+
+  useEffect(() => {
+    // Assume the user is logged in and needs to get tag recommendations
+    if (user && isLoggedIn) {
+      getSimilarityTags(userTags, allTags, setTagRecommendation);
+    }
+  }, [userTags, allTags]);
+  // 取每组tagRecommendation的前三个tag,将所有tag放入一个数组
+  const extractTopTagsFlatList = (tagData) => {
+    let flatList = [];
+
+    tagData.forEach((data) => {
+      const allTagsWithScore = Object.entries(data.similarity)
+        .map(([key, value]) => ({ name: key, score: value }))
+        .sort((a, b) => b.score - a.score)
+        .filter((_, index) => index < 3); // Get the top three including the main tag
+
+      // Push the main tag and the top two similar tags into flatList
+      if (allTagsWithScore[0].name === data.tag) {
+        flatList.push(
+          data.tag,
+          allTagsWithScore[1].name,
+          allTagsWithScore[2].name
+        );
+      } else {
+        // If the main tag is not the highest score, adjust accordingly
+        flatList.push(
+          data.tag,
+          allTagsWithScore[0].name,
+          allTagsWithScore[1].name
+        );
+      }
+    });
+
+    return flatList;
+  };
+
+  // Then call this function with your data
+  const flatTagList = extractTopTagsFlatList(tagRecommendation); // Replace 'tagRecommendationData' with the actual data
+
+  // 查找包含flatTagList的popularGroupData,选取popular最高的三个group
+  const top3RecommendationGroupData = popularGroupData
+    .map((group) => {
+      // Calculate a weight for each group based on how many tags it contains that are in flatTagList
+      const weight = group.groupTags.reduce((acc, tag) => {
+        if (flatTagList.includes(tag)) {
+          // Increase the accumulator if the tag is found, adjust the increment as needed
+          return acc + 10;
+        }
+        return acc;
+      }, 0);
+
+      // Return the group with an updated popular score based on the weight
+      return {
+        ...group,
+        popular: group.popular + weight,
+      };
+    })
+    // After mapping, sort the groups by their new popular score and take the top three
+    .sort((a, b) => b.popular - a.popular)
+    .slice(0, 3);
+
+  async function getGroupImageLink(group, API_BASE_URL) {
     if (!group || !group.groupMembers) {
       console.error("Invalid group data");
       return []; // Return an empty array if there's no group data or members
@@ -109,84 +184,7 @@ function HomePage() {
       })
     );
 
-    console.log("members_imageLink", members_imageLink);
     return members_imageLink; // This will be an array of strings, each being an avatar URL or an empty string
-  }
-
-  // handle the groupData to make it like dummyData structure
-  function handleGroupData(groupData) {
-    let isFavorite = false;
-    const data = groupData.map((group) => {
-      console.log("group", group);
-      const deadlineDate = group.deadlineDate;
-      const now = new Date();
-      const deadlineDateObj = new Date(deadlineDate);
-      const dayNum =
-        (deadlineDateObj - now) / (1000 * 60 * 60 * 24) > 0
-          ? Math.floor((deadlineDateObj - now) / (1000 * 60 * 60 * 24))
-          : 0;
-
-      const imageLink = getGroupImageLink(group);
-      const num = group.groupMembers.length;
-      if (isLoggedIn) {
-        // find user's likedGroups property to check if the group id is in the likedGroups
-        isFavorite = user.likedGroups.includes(group._id);
-      }
-      const groupTags = getTagsByIds(group.groupTags, API_BASE_URL);
-      return {
-        title: group.groupName,
-        id: group._id,
-        dayNum: dayNum,
-        isFavorite: isFavorite,
-        imageLink: imageLink,
-        num: num,
-        description: group.description,
-        groupType: group.groupType,
-        groupTags: groupTags,
-        numLimit: group.number0fGroupMember,
-        groupStatus: group.groupStatus,
-        likeNumber: group.likeNumber,
-      };
-    });
-    return data;
-  }
-  console.log("handleGroupData", handleGroupData(groupData));
-  // get the data in groupData which type is group and status is available
-  const groupDataGroup = handleGroupData(groupData).filter(
-    (item) => item.groupType === "group" && item.groupStatus === "available"
-  );
-  // get the top 3 data in groupDataGroup by dayNum
-  const top3GroupDataGroup = groupDataGroup
-    .sort((a, b) => a.dayNum - b.dayNum)
-    .slice(0, 3);
-  // get the data in groupData which type is activity and status is available
-  const groupDataActivity = handleGroupData(groupData).filter(
-    (item) => item.groupType === "activity" && item.groupStatus === "available"
-  );
-  // get the top 3 data in groupDataActivity by dayNum
-  const top3GroupDataActivity = groupDataActivity
-    .sort((a, b) => a.dayNum - b.dayNum)
-    .slice(0, 3);
-  console.log("top3GroupDataGroup", top3GroupDataGroup);
-  console.log("top3GroupDataActivity", top3GroupDataActivity);
-
-  const popularGroupData = popularGroups(handleGroupData, groupData);
-  // 取出popular最高的三个group
-  const top3PopularGroupData = popularGroupData
-    .sort((a, b) => b.popular - a.popular)
-    .slice(0, 3);
-  console.log("top3PopularGroupData", top3PopularGroupData);
-  if (user && isLoggedIn) {
-    const userTags = getTagsByIds(user.profileTags, API_BASE_URL);
-    const allTags = getAllTags();
-    const similarityTags = getSimilarityTags(userTags, allTags);
-    // 查找包含similarityTags的group
-    const recommendationGroupData = handleGroupData(groupData).filter(
-      (item) =>
-        item.groupTags.some((tag) => similarityTags.includes(tag)) &&
-        item.groupStatus === "available"
-    );
-    console.log("recommendationGroupData", recommendationGroupData);
   }
 
   return (
@@ -215,44 +213,49 @@ function HomePage() {
             </div>
           </div>
         </div>
-        <Word2VecForm />
         <Gallery
           name="Recommendation"
-          data={dummyData}
-          sendRewardToPersonalizer={sendRewardToPersonalizer}
+          data={isLoggedIn ? top3RecommendationGroupData : top3PopularGroupData}
         />
-        <Gallery
-          name="Groups"
-          data={dummyData}
-          sendRewardToPersonalizer={sendRewardToPersonalizer}
-        />
-        <Gallery
-          name="Activities"
-          data={dummyData}
-          sendRewardToPersonalizer={sendRewardToPersonalizer}
-        />
+        <Gallery name="Groups" data={latest3GroupDataGroups} />
+        <Gallery name="Activities" data={latest3GroupDataActivities} />
       </div>
     </>
   );
 }
 
 export default HomePage;
-function popularGroups(handleGroupData, groupData) {
-  // get the popular group, group 必须available才能被推荐
-  // popular根据用户的喜爱like数、现有成员数和截止日期来判断
-  // 如果用户喜爱like数越多，现有成员数越多，截止日期越近，那么这个group就越popular
-  // popular = like数 * 0.5 + 现有成员数 * 0.3 + 截止日期 * 0.2
-  return handleGroupData(groupData)
-    .filter((item) => item.status === "available") // 只处理状态为 'available' 的小组
-    .map((item) => {
-      console.log("item", item);
-      const popular =
-        item.likeNumber * 0.5 +
-        item.num * 0.3 +
-        0.2 / (item.dayNum === 0 ? 1 : item.dayNum);
-      return {
-        ...item,
-        popular: popular,
-      };
-    });
+
+// handle the groupData to make it like dummyData structure
+function handleGroupData(groupData, isLoggedIn, user) {
+  let isFavorite = false;
+  const data = groupData.map((group) => {
+    const deadlineDate = group.deadlineDate;
+    const now = new Date();
+    const deadlineDateObj = new Date(deadlineDate);
+    const dayNum =
+      (deadlineDateObj - now) / (1000 * 60 * 60 * 24) > 0
+        ? Math.floor((deadlineDateObj - now) / (1000 * 60 * 60 * 24))
+        : 0;
+    const num = group.groupMembers.length;
+    if (isLoggedIn) {
+      // find user's likedGroups property to check if the group id is in the likedGroups
+      isFavorite = user.likedGroups.includes(group._id);
+    }
+    return {
+      title: group.groupName,
+      id: group._id,
+      dayNum: dayNum,
+      isFavorite: isFavorite,
+      imageLink: group.imageLinks,
+      num: num,
+      description: group.description ? group.description : "No content.",
+      groupType: group.groupType,
+      groupTags: group.groupTags,
+      numLimit: group.number0fGroupMember ? group.number0fGroupMember : 0,
+      groupStatus: group.groupStatus,
+      likeNumber: group.likeNumber ? group.likeNumber : 0,
+    };
+  });
+  return data;
 }

@@ -3,7 +3,6 @@ import Group from "../models/groupModel.js";
 import Notification from "../models/notificationModel.js";
 import Tag from "../models/tagModel.js";
 import User from "../models/userModel.js";
-import Event from "../models/eventSchema.js";
 
 export const getApplication = getEntityMiddleware(Application, "Application");
 export const getGroup = getEntityMiddleware(Group, "Group");
