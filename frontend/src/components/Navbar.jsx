@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Button from "./Button";
 import { IoAdd } from "react-icons/io5";
 import { IoMdNotificationsOutline } from "react-icons/io";
@@ -9,6 +9,7 @@ import { useAuth } from "../store/AuthContext";
 import axios from "axios";
 
 function Navbar() {
+  const navigate = useNavigate();
   const { isLoggedIn, user, setIsLoggedIn, setUser } = useAuth();
   const [showSearch, setShowSearch] = useState(true);
   const location = useLocation();
@@ -21,7 +22,9 @@ function Navbar() {
       })
       .then(() => {
         setIsLoggedIn(false);
+        window.localStorage.setItem("isLoggedIn", false);
         setUser(null);
+        navigate("/");
       });
   };
 
@@ -185,10 +188,10 @@ function Navbar() {
                       }`}
                     >
                       <Link
-                        to="/user/profile"
+                        to={`/user/profile/${user._id}`}
                         className="flex flex-row justify-around items-center w-full h-10 hover:bg-gray-200 rounded-lg cursor-pointer"
                       >
-                        <span>Your profile</span>
+                        <span>My profile</span>
                         <BsChevronCompactRight className="w-6 h-6 text-lg font-extrabold" />
                       </Link>
                       <Button onClick={logoutHandler} className="border-1 h-9 ">
