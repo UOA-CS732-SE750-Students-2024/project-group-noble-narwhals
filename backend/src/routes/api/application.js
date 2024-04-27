@@ -2,6 +2,7 @@ import express from 'express';
 import Application from '../../models/applicationModel.js';
 import User from '../../models/userModel.js';
 import mongoose from 'mongoose';
+import User from '../../models/userModel.js';
 import Group from '../../models/groupModel.js';
 import { body, validationResult } from 'express-validator';
 import { getApplication } from '../../middleware/entityMiddleware.js';

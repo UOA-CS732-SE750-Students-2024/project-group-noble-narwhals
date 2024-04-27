@@ -43,7 +43,7 @@ function GroupInfoPage() {
 
         const activityDetails = [
           { icon: <IoMdTime />, text: new Date(data.deadlineDate).toLocaleDateString() },
-          { icon: <MdPeople />, text: `${data.numberOfGroupMember} people wanted` },
+          { icon: <MdPeople />, text: `${data.maxNumber} people wanted` },
           { icon: <IoPricetag />, text: tagsText }
         ];
 

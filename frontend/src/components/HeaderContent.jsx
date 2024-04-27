@@ -151,10 +151,10 @@ function HeaderContent({ groupName, groupTags, postedDate, activityDetails, isHo
     if (window.confirm('Are you sure you want to dismiss this group? This action cannot be undone.')) {
 
       try {
-        const response =  await axios.patch(`http://localhost:3000/api/groups/dismiss/${groupId}`, {
+        const response = await axios.patch(`http://localhost:3000/api/groups/dismiss/${groupId}`, {
           groupStatus: 'dismissed'
         });
-          
+
         alert('Group has been successfully dismissed.');
         navigate('/');
       } catch (error) {
@@ -201,60 +201,67 @@ function HeaderContent({ groupName, groupTags, postedDate, activityDetails, isHo
           </div>
         </div>
         <div className="actions flex flex-col space-y-2">
-        {isHost && (
-    <>
-      <Button className="py-3 px-16" style_type="border" onClick={handleEditGroup}>Edit</Button>
-      {groupStatus !== 'closed' && groupStatus !== 'dismissed' && (
-        <>
-          {!isPastDeadline && (
-            <Button className="py-3 px-16" style_type="border" onClick={handleDismissGroup}>Dismiss Group</Button>
+          {isHost && (
+            <>
+              <Button className="py-3 px-16" style_type="border" onClick={handleEditGroup}>Edit</Button>
+              {groupStatus !== 'closed' && groupStatus !== 'dismissed' && (
+                <>
+                  {!isPastDeadline && (
+                    <Button className="py-3 px-16" style_type="border" onClick={handleDismissGroup}>Dismiss Group</Button>
+                  )}
+                  {isPastDeadline && (
+                    <Button className="py-3 px-16" style_type="border" onClick={handleCloseGroup}>Close Group</Button>
+                  )}
+                </>
+              )}
+              {(groupStatus === 'closed' || groupStatus === 'dismissed' || groupStatus === 'full') && (
+                <div className="py-3 px-16" style_type="border">
+                  {groupStatus === 'closed' ? 'This group is closed' :
+                    (groupStatus === 'dismissed' ? 'This group is dismissed' :
+                      'This group is full')}
+                </div>
+              )}
+            </>
           )}
-          {isPastDeadline && (
-            <Button className="py-3 px-16" style_type="border" onClick={handleCloseGroup}>Close Group</Button>
+          {!isHost && (
+            <>
+              {groupStatus === 'full' ? (
+                <div className="flex flex-col items-center py-3 px-16">
+                  {isGroupMember && (
+                    <Button className="mb-4 py-3 px-16" style_type="border" onClick={handleQuitGroup}>Quit Group</Button>
+                  )}
+                  <div>This group is full</div>
+                </div>
+
+
+
+              ) : groupStatus === 'available' ? (
+                <>
+                  {hasApplied ? (
+                    <Button className="py-3 px-16" style_type="border" onClick={handleCancelApplication}>
+                      Cancel
+                    </Button>
+                  ) : (
+                    <Button className="py-3 px-16" style_type="fill" onClick={handleJoinButtonClick}>
+                      Join
+                    </Button>
+                  )}
+                  <Button className="py-3 px-16 flex items-center" style_type="border" onClick={toggleLike}>
+                    {liked ? <MdFavorite color="red" size="24px" /> : <MdFavoriteBorder size="24px" />}
+                    <span className="ml-1">{liked ? 'Liked' : 'Like'}</span>
+                  </Button>
+                  {isGroupMember && (
+                    <Button className="py-3 px-16" style_type="border" onClick={handleQuitGroup}>Quit Group</Button>
+                  )}
+                </>
+              ) : (
+                <div className="py-3 px-16" style_type="border">
+                  This group is {groupStatus}
+                </div>
+              )}
+            </>
           )}
-        </>
-      )}
-      {(groupStatus === 'closed' || groupStatus === 'dismissed' || groupStatus === 'full') && (
-        <Button className="py-3 px-16" style_type="border" onClick={() => navigate('/')}>
-          {groupStatus === 'closed' ? 'This group is closed' : (groupStatus === 'dismissed' ? 'This group is dismissed' : 'This group is full')}
-        </Button>
-      )}
-    </>
-  )}
-  {!isHost && groupStatus !== 'available' && (
-    <Button className="py-3 px-16" style_type="border" onClick={() => navigate('/')}>
-      This group is {groupStatus}
-    </Button>
-  )}
-  {!isHost  && groupStatus === 'available' && (
-    <>
-      {groupStatus === 'full' ? (
-        <Button className="py-3 px-16" style_type="border" onClick={() => navigate('/')}>
-          This group is full
-        </Button>
-      ) : (
-        <>
-          {hasApplied ? (
-            <Button className="py-3 px-16" style_type="border" onClick={handleCancelApplication}>
-              Cancel
-            </Button>
-          ) : (
-            <Button className="py-3 px-16" style_type="fill" onClick={handleJoinButtonClick}>
-              Join
-            </Button>
-          )}
-          <Button className="py-3 px-16 flex items-center" style_type="border" onClick={toggleLike}>
-            {liked ? <MdFavorite color="red" size="24px" /> : <MdFavoriteBorder size="24px" />}
-            <span className="ml-1">{liked ? 'Liked' : 'Like'}</span>
-          </Button>
-          {isGroupMember && (
-            <Button className="py-3 px-16" style_type="border" onClick={handleQuitGroup}>Quit Group</Button>
-          )}
-        </>
-      )}
-    </>
-  )}
-</div>
+        </div>
 
 
 
