@@ -62,6 +62,7 @@ router.post('/creategroup',
             ownerId: req.user._id, //fix later
             groupStatus: 'available',
             groupType: req.body.type,
+            likeNumber: 0,
         });
 
         try {
