@@ -162,7 +162,7 @@ function Navbar() {
                   }`}
                 >
                   <Link
-                    to="/user/notification"
+                    to={`/user/notification/${user._id}}`}
                     className={`text-xl flex flex-row items-center justify-center gap-1 `}
                   >
                     <IoMdNotificationsOutline />
