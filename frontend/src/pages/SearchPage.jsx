@@ -1,27 +1,40 @@
-import React, { useState } from "react";
-import Button from "../components/Button";
+/**
+ * To navigate to this page with a default keyword:
+ *
+ * import { useNavigate } from "react-router-dom";
+ * const navigate = useNavigate();
+ * const word = "tech";
+ * navigate(`/search`, { state: { keywords: word } });
+ *
+ */
+
+import React, { useEffect, useRef, useState } from "react";
 import LongSearchingBar from "../components/LongSearchingBar";
+import { useLocation } from "react-router-dom";
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "";
 
 /**
  * Search group page
  * @param {*} keywords if navigate form other page with a keyword
  */
-function SearchPage({ keywords }) {
-  // TODO: fetch data by keywords
-  // for test
-  let mykeywords = "CS 732";
+function SearchPage() {
+  const location = useLocation();
+  let mykeywords = location.state ? location.state.keywords : "";
+  // clear the state in location
+  window.history.replaceState({}, document.title);
 
   // Now there are two tpyes of group. We may extend in the future.
   const groupTypes = [
-    { id: 1, name: "Course" },
-    { id: 2, name: "Activity" },
+    { id: 1, name: "group" },
+    { id: 2, name: "activity" },
   ];
 
-  const fetchedData = DummyGroups;
+  let fetchedData = useRef([]);
 
   const [activeTab, setActiveTab] = useState(groupTypes[0].id);
   const [displayedGroups, setDisplayedGroups] = useState(
-    fetchedData.filter((group) => group.type === "Course")
+    fetchedData.current.filter((group) => group.groupType === "group")
   );
   const [keywordList, setKeywordList] = useState(splitKeywords(mykeywords));
 
@@ -41,29 +54,56 @@ function SearchPage({ keywords }) {
    */
   function handleTabBtnClick(tabId, typeName) {
     setActiveTab(tabId);
-
-    const filteredData = fetchedData.filter((group) => group.type === typeName);
+    const filteredData = fetchedData.current.filter(
+      (group) => group.groupType === typeName
+    );
     setDisplayedGroups([...filteredData]);
   }
 
-  function handleSearchBthClick() {
-    //TODO: get data from database
-    // !!! Dummy Data!!!
-
-    //TODO: render result list
-    setActiveTab(groupTypes[0].id);
-    mykeywords = document.getElementById("Search").value;
-    setDisplayedGroups(fetchedData.filter((group) => group.type === "Course"));
-    setKeywordList(splitKeywords(mykeywords));
+  /**
+   * Handler when search btn is clicked
+   */
+  async function handleSearchBthClick() {
+    mykeywords = encodeURIComponent(document.getElementById("Search").value);
+    // get data from database
+    try {
+      await fetch(`${API_BASE_URL}/api/group/search/${mykeywords}`)
+        .then((response) => {
+          if (response.status === 200) {
+            return response.json();
+          } else {
+            throw new Error("Fail");
+          }
+        })
+        .then((json) => {
+          fetchedData.current = json;
+          setActiveTab(groupTypes[0].id);
+          setDisplayedGroups(
+            fetchedData.current.filter((group) => group.groupType === "group")
+          );
+          // set keywords to highlight
+          setKeywordList(splitKeywords(mykeywords));
+        });
+    } catch (error) {
+      return;
+    }
   }
+
+  useEffect(() => {
+    // default search when page loaded
+    handleSearchBthClick();
+  }, []);
 
   return (
     <>
       {/* search box */}
       <div className="w-4/5 mx-auto my-16">
-        <LongSearchingBar />
+        <LongSearchingBar
+          searchBtnClick={handleSearchBthClick}
+          value={mykeywords}
+        />
       </div>
-
+      <input className="appearance-none" max="99" type="number" />
       {/* tab control */}
       <div className="mt-5 flex space-x-5">
         {groupTypes.map((type) => (
@@ -121,12 +161,12 @@ function TabButton({
  */
 function SingleSearchedGroup({ group, keywords }) {
   const pickStatusColor = () => {
-    switch (group.status) {
-      case "Available":
+    switch (group.groupStatus) {
+      case "available":
         return "bg-green-400";
-      case "Full":
+      case "full":
         return "bg-red-400";
-      case "Closed":
+      case "closed":
         return "bg-gray-400";
     }
   };
@@ -148,140 +188,29 @@ function SingleSearchedGroup({ group, keywords }) {
           <span
             className={`${statusColor} inline-block font-thin text-xs text-white p-[2px] w-14 text-center rounded-md mr-1`}
           >
-            {group.status}
+            {group.groupStatus}
           </span>
         </div>
         <div
           className="flex-grow"
           dangerouslySetInnerHTML={{
-            __html: highlightKeywords(group.title, keywords),
+            __html: highlightKeywords(group.groupName, keywords),
           }}
         ></div>
         <div className="font-thin text-gray-400 text-sm">
-          {`Members: ${group.currentMember}/${group.maxMember}`}
+          {`Members: ${group.numberOfGroupMember}/${group.maxNumber}`}
         </div>
       </div>
       <div className="flex justify-start space-x-1 text-xs mt-2 overflow-hidden">
-        {group.tags.map((tag, idx) => (
+        {group.groupTags.map((tag, idx) => (
           <span
             key={idx}
             className="rounded-full px-2 py-1 h-auto bg-hmblue-100 text-hmblue-800 border-hmblue-800 border-[1px]"
           >
-            {tag}
+            {tag.name}
           </span>
         ))}
       </div>
     </div>
   );
 }
-
-// Dummy data
-const DummyGroups = [
-  {
-    type: "Course",
-    status: "Available",
-    maxMember: 6,
-    minMember: 5,
-    currentMember: 4,
-    title: "Hey, CS732 need members here!",
-    content: "We already have a project topic, we still need a tester",
-    tags: ["React", "MongoDB", "COMPSCI732"],
-  },
-  {
-    type: "Activity",
-    status: "Full",
-    maxMember: 6,
-    minMember: 6,
-    currentMember: 6,
-    title: "Hiking Trip",
-    content:
-      "Join us for a fun hiking trip to Mount XYZ. All skill levels welcome!",
-    tags: ["Outdoor", "Hiking", "Nature"],
-  },
-  {
-    type: "Course",
-    status: "Closed",
-    maxMember: 10,
-    minMember: 8,
-    currentMember: 9,
-    title: "Introduction to Python Programming",
-    content:
-      "Learn Python programming language from scratch. No prior experience required.",
-    tags: ["Python", "Programming", "COMPSCI732"],
-  },
-  {
-    type: "Activity",
-    status: "Available",
-    maxMember: 10,
-    minMember: 8,
-    currentMember: 9,
-    title: "Board Game Night",
-    content: "Join us for a night of fun board games and friendly competition.",
-    tags: ["Board Games", "Social", "Fun"],
-  },
-  {
-    type: "Course",
-    status: "Full",
-    maxMember: 8,
-    minMember: 6,
-    currentMember: 8,
-    title: "Advanced JavaScript Workshop",
-    content:
-      "Take your JavaScript skills to the next level with this advanced workshop.",
-    tags: ["JavaScript", "Advanced", "Workshop"],
-  },
-  {
-    type: "Activity",
-    status: "Closed",
-    maxMember: 8,
-    minMember: 8,
-    currentMember: 4,
-    title: "Cooking Class",
-    content:
-      "Learn to cook delicious meals from expert chefs. Limited spots available.",
-    tags: ["Cooking", "Class", "Food"],
-  },
-  {
-    type: "Course",
-    status: "Available",
-    maxMember: 15,
-    minMember: 10,
-    currentMember: 7,
-    title: "Data Science Bootcamp",
-    content:
-      "Join our comprehensive data science bootcamp and kickstart your career.",
-    tags: ["DataScience", "Bootcamp", "Career"],
-  },
-  {
-    type: "Activity",
-    status: "Full",
-    maxMember: 15,
-    minMember: 15,
-    currentMember: 15,
-    title: "Yoga Session",
-    content: "Relax your mind and body with our yoga session. Mats provided.",
-    tags: ["Yoga", "Relaxation", "Health"],
-  },
-  {
-    type: "Course",
-    status: "Closed",
-    maxMember: 20,
-    minMember: 15,
-    currentMember: 20,
-    title: "Artificial Intelligence Masterclass",
-    content:
-      "Explore the latest advancements in AI technology in this masterclass.",
-    tags: ["AI", "Masterclass", "Technology"],
-  },
-  {
-    type: "Activity",
-    status: "Available",
-    maxMember: 20,
-    minMember: 15,
-    currentMember: 15,
-    title: "Photography Workshop",
-    content:
-      "Learn photography techniques from professional photographers. Bring your camera!",
-    tags: ["Photography", "Workshop", "Skills"],
-  },
-];

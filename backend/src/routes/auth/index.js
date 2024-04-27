@@ -36,6 +36,7 @@ router.post("/signup", async (req, res) => {
   const email = req.body.email;
 
   try {
+    
     let checkUser = await User.findOne({ email });
     if (checkUser) {
       return res
@@ -48,6 +49,7 @@ router.post("/signup", async (req, res) => {
     const user = new User({
       name: email.split("@")[0],
       email,
+      gender: "Not specified",
       password: hashedPassword,
       accountType: "email",
       isVerification: false,
@@ -77,6 +79,7 @@ router.get(
   passport.authenticate("google", { scope: ["profile", "email"] })
 );
 
+
 router.get(
   "/google/callback",
   passport.authenticate("google", {
@@ -85,7 +88,7 @@ router.get(
   }),
   (req, res) => {
     if (req.user) {
-      res.redirect(`${process.env.CLIENT_URL}/`);
+      res.redirect(`${process.env.CLIENT_URL}/user/settings/${req.user._id}`);
     } else {
       res.status(500).redirect(`${process.env.CLIENT_URL}/signup`).json({
         success: false,
@@ -96,6 +99,7 @@ router.get(
 );
 
 router.get("/check-session", isLoggedIn, (req, res) => {
+  console.log("check-session", req.user)
   res.json({ isLoggedIn: true, user: req.user });
 });
 

@@ -25,7 +25,7 @@ function CreatGroupPage() {
 
   if (user && !user.isVerification) {
     alert("Please verify your email before creating a group");
-    window.location.href = "/user/settings";
+    window.location.href = `/user/settings/${user._id}`;
   }
 
   // Handle title change event
@@ -162,7 +162,7 @@ function CreatGroupPage() {
 
     // Use Axios to POST request to server
     await axios
-      .post(`${API_BASE_URL}/api/group/creategroup`, formData)
+      .post(`${API_BASE_URL}/api/groups/creategroup`, formData)
       .then((res) => {
         window.location.href = `/group/${res.data._id}`;
       })
