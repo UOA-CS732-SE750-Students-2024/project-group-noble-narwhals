@@ -5,7 +5,6 @@ const groupSchema = new Schema({
     groupName: String,
     createDate: Date,  
     deadlineDate: Date,
-    numberOfGroupMember: Number,
     groupMembers: [{  
         type: Schema.Types.ObjectId,
         ref: 'User'  

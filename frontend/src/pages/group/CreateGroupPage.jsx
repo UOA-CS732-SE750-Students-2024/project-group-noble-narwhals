@@ -25,7 +25,7 @@ function CreatGroupPage() {
 
   if (user && !user.isVerification) {
     alert("Please verify your email before creating a group");
-    window.location.href = "/user/settings";
+    window.location.href = `/user/settings/${user._id}`;
   }
 
   // Handle title change event

@@ -188,7 +188,7 @@ function Navbar() {
                       }`}
                     >
                       <Link
-                        to="/user/profile"
+                        to={`/user/profile/${user._id}`}
                         className="flex flex-row justify-around items-center w-full h-10 hover:bg-gray-200 rounded-lg cursor-pointer"
                       >
                         <span>My profile</span>

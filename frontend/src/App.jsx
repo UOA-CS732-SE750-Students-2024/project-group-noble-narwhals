@@ -32,12 +32,12 @@ function App() {
         <Route path="creategroup" element={<CreateGroupPage />} />
       </Route>
       <Route path="user" element={<LayoutUserPages />}>
-        <Route index element={<Navigate to={"profile"} replace />} />
-        <Route path="profile" element={<PublicProfilePage />} />
-        <Route path="settings" element={<AccountSettingPage />} />
-        <Route path="apply-in-progress" element={<ApplyInProgressPage />} />
-        <Route path="liked" element={<LikedGroupPage />} />
-        <Route path="notification" element={<NotificationPage />} />
+        <Route index element={<Navigate to={"profile/:userId"} replace />} />
+        <Route path="profile/:userId" element={<PublicProfilePage />} />
+        <Route path="settings/:userId" element={<AccountSettingPage />} />
+        <Route path="apply-in-progress/:userId" element={<ApplyInProgressPage />} />
+        <Route path="liked/:userId" element={<LikedGroupPage />} />
+        <Route path="notification/:userId" element={<NotificationPage />} />
       </Route>
     </Routes>
   );
