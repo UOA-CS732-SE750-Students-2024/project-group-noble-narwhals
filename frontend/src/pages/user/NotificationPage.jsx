@@ -63,7 +63,7 @@ function SingleNotification({ notification, idx }) {
 
   async function setRead(notificationId) {
     await fetch(
-      `${API_BASE_URL}/api/notification/user/660624d75d210ffadab318bc/read`,
+      `${API_BASE_URL}/api/notification/66076d40c252a84d7ed94548/read`,
       { method: "PATCH" }
     ).then();
   }
@@ -96,38 +96,3 @@ function SingleNotification({ notification, idx }) {
     </div>
   );
 }
-
-const dummynotifications = [
-  {
-    photoUrl: "",
-    from: "Chelsea",
-    type: "reply",
-    description: "reply you:",
-    notificationContent: "NO, don't choose INFOSYS730,",
-    isRead: "false",
-  },
-  {
-    photoUrl: "",
-    from: "Chelsea",
-    type: "approve",
-    description: "approve your application to:",
-    notificationContent: "Looking for INFOSYS730 teamates.",
-    isRead: "false",
-  },
-  {
-    photoUrl: "",
-    from: "Jennie",
-    type: "request",
-    description: "send you a request for joining:",
-    notificationContent: "Looking for INFOSYS730 teamates.",
-    isRead: "true",
-  },
-  {
-    photoUrl: "",
-    from: "Jennie",
-    type: "close",
-    description: "closed a group:",
-    notificationContent: "Looking for INFOSYS730 teamates.",
-    isRead: "true",
-  },
-];
