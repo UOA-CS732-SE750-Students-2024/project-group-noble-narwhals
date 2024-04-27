@@ -51,7 +51,6 @@ function AccountSettingsPage() {
     );
   } else {
     console.log("user from accountsetting: ", user);
-    console.log("password: ", password)
   }
 
   // if user is not found (is null)
@@ -118,11 +117,18 @@ function AccountSettingsPage() {
       alert('You can only have 6 tags maximum.');
       return;
     }
+
+    // Check tag length constraint
+    if (formattedTag.length > 20) {
+      alert('The tag length should be within 20 characters.');
+      return;
+    }
+
     // Check if the formatted tag is already in the profileTags
-  if (tags.some(tag => tag.name.toLowerCase() === formattedTag)) {
-    alert('Please add a unique tag.');
-    return;
-  }
+    if (tags.some(tag => tag.name.toLowerCase() === formattedTag)) {
+      alert('Please add a unique tag.');
+      return;
+    }
     try {
       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/tag`, {
         method: 'POST',
@@ -259,7 +265,7 @@ function AccountSettingsPage() {
 
 
   return (
-    <div className=" m-4 p-4">
+    <div className="w-4/5 m-4 p-4">
       <div className="text-3xl mb-5">Account Settings</div>
       {user.isVerification ? (
         <p className="text-gray-400 mb-2">Your account has been verified</p>
@@ -344,7 +350,7 @@ function AccountSettingsPage() {
                 </label>
               </>
             ) : (
-              <p className="text-gray-500">{gender}</p>
+              <p className="text-gray-500 ml-1">{gender}</p>
             )}
           </div>
         </div>
@@ -403,7 +409,7 @@ function AccountSettingsPage() {
             </>
           )}
           {/**user's current tags */}
-          <div className="mr-4 flex flex-row">
+          <div className="mr-4 flex flex-row flex-wrap">
             {" "}
             {/**user's tags list */}
             {tags && tags.map((tag, index) => (
