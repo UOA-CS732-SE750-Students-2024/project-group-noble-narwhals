@@ -9,7 +9,8 @@ import isLoggedIn from '../../middleware/authMiddleware.js';
 const router = express.Router();
 
 // Define the array of avatar styles
-export const avatarStyles = ['thumbs', 'fun-emoji', 'adventurer', 'pixel-art-neutral', 'open-peeps', 'lorelei', 'croodles-neutral', 'croodles', 'miniavs', 'avataaars', 'bottts-neutral', 'icons', 'micah'];
+export const avatarStyles = ['thumbs', 'fun-emoji', 'adventurer', 'pixel-art-neutral', 'open-peeps', 'lorelei', 'croodles-neutral', 'croodles', 'miniavs', 'avataaars', 'icons', 'micah'];
+
 
 // get all users
 router.get('/', async (req, res) => {
@@ -84,7 +85,76 @@ router.post('/', async (req, res) => {
 });
 
 
+// initial state about if user likes group or not
+router.get('/:id/likes/:groupId', async (req, res) => {
+    const { id, groupId } = req.params;
 
+    try {
+        const user = await User.findById(id).populate('likedGroups');
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        const isLiked = user.likedGroups.some(group => group._id.toString() === groupId);
+        res.json({ liked: isLiked });
+    } catch (err) {
+        console.error('Error checking if group is liked:', err);
+        res.status(500).json({ message: 'Error processing request', error: err });
+    }
+});
+
+
+// Route to like a group
+router.post('/like/:groupId', async (req, res) => {
+    const { groupId } = req.params;
+    const userId = req.user._id; 
+
+    try {
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Check if the group is already liked by the user
+        if (user.likedGroups.includes(groupId)) {
+            return res.status(400).json({ message: 'Group already liked' });
+        }
+
+        // Add group to user's liked groups
+        user.likedGroups.push(groupId);
+        await user.save();
+        res.status(200).json({ message: 'Group liked successfully' });
+    } catch (error) {
+        console.error('Error liking the group:', error);
+        res.status(500).json({ message: 'Error liking the group', error });
+    }
+});
+
+// // Route to unlike a group
+router.post('/unlike/:groupId', async (req, res) => {
+    const { groupId } = req.params;
+    const userId = req.user._id; 
+
+    try {
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Check if the group is in user's liked groups
+        if (!user.likedGroups.includes(groupId)) {
+            return res.status(400).json({ message: 'Group not previously liked' });
+        }
+
+        // Remove group from user's liked groups
+        user.likedGroups.pull(groupId);
+        await user.save();
+        res.status(200).json({ message: 'Group unliked successfully' });
+    } catch (error) {
+        console.error('Error unliking the group:', error);
+        res.status(500).json({ message: 'Error unliking the group', error });
+    }
+});
 
 
 // update user
