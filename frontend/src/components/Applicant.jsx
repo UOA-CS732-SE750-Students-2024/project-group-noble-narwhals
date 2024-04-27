@@ -98,7 +98,7 @@ function Applicant({
           </Button>
           <Button
             onClick={handleReject}
-            className="w-20 h-9 py-1 px-0 border-0 bg-slate-400 hover:bg-slate-700 text-slate-900"
+            className="w-20 h-9 py-1 px-0 border-none bg-slate-400 hover:bg-slate-700 text-slate-900"
           >
             Reject
           </Button>

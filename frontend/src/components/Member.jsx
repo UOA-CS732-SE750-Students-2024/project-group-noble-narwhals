@@ -69,7 +69,7 @@ function Member({
         {showDeleteButton && (
           <Button
             onClick={() => handleDelete(groupId, memberId)}
-            className="w-24 h-9 py-1 px-0 ml-4  border-0 bg-slate-400 hover:bg-slate-700 text-slate-900"
+            className="w-24 h-9 py-1 px-0 ml-4  bg-slate-400 hover:bg-slate-700 text-slate-900 border-none"
           >
             Delete
           </Button>
