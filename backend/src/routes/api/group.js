@@ -1,8 +1,6 @@
 import express from "express";
 import Group from "../../models/groupModel.js";
-
 import Application from "../../models/applicationModel.js";
-
 import User from "../../models/userModel.js";
 
 import { body, validationResult } from "express-validator";
@@ -97,7 +95,7 @@ router.get("/:id/detail", getGroup, async (req, res) => {
 
 // create a new group
 router.post(
-  "/",
+  "/creategroup",
   [
     body("title").not().isEmpty().withMessage("group name cannot be empty"),
     body("dueDate").optional().isISO8601().toDate(),
@@ -108,6 +106,8 @@ router.post(
   ],
   isVerifiedUser,
   async (req, res) => {
+
+    console.log(0,req.user)
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
@@ -131,16 +131,16 @@ router.post(
       createDate: new Date(),
       deadlineDate: req.body.dueDate,
       maxNumber: req.body.members,
-
       groupMembers: [req.user._id],
-
       groupDescription: req.body.description,
       groupTags: modifiedTags,
-      ownerId: req.user._id, //fix later
+      ownerId: req.user._id, 
       groupStatus: "available",
       groupType: req.body.type,
       likeNumber: 0,
     });
+
+    console.log(2, group);
 
     try {
       const newGroup = await group.save();
