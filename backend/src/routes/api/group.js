@@ -56,7 +56,9 @@ router.post('/creategroup',
             createDate: new Date(),
             deadlineDate: req.body.dueDate,
             maxNumber: req.body.members,
-            groupMembers: [req.user._id],
+
+            groupMembers: [req.user._id], 
+
             groupDescription: req.body.description,
             groupTags: modifiedTags,
             ownerId: req.user._id, //fix later
