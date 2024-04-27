@@ -13,6 +13,11 @@ const groupSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'User'  
     }],
+    application:[{
+        type: Schema.Types.ObjectId,
+        ref: 'Application'
+    }],
+    
     groupDescription: String,
     groupTags:[{
         type: Schema.Types.ObjectId,
@@ -25,7 +30,7 @@ const groupSchema = new Schema({
    
     groupStatus: {
         type: String,
-        enum: ['available', 'closed', 'full']
+        enum: ['available', 'closed', 'dismissed','full']
     },
     groupType: {
         type: String,
