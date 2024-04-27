@@ -64,7 +64,7 @@ const PublicProfilePage = () => {
         <div className="py-8">
           {/* Add new feature for tags reminder */}
         {isLoggedIn && userId === loggedInUser._id && (!user.profileTags || user.profileTags.length === 0) && (
-          <div className="fixed w-[280px] right-10 top-120 p-4 bg-blue-100 rounded-lg shadow-lg">
+          <div className="fixed w-[280px] right-10 bottom-10 p-4 bg-blue-100 rounded-lg shadow-lg">
             <p className="">It seems you haven't added any tags in your profile! Tag yourself can make people find you easily!</p>
             <Button className="mt-2"
               onClick={() => navigate(`/user/settings/${user._id}`)}>
@@ -95,7 +95,7 @@ const PublicProfilePage = () => {
               </div>
 
               <div className="ml-5 mr-5 mb-5 ">Email: {user.email}</div>
-              <div className="flex ml-5 mr-5 mb-5">
+              <div className="flex ml-5 mb-5 flex-wrap">
                 {user.profileTags && user.profileTags.map((tag) => (
                   <ProfileTags key={tag._id} tagName={tag.name} />
                 ))}

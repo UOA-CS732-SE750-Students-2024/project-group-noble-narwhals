@@ -17,6 +17,8 @@ export default function UserGroupBar({ group }) {
         return "bg-red-400";
       case "closed":
         return "bg-gray-400";
+      case "dismissed":
+        return "bg-gray-400";
     }
   };
   const statusColor = pickStatusColor();
