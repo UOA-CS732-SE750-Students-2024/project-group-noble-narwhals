@@ -4,6 +4,7 @@ import LongSearchingBar from "../components/LongSearchingBar";
 import Gallery from "../components/Gallery";
 import axios from "axios";
 import { useAuth } from "../store/AuthContext";
+import getTagsByIds from "../functions/getTagsByIds";
 
 function HomePage() {
   const { isLoggedIn, user } = useAuth();
@@ -60,6 +61,8 @@ function HomePage() {
         "Type in the group name or course name you are looking for. Type in the group name or course name you are looking for. Type in the group name or course name you are looking for. Type in the group name or course name you are looking for.",
     },
   ];
+  const [recommendation, setRecommendation] = useState(null);
+
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   useEffect(() => {
     const getGroups = async () => {
@@ -112,6 +115,7 @@ function HomePage() {
   function handleGroupData(groupData) {
     let isFavorite = false;
     const data = groupData.map((group) => {
+      console.log("group", group);
       const deadlineDate = group.deadlineDate;
       const now = new Date();
       const deadlineDateObj = new Date(deadlineDate);
@@ -126,6 +130,7 @@ function HomePage() {
         // find user's likedGroups property to check if the group id is in the likedGroups
         isFavorite = user.likedGroups.includes(group._id);
       }
+      const groupTags = getTagsByIds(group.groupTags, API_BASE_URL);
       return {
         title: group.groupName,
         id: group._id,
@@ -135,9 +140,10 @@ function HomePage() {
         num: num,
         description: group.description,
         groupType: group.groupType,
-        groupTags: group.groupTags,
+        groupTags: groupTags,
         numLimit: group.number0fGroupMember,
         groupStatus: group.groupStatus,
+        likeNumber: group.likeNumber,
       };
     });
     return data;
@@ -161,6 +167,30 @@ function HomePage() {
     .slice(0, 3);
   console.log("top3GroupDataGroup", top3GroupDataGroup);
   console.log("top3GroupDataActivity", top3GroupDataActivity);
+  // get the popular group, group 必须available才能被推荐
+  // popular根据用户的喜爱like数、现有成员数和截止日期来判断
+  // 如果用户喜爱like数越多，现有成员数越多，截止日期越近，那么这个group就越popular
+  // popular = like数 * 0.5 + 现有成员数 * 0.3 + 截止日期 * 0.2
+  const popularGroupData = handleGroupData(groupData)
+    .filter((item) => item.status === "available") // 只处理状态为 'available' 的小组
+    .map((item) => {
+      console.log("item", item);
+      const popular =
+        item.likeNumber * 0.5 + item.num * 0.3 + (5 - item.dayNum) * 0.2;
+      return {
+        ...item,
+        popular: popular,
+      };
+    });
+  // 取出popular最高的三个group
+  const top3PopularGroupData = popularGroupData
+    .sort((a, b) => b.popular - a.popular)
+    .slice(0, 3);
+  console.log("top3PopularGroupData", top3PopularGroupData);
+  if (user && isLoggedIn) {
+    const userTags = getTagsByIds(user.profileTags, API_BASE_URL);
+  }
+
   return (
     <>
       <div id="main_content" className="">
@@ -187,9 +217,22 @@ function HomePage() {
             </div>
           </div>
         </div>
-        <Gallery name="Recommendation" data={dummyData} />
-        <Gallery name="Groups" data={dummyData} />
-        <Gallery name="Activities" data={dummyData} />
+        <Word2VecForm />
+        <Gallery
+          name="Recommendation"
+          data={dummyData}
+          sendRewardToPersonalizer={sendRewardToPersonalizer}
+        />
+        <Gallery
+          name="Groups"
+          data={dummyData}
+          sendRewardToPersonalizer={sendRewardToPersonalizer}
+        />
+        <Gallery
+          name="Activities"
+          data={dummyData}
+          sendRewardToPersonalizer={sendRewardToPersonalizer}
+        />
       </div>
     </>
   );
