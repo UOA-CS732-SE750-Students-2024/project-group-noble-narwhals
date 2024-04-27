@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { MdPeople } from "react-icons/md";
 import { IoMdTime } from "react-icons/io";
 import { IoPricetag } from "react-icons/io5";
@@ -6,108 +6,154 @@ import Member from "../../components/Member";
 import Applicant from "../../components/Applicant";
 import Description from "../../components/Description";
 import HeaderContent from "../../components/HeaderContent";
-
+import axios from "axios";
+import { useParams } from 'react-router-dom';
+import { useAuth } from "../../store/AuthContext";
 
 function GroupInfoPage() {
+  const { groupId } = useParams();
+  const [groupDetails, setGroupDetails] = useState(null);
+  const [applications, setApplications] = useState([]);
+  const { user } = useAuth();
 
-  const activityDetails = [
-    { icon: IoMdTime, text: "2024-03-30" },
-    { icon: MdPeople, text: "5 people wanted" },
-    { icon: IoPricetag, text: "fishing, BBQ" },
-  ];
-  return (
-    <>
+  useEffect(() => {
+    const fetchGroupDetails = async () => {
+      try {
+        const response = await axios.get(`http://localhost:3000/api/groups/${groupId}/detail`);
+        console.log('response:', response.data)
+        const data = response.data || {};
+        const tagsText = data.groupTags ? data.groupTags.map(tag => tag.name).join(', ') : 'No tags';
+        const ownerId = data.ownerId ? data.ownerId._id : null;
 
-      <div className="content ">
-      
-        <HeaderContent details={activityDetails}  />
-        <Description />
-        <MemberList />
-        <ApplicantList />
+        const isCurrentUserHost = user && user._id === ownerId;
+
+        let members = data.groupMembers || [];
+        if (ownerId && !members.some(member => member._id === ownerId)) {
+          members.unshift({
+            _id: ownerId,
+            name: data.ownerId.name,
+            avatar: data.ownerId.avatar
+          });
+        }
+        if (data.application) {
+          setApplications(data.application);
+        }
+
        
-      </div>
-    
-     
-      
 
-    </>
+        const activityDetails = [
+          { icon: <IoMdTime />, text: new Date(data.deadlineDate).toLocaleDateString() },
+          { icon: <MdPeople />, text: `${data.numberOfGroupMember} people wanted` },
+          { icon: <IoPricetag />, text: tagsText }
+        ];
+
+        setGroupDetails({ ...data, activityDetails, ownerId, isCurrentUserHost });
+      } catch (error) {
+        console.error('Error fetching group details', error);
+        setGroupDetails(null);
+      }
+    };
+
+    
+    fetchGroupDetails();
+  }, [groupId, user]);
+
+  const handleApplicationUpdate = (applicationId, status) => {
+    setApplications(prevApplications => prevApplications.filter(app => app._id !== applicationId));
+    console.log(`Application ${applicationId} was ${status}.`);
+  };
+
+
+  if (!groupDetails) {
+    return <div>Loading...</div>;
+  }
+
+  return (
+
+    <div className="content">
+
+      <HeaderContent
+        groupName={groupDetails.groupName}
+        groupTags={groupDetails.tagsText}
+        postedDate={new Date(groupDetails.createDate).toLocaleDateString()}
+        activityDetails={groupDetails.activityDetails}
+        isHost={groupDetails.isCurrentUserHost}
+        groupId={groupId}
+        groupMembers={groupDetails.groupMembers}
+        deadlineDate={groupDetails.deadlineDate}
+        groupStatus={groupDetails.groupStatus}
+      />
+      <Description description={groupDetails.groupDescription} />
+      <MemberList
+        members={groupDetails.groupMembers || []}
+        ownerId={groupDetails.ownerId}
+        isCurrentUserHost={groupDetails.isCurrentUserHost}
+        groupId={groupId}
+      />
+      <ApplicantList
+        applications={groupDetails.application || []}
+        isCurrentUserHost={groupDetails.isCurrentUserHost}
+        groupId={groupId}
+        onApplicationHandled={handleApplicationUpdate}
+      />
+    </div>
   );
 }
 
 
-function MemberList() {
-  const members = [
-    { username: "username1", role: "Host", avatar: "bg-yellow-400" },
-    { username: "username2", avatar: "bg-pink-600" },
-    { username: "username3", avatar: "bg-blue-400" },
-    { username: "username4", avatar: "bg-yellow-400" },
-  
+function MemberList({ members, ownerId, isCurrentUserHost, groupId }) {
 
- 
-   
-  ];
 
   return (
     <div className="member-list p-6 mt-2">
       <div className="flex justify-between items-center mb-4">
         <h3 className="font-semibold text-2xl">
-          Members
-          <span className="ml-2 text-gray-500">{members.length}/5</span>
+          Members<span className="ml-2 text-gray-500">{members.length}</span>
         </h3>
-
       </div>
       <div className="flex justify space-x-2 overflow-x-auto">
-        {members.map((member, index) => (
-          <Member key={index} {...member} />
+        {members.map((member) => (
+          <Member
+            key={member._id}
+            username={member.name}
+            avatar={member.avatar}
+            role={member._id === ownerId ? 'Host' : 'Member'}
+            ownerId={ownerId}
+            memberId={member._id}
+            isCurrentUserHost={isCurrentUserHost}
+            groupId={groupId}
+          />
         ))}
       </div>
     </div>
   );
 }
 
-function ApplicantList() {
-  const applicants = [
-    { username: "username1", message: "Hi! my name is Chris, I love fishing and BBQ", avatar: "bg-blue-800" },
-    { username: "username2", message: " Hi! my name is Chris, I love fishing and BBQHi! my name is Chris, I love fishing and BBQHi! my name is Chris, I love fishing and BBQHi! my name is Chris, I love fishing and BBQHi! my name is Chris, I love fishing and BBQHi! my name is Chris, I love fishing and BBQHi! my name is Chris, I love fishing and BBQdsaijosda dnauo disao qwoiowueqo dsaioj dsaoiqw dsaioq 111 111 11", avatar: "bg-red-400" },
-    { username: "username3", message: "Message Message Message Message Message Message Message Message Message MessageMessage Message Message Message Message Message Message Message MessageMessage Message Message Message Message Message Message Message Message Message Message Message Message Message Message Message Message Message MessageMessage Message Message Message Message Message3", avatar: "bg-blue-200" },
-    { username: "username4", message: "null", avatar: "bg-yellow-400" },
-    { username: "username5", message: "Message 5", avatar: "bg-green-400" },
-    { username: "username6", message: "Message 6", avatar: "bg-pink-600" },
-    { username: "username7", message: "Message 7", avatar: "bg-blue-400" },
-    { username: "username8", message: "Message 8", avatar: "bg-yellow-400" },
-    { username: "username9", message: "Message 9", avatar: "bg-green-400" },
-    { username: "username10", message: "Message 10", avatar: "bg-blue-800" },
-    { username: "username11", message: "Message 11", avatar: "bg-red-400" },
-    { username: "username12", message: "Message 12", avatar: "bg-blue-200" },
-    { username: "username13", message: "Message 13", avatar: "bg-yellow-400" },
-    { username: "username14", message: "Message 14", avatar: "bg-green-400" },
-    { username: "username15", message: "Message 15", avatar: "bg-pink-600" },
-    { username: "username16", message: "Message 16", avatar: "bg-blue-400" },
-    { username: "username17", message: "Message 17", avatar: "bg-yellow-400" },
-    { username: "username18", message: "Message 18", avatar: "bg-green-400" },
-    { username: "username19", message: "Message 19", avatar: "bg-blue-800" },
-    { username: "username20", message: "Message 20", avatar: "bg-red-400" }
-  ];
+function ApplicantList({ applications, isCurrentUserHost, onApplicationHandled, groupId }) {
 
   return (
     <div className="applicant-list p-6 mt-6">
       <div className="flex justify-between items-center mb-4 sticky top-0 bg-white">
-        <h3 className="font-semibold text-2xl">Applicants
-          <span className="ml-2 text-gray-500">{applicants.length}</span>
-        </h3>
-
+        <h3 className="font-semibold text-2xl">Applicants<span className="ml-2 text-gray-500">{applications.length}</span></h3>
       </div>
       <div className="flex overflow-x-auto">
-        {applicants.map((applicant, index) => (
-          <div key={index} className="first:ml-0 ">
-            <Applicant {...applicant} />
-          </div>
+        {applications.map((application) => (
+          <Applicant
+            key={application._id}
+            username={application.applicantId.name}
+            message={application.message}
+            avatar={application.applicantId.avatar}
+            isHost={isCurrentUserHost}
+            applicationId={application._id}
+            groupId={groupId}
+            onApplicationHandled={onApplicationHandled}
+          />
         ))}
+
       </div>
     </div>
   );
 }
-
 
 
 
