@@ -235,9 +235,10 @@ router.post("/join/:id", getGroup, async (req, res) => {
 
 // quit group by id
 router.post("/quit/:groupId", async (req, res) => {
+  console.log("Quit group route");
   const { groupId } = req.params;
   const userId = req.user._id; // User ID from authentication/session
-
+  console.log("User ID who want to quit the group:", userId);
   const user = await User.findById(userId);
 
   try {
@@ -256,6 +257,7 @@ router.post("/quit/:groupId", async (req, res) => {
 
     await group.save();
     await user.save();
+    console.log("User removed from group successfully");
     res.status(200).json({ message: "Successfully quit the group" });
   } catch (err) {
     res.status(500).json({ message: err.message });

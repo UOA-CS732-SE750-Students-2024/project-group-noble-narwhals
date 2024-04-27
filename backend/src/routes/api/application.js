@@ -1,5 +1,6 @@
 import express from 'express';
 import Application from '../../models/applicationModel.js';
+import User from '../../models/userModel.js';
 import mongoose from 'mongoose';
 import Group from '../../models/groupModel.js';
 import { body, validationResult } from 'express-validator';
@@ -78,7 +79,7 @@ router.patch('/:id', getApplication, async (req, res) => {
 // update application by id in group info page
 router.patch('/applications-with-details/:id', getApplication, async (req, res) => {
     const session = await mongoose.startSession();
-
+    console.log('enter applications-with-details...');
     try {
         session.startTransaction();  // Start the transaction
 
@@ -107,9 +108,11 @@ router.patch('/applications-with-details/:id', getApplication, async (req, res) 
 
         // If application is accepted, add the applicant to the group and remove from applicants
         if (application.applicationStatus === 'accepted' || application.applicationStatus === 'rejected') {
+            console.log('applicationStatus:', application.applicationStatus);
             const group = await Group.findById(application.groupId).session(session);
             if (group) {
                 if (application.applicationStatus === 'accepted') {
+                    console.log('application accepted');
                     group.groupMembers.push(application.applicantId);
                     group.groupApplicants.pull(application.applicantId);
                     group.application.pull(application._id);  // also remove the application reference
