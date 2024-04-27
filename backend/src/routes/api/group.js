@@ -107,7 +107,7 @@ router.post(
   isVerifiedUser,
   async (req, res) => {
 
-    console.log(0,req.user)
+    console.log(0, req.user)
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
@@ -134,7 +134,7 @@ router.post(
       groupMembers: [req.user._id],
       groupDescription: req.body.description,
       groupTags: modifiedTags,
-      ownerId: req.user._id, 
+      ownerId: req.user._id,
       groupStatus: "available",
       groupType: req.body.type,
       likeNumber: 0,
@@ -185,6 +185,8 @@ router.delete("/delete/:id", getGroup, async (req, res) => {
 // Route to remove a member from a group
 router.patch("/remove-member/:id", getGroup, async (req, res) => {
   const memberId = req.body.memberId;
+  const member = await User.findById(memberId);
+
   const group = res.group;
   console.log(`Group ID from URL: ${req.params.id}`); // Check if ID is received correctly
   console.log(`Group from middleware: ${req.group}`); // Check what the middleware found
@@ -200,7 +202,9 @@ router.patch("/remove-member/:id", getGroup, async (req, res) => {
     }
 
     group.groupMembers.splice(index, 1);
+    member.participatingGroups.pull(group._id);
     await group.save();
+    await member.save();
     res.send({ message: "Member removed successfully" });
   } catch (error) {
     console.error("Error in remove-member route:", error);
@@ -220,6 +224,7 @@ router.post("/join/:id", getGroup, async (req, res) => {
   // add user to the group
   res.group.groupMembers.push(userId);
 
+
   try {
     await res.group.save();
     res.json({ message: "User added to the group successfully" });
@@ -233,6 +238,8 @@ router.post("/quit/:groupId", async (req, res) => {
   const { groupId } = req.params;
   const userId = req.user._id; // User ID from authentication/session
 
+  const user = await User.findById(userId);
+
   try {
     const group = await Group.findById(groupId);
     if (!group) {
@@ -244,7 +251,11 @@ router.post("/quit/:groupId", async (req, res) => {
 
     // Remove the user from the groupMembers array
     group.groupMembers.pull(userId);
+    // Remove the group from the user's participatingGroups array
+    user.participatingGroups.pull(groupId);
+
     await group.save();
+    await user.save();
     res.status(200).json({ message: "Successfully quit the group" });
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -254,6 +265,7 @@ router.post("/quit/:groupId", async (req, res) => {
 // Join group by applying to it at group info
 router.post("/join/:id/group", getGroup, async (req, res) => {
   const userId = req.user._id;
+  const user = await User.findById(userId);
 
   // Check if user has already applied
   if (res.group.groupMembers.includes(userId)) {
@@ -276,7 +288,12 @@ router.post("/join/:id/group", getGroup, async (req, res) => {
     // Add user to the group applicants
     res.group.groupApplicants.push(userId);
 
+    // add group to user's applied in progress group list.
+    user.appliedGroups.push(res.group._id);
+
     await res.group.save(); // Save the group with the updated applicants and application list
+    await user.save(); // Save the user with the updated applied group list
+
     res.json({
       message: "User added to the group successfully",
       applicationId: newApplication._id,
@@ -321,12 +338,16 @@ router.post("/cancel-application/:groupId", async (req, res) => {
       applicantId: userId,
     });
 
+    const user = await User.findById(userId);
+
     if (!application) {
       return res.status(404).json({ message: "Application not found" });
     }
 
     // Remove the application document
     await Application.findByIdAndDelete(application._id);
+    // Remove the group from the user's appliedGroups
+    user.appliedGroups.pull(groupId);
 
     // Update the group document
     const group = await Group.findById(groupId);
@@ -347,6 +368,7 @@ router.post("/cancel-application/:groupId", async (req, res) => {
     }
 
     await group.save();
+    await user.save();
     res.json({ message: "Application cancelled successfully" });
   } catch (err) {
     console.error("Failed to cancel application:", err);
@@ -368,11 +390,27 @@ router.patch("/dismiss/:groupId", async (req, res) => {
       return res.status(404).json({ message: "Group not found." });
     }
 
+
     // Check if the user is the host and the group isn't full
     if (
-      group.ownerId.toString() === userId.toString() &&
-      group.groupMembers.length < group.maxNumber
+      group.ownerId.toString() === userId.toString() && group.groupMembers.length < group.maxNumber
     ) {
+      const memberIds = group.groupMembers.map(member => member.toString());
+      const applicantIds = group.groupApplicants.map(applicant => applicant.toString());
+      const userIds = [...new Set([...memberIds, ...applicantIds])]; // Combine and remove duplicates
+
+      // Remove the groupId from participatingGroups and appliedGroups
+      await User.updateMany(
+        { _id: { $in: userIds } },
+        { $pull: { participatingGroups: groupId, appliedGroups: groupId } }
+      );
+
+      // Additionally, remove the groupId from likedGroups of all users who liked this group
+      await User.updateMany(
+        { likedGroups: groupId },
+        { $pull: { likedGroups: groupId } }
+      );
+
       // Setting group status to 'closed' and clearing members and applicants
       group.groupStatus = "dismissed";
       group.groupMembers = []; // Clear all members

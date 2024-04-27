@@ -91,6 +91,8 @@ router.patch('/applications-with-details/:id', getApplication, async (req, res) 
         const allowedUpdates = ['applicationStatus', 'message'];
         const updateFields = Object.keys(updates);
 
+        const applicant = await User.findById(application.applicantId).session(session);
+
         if (!updateFields.every(field => allowedUpdates.includes(field))) {
             await session.abortTransaction();  // Abort transaction if updates are invalid
             session.endSession();
@@ -111,12 +113,18 @@ router.patch('/applications-with-details/:id', getApplication, async (req, res) 
                     group.groupMembers.push(application.applicantId);
                     group.groupApplicants.pull(application.applicantId);
                     group.application.pull(application._id);  // also remove the application reference
+                    
+                    applicant.participatingGroups.push(group._id); // add group to participating groups
+               
                 }
                 await group.save({ session });
             }
 
             // Remove the application record
             await Application.findByIdAndDelete(application._id, { session });
+
+            applicant.appliedGroups.pull(group._id); // remove group from applied groups in User
+            await applicant.save({ session });
 
             // Commit all changes if everything above was successful
             await session.commitTransaction();
