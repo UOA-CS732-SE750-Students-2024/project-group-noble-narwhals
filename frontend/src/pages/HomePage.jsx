@@ -5,6 +5,8 @@ import Gallery from "../components/Gallery";
 import axios from "axios";
 import { useAuth } from "../store/AuthContext";
 import getTagsByIds from "../functions/getTagsByIds";
+import getAllTags from "../functions/getAllTags";
+import getSimilarityTags from "../functions/getSimilarityTags";
 
 function HomePage() {
   const { isLoggedIn, user } = useAuth();
@@ -167,21 +169,8 @@ function HomePage() {
     .slice(0, 3);
   console.log("top3GroupDataGroup", top3GroupDataGroup);
   console.log("top3GroupDataActivity", top3GroupDataActivity);
-  // get the popular group, group 必须available才能被推荐
-  // popular根据用户的喜爱like数、现有成员数和截止日期来判断
-  // 如果用户喜爱like数越多，现有成员数越多，截止日期越近，那么这个group就越popular
-  // popular = like数 * 0.5 + 现有成员数 * 0.3 + 截止日期 * 0.2
-  const popularGroupData = handleGroupData(groupData)
-    .filter((item) => item.status === "available") // 只处理状态为 'available' 的小组
-    .map((item) => {
-      console.log("item", item);
-      const popular =
-        item.likeNumber * 0.5 + item.num * 0.3 + (5 - item.dayNum) * 0.2;
-      return {
-        ...item,
-        popular: popular,
-      };
-    });
+
+  const popularGroupData = popularGroups(handleGroupData, groupData);
   // 取出popular最高的三个group
   const top3PopularGroupData = popularGroupData
     .sort((a, b) => b.popular - a.popular)
@@ -189,6 +178,15 @@ function HomePage() {
   console.log("top3PopularGroupData", top3PopularGroupData);
   if (user && isLoggedIn) {
     const userTags = getTagsByIds(user.profileTags, API_BASE_URL);
+    const allTags = getAllTags();
+    const similarityTags = getSimilarityTags(userTags, allTags);
+    // 查找包含similarityTags的group
+    const recommendationGroupData = handleGroupData(groupData).filter(
+      (item) =>
+        item.groupTags.some((tag) => similarityTags.includes(tag)) &&
+        item.groupStatus === "available"
+    );
+    console.log("recommendationGroupData", recommendationGroupData);
   }
 
   return (
@@ -239,3 +237,22 @@ function HomePage() {
 }
 
 export default HomePage;
+function popularGroups(handleGroupData, groupData) {
+  // get the popular group, group 必须available才能被推荐
+  // popular根据用户的喜爱like数、现有成员数和截止日期来判断
+  // 如果用户喜爱like数越多，现有成员数越多，截止日期越近，那么这个group就越popular
+  // popular = like数 * 0.5 + 现有成员数 * 0.3 + 截止日期 * 0.2
+  return handleGroupData(groupData)
+    .filter((item) => item.status === "available") // 只处理状态为 'available' 的小组
+    .map((item) => {
+      console.log("item", item);
+      const popular =
+        item.likeNumber * 0.5 +
+        item.num * 0.3 +
+        0.2 / (item.dayNum === 0 ? 1 : item.dayNum);
+      return {
+        ...item,
+        popular: popular,
+      };
+    });
+}

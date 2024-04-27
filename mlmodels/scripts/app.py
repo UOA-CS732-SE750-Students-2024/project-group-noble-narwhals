@@ -1,8 +1,10 @@
 from flask import Flask
 from flask import request
 from tagsim import FindTopSimTags
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 @app.post("/tagsim")
 def hello_world():
