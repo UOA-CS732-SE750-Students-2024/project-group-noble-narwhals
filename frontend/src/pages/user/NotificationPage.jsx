@@ -24,7 +24,7 @@ function NotificationPage() {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
       const notifications = await response.json();
-      console.log('Fetched notifications:', notifications); // 打印出获取到的通知
+      console.log('Fetched notifications:', notifications); 
       setNotifications(notifications);
     } catch (error) {
       console.error('Error fetching notifications:', error);
@@ -56,7 +56,7 @@ function NotificationPage() {
       <div className="text-3xl pb-10">Notification</div>
       <div>
         {notifications.map((notification, idx) =>
-          notification.senderId ? ( // 只有当 senderId 存在时才渲染 SingleNotification
+          notification.senderId ? ( // check if senderId is not null
             <SingleNotification key={idx} notification={notification} />
           ) : null
         )}
