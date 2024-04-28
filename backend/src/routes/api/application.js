@@ -109,10 +109,10 @@ router.patch('/applications-with-details/:id', getApplication, async (req, res) 
 
         // If application is accepted, add the applicant to the group and remove from applicants
         if (application.applicationStatus === 'accepted' || application.applicationStatus === 'rejected') {
-            console.log('applicationStatus:', application.applicationStatus);
+           
             const group = await Group.findById(application.groupId).session(session);
             if (group) {
-                console.log('group found:', group);
+               
                 if (application.applicationStatus === 'accepted') {
                     console.log('application accepted');
                     group.groupMembers.push(application.applicantId);

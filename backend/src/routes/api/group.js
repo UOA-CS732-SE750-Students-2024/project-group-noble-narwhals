@@ -286,7 +286,6 @@ router.post("/quit/:groupId", async (req, res) => {
   console.log("Quit group route");
   const { groupId } = req.params;
   const userId = req.user._id; // User ID from authentication/session
-  console.log("User ID who want to quit the group:", userId);
   const user = await User.findById(userId);
 
   try {
@@ -317,7 +316,6 @@ router.post("/quit/:groupId", async (req, res) => {
     await user.save();
     // Save the notification
     await newNotification.save();
-    console.log("User removed from group successfully");
     res.status(200).json({ message: "Successfully quit the group" });
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -327,9 +325,6 @@ router.post("/quit/:groupId", async (req, res) => {
 // Join group by applying to it at group info
 router.post("/join/:id/group", getGroup, async (req, res) => {
   const userId = req.user._id;
-  console.log(`User ID: ${userId}`);
-  console.log(`Group ID: ${req.params.id}`);
-  console.log(`Current Members: ${res.group.groupMembers.length}, Max Members: ${res.group.maxNumber}`);
   const user = await User.findById(userId);
 
   // Check if the user is already a member of the group
