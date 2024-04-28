@@ -12,13 +12,14 @@ function NotificationPage() {
   const navigate = useNavigate();
   const { user, setUser, isLoading, setIsLoading, isLoggedIn } = useAuth();
   const [notifications, setNotifications] = useState([]);
-  
+
 
   /**
    * get all notifications
    */
   async function fetchNotification() {
     try {
+      
       await fetch(
         `${API_BASE_URL}/api/notification/user/${userId}`
       )
@@ -70,6 +71,17 @@ function SingleNotification({ notification, idx }) {
         return "rejected your application to:";
       case "group_started":
         return "";
+      case "new_applicant":
+        return "applied to join:";
+      case "member_quit":
+        return "quit the group:";
+      case "group_updated":
+        return "closed the group:";
+      case "group_dismissed":
+        return "dismissed the group:";
+      case "group_dismissed":
+      case "delete_member":
+        return "removed you from:";
       default:
         return "Said:";
     }
@@ -77,24 +89,22 @@ function SingleNotification({ notification, idx }) {
 
   async function setRead(notificationId) {
     await fetch(
-      `${API_BASE_URL}/api/notification/66076d40c252a84d7ed94548/read`,
+      `${API_BASE_URL}/api/notification/${notificationId}/read`,
       { method: "PATCH" }
     ).then();
   }
   return (
     <div
-      className={`flex justify-between py-2${
-        idx === 0 ? "" : " border-t-2 border-t-hmblue-700"
-      }`}
+      className={`flex justify-between py-2${idx === 0 ? "" : " border-t-2 border-t-hmblue-700"
+        }`}
     >
       {/* avatar */}
       <div className="w-10 h-10 rounded-full mt-1 overflow-hidden border border-hmblue-500">
         <img src={notification.senderId.avatar} />
       </div>
       <div
-        className={`flex-grow ml-3${
-          notification.isRead === "true" ? " text-gray-400" : ""
-        }`}
+        className={`flex-grow ml-3${notification.isRead === "true" ? " text-gray-400" : ""
+          }`}
       >
         {/* notification title */}
         <div className="font-bold text-lg ">

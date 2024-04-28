@@ -1,6 +1,7 @@
 import express from 'express';
 import Application from '../../models/applicationModel.js';
 import User from '../../models/userModel.js';
+import Notification from '../../models/notificationModel.js';
 import mongoose from 'mongoose';
 import Group from '../../models/groupModel.js';
 import { body, validationResult } from 'express-validator';
@@ -111,6 +112,7 @@ router.patch('/applications-with-details/:id', getApplication, async (req, res) 
             console.log('applicationStatus:', application.applicationStatus);
             const group = await Group.findById(application.groupId).session(session);
             if (group) {
+                console.log('group found:', group);
                 if (application.applicationStatus === 'accepted') {
                     console.log('application accepted');
                     group.groupMembers.push(application.applicantId);
@@ -118,9 +120,32 @@ router.patch('/applications-with-details/:id', getApplication, async (req, res) 
                     group.application.pull(application._id);  // also remove the application reference
                     
                     applicant.participatingGroups.push(group._id); // add group to participating groups
-               
+
+                    // Create a new notification for the applicant
+                    const newNotification = new Notification({
+                        notificationContent: `Your application to join group "${group.groupName}" has been accepted.`,
+                        notificationTime: new Date(),
+                        notificationType: 'join_request_accepted',
+                        senderId: group._id,
+                        receiverId: applicant._id
+                    });
+                    await newNotification.save({ session });
                 }
                 await group.save({ session });
+            }else if (application.applicationStatus === 'rejected') {
+                console.log('application rejected');
+                group.groupApplicants.pull(application.applicantId);
+                group.application.pull(application._id);  // also remove the application reference
+
+                // Create a new notification for the applicant
+                const newNotification = new Notification({
+                    notificationContent: `Your application to join group "${group.groupName}" has been rejected.`,
+                    notificationTime: new Date(),
+                    notificationType: 'join_request_rejected',
+                    senderId: group._id,
+                    receiverId: applicant._id
+                });
+                await newNotification.save({ session });
             }
 
             // Remove the application record

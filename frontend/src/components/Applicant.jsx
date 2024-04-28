@@ -23,6 +23,7 @@ function Applicant({ username, message='', avatar, isHost, applicationId,onAppli
         const response = await axios.patch(`http://localhost:3000/api/application/applications-with-details/${applicationId}`, {
             applicationStatus: 'rejected'
         });
+        console.log('Application rejected successfully:', response.data);
         alert('Application rejected successfully!');
         onApplicationHandled(applicationId, 'rejected'); 
     } catch (error) {
