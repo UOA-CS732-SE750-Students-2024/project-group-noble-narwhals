@@ -16,7 +16,6 @@ beforeAll(() => {
 
 //after each test, reset the mock
 afterEach(() => {
-  fireEvent.scroll(window, { target: { scrollY: 0 } });
   axiosMock.reset();
 });
 
