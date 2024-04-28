@@ -5,11 +5,11 @@ function getUserData(Model, entityName) {
     try {
       const entity = await Model.findById(req.params.id)
         .populate({
-          path: 'profileTags', 
+          path: 'profileTags',
           model: 'Tag'
         })
         .populate({
-          path: 'participatingGroups', 
+          path: 'participatingGroups',
           populate: [{
             path: 'groupMembers',
             model: 'User'
@@ -25,7 +25,7 @@ function getUserData(Model, entityName) {
           }]
         })
         .populate({
-          path: 'likedGroups', 
+          path: 'likedGroups',
           populate: [{
             path: 'groupMembers',
             model: 'User'
@@ -41,7 +41,7 @@ function getUserData(Model, entityName) {
           }]
         })
         .populate({
-          path: 'appliedGroups', 
+          path: 'appliedGroups',
           populate: [{
             path: 'groupMembers',
             model: 'User'
@@ -57,13 +57,18 @@ function getUserData(Model, entityName) {
           }]
         });
 
+      console.log("Looking for user ID:", req.params.id);
       if (!entity) {
+        console.log(`User not found with ID ${req.params.id}`);
         return res.status(404).json({ message: `${entityName} not found` });
+      } else {
+        console.log("User found:", entity);
       }
+
 
       res[entityName.toLowerCase()] = entity;
       next();
-      
+
     } catch (err) {
       return res.status(500).json({ message: err.message });
     }
