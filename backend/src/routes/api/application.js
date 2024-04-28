@@ -111,6 +111,12 @@ router.patch('/applications-with-details/:id', getApplication, async (req, res) 
             const group = await Group.findById(application.groupId).session(session);
             if (group) {
                 if (application.applicationStatus === 'accepted') {
+                    if (group.groupMembers.length >= group.maxNumber) {
+                        await session.abortTransaction();
+                        session.endSession();
+                        return res.status(400).json({ message: "Group is full" });
+                    }
+                    
                     group.groupMembers.push(application.applicantId);
                     group.groupApplicants.pull(application.applicantId);
                     group.application.pull(application._id);  // also remove the application reference

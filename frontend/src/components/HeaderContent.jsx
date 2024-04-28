@@ -135,6 +135,9 @@ function HeaderContent({ groupName, groupTags, postedDate, activityDetails, isHo
       navigate('/login');
       return;
     }
+    if (!window.confirm('Are you sure you want to quit the group?')) {
+      return; 
+  }
 
     try {
       const response = await axios.post(`http://localhost:3000/api/groups/quit/${groupId}`, { userId: user._id });
