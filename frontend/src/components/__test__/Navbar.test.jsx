@@ -10,8 +10,8 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import MockAdapter from "axios-mock-adapter";
 import axios from "axios";
 import { MemoryRouter } from "react-router-dom";
-import Navbar from "../../src/components/Navbar";
-import { AuthProvider } from "../../src/store/AuthContext";
+import Navbar from "../Navbar";
+import { AuthProvider } from "../../store/AuthContext";
 
 let axiosMock;
 
@@ -70,12 +70,12 @@ describe("Navbar component", () => {
     expect(inputSearch.value).toBe("test query");
   });
 
-  it("Render correctly when user is not logged in", async () => {
+  it("Render correctly when user is not logged in", () => {
     const context = {
       isLoggedIn: false,
     };
 
-    const { getByText, getAllByAltText, findByText } = render(
+    render(
       <AuthProvider value={context}>
         <MemoryRouter>
           <Navbar />
@@ -84,11 +84,11 @@ describe("Navbar component", () => {
     );
 
     //login & signup button should be displayed
-    expect(getByText("Log in")).toBeInTheDocument();
-    expect(getByText("Sign up")).toBeInTheDocument();
+    expect(screen.getByText("Log in")).toBeInTheDocument();
+    expect(screen.getByText("Sign up")).toBeInTheDocument();
 
     //logo should be displayed
-    expect(getAllByAltText("logo").length).toBeGreaterThan(1);
+    expect(screen.getAllByAltText("logo").length).toBeGreaterThan(1);
   });
 
   it("Render correctly when user is logged in", async () => {
