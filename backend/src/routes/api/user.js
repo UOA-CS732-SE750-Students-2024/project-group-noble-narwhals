@@ -206,42 +206,43 @@ router.patch('/update/:id', getUser, async (req, res) => {
 
 // delete user
 router.delete('/delete/:id', isLoggedIn, getUser, async (req, res) => {
-    const userId = req.params.id; // get the user ID from the request
+    const userId = req.params.id;
     try {
-        console.log("delete user", res.user)
-        //first find all the groups owned by the user
-        const ownedGroups = await Group.find({ ownerId: userId }).select('_id');
-        const ownedGroupIds = ownedGroups.map(group => group._id);
+        console.log("delete user", res.user);
 
-        // delete all the groups owned by the user
+        // Step 1: Retrieve all group IDs that the user has liked
+        const userDoc = await User.findById(userId).select('likedGroups');
+        if (!userDoc) {
+            return res.status(404).json({ message: "User not found." });
+        }
+        const likedGroupIds = userDoc.likedGroups;
+
+        // Step 2: Decrement the likeNumber for each group the user has liked
+        const decrementLikesPromises = likedGroupIds.map(groupId => {
+            return Group.findByIdAndUpdate(groupId, { $inc: { likeNumber: -1 } });
+        });
+        await Promise.all(decrementLikesPromises);
+
+        // Step 3: Perform deletion and updates after ensuring the liked groups are updated
         const ownedGroupsDeletion = Group.deleteMany({ ownerId: userId });
-        console.log("Groups owned by the user have been deleted.");
-        // remove the user from the groupMembers and groupApplicants arrays in all groups
-        const removeFromMembers = Group.updateMany(
-            { groupMembers: userId },
-            { $pull: { groupMembers: userId } }
-        );
-        const removeFromApplicants = Group.updateMany(
-            { groupApplicants: userId },
-            { $pull: { groupApplicants: userId } }
-        );
-        const removeFromLiked = Group.updateMany(
-            { likedGroups: { $in: ownedGroupIds } },
-            { $pull: { likedGroups: { $in: ownedGroupIds } } }
-        );
-        console.log("User has been removed from groupMembers and groupApplicants arrays in all groups.");
-        // wait for all the promises to resolve
-        await Promise.all([ownedGroupsDeletion, removeFromMembers, removeFromApplicants, removeFromLiked]);
-        console.log("Groups owned and references in other groups have been updated.");
-        // delete the user
+        const removeFromMembers = Group.updateMany({ groupMembers: userId }, { $pull: { groupMembers: userId } });
+        const removeFromApplicants = Group.updateMany({ groupApplicants: userId }, { $pull: { groupApplicants: userId } });
+
+        await Promise.all([ownedGroupsDeletion, removeFromMembers, removeFromApplicants]);
+
+        // Finally, delete the user
         await res.user.deleteOne();
-        console.log("User has been deleted");
-        req.logout(function (err) {
-            if (err) { return next(err); }
-            console.log("user has been logged out");
+        req.logout(function(err) {
+            if (err) {
+                console.error("Error during logout:", err);
+                return res.status(500).json({ message: err.message });
+            }
+            console.log("User has been deleted and logged out");
             res.json({ message: 'Deleted User' });
         });
+
     } catch (err) {
+        console.error("Error during user deletion:", err);
         res.status(500).json({ message: err.message });
     }
 });
