@@ -39,4 +39,32 @@ describe("LogAndSign component", () => {
     expect(getByText("Sign up with Google")).toBeInTheDocument();
     expect(getByAltText("logo")).toBeInTheDocument();
   });
+
+  it("log in function correctly ", async () => {
+    const context = {
+      isLoggedIn: true,
+      user: { _id: "123", avatar: "test", name: "Bob" },
+    };
+
+    //mock check-session api
+    axiosMock
+      .onPost(`${import.meta.env.VITE_API_BASE_URL}/auth/login`)
+      .reply(201, context);
+
+    const { getByText, queryByText, getByAltText } = render(
+      <LogAndSign loginType={true} />
+    );
+
+    expect(getByText("Log in with Google")).toBeInTheDocument();
+
+    const emailInput = screen.getByPlaceholderText("E-mail");
+    const passwordInput = screen.getByPlaceholderText("Password");
+    const submitButton = screen.getByText("Log in");
+
+    fireEvent.change(emailInput, { target: { value: "user@example.com" } });
+    fireEvent.change(passwordInput, { target: { value: "password" } });
+    fireEvent.click(submitButton);
+
+    expect(await axiosMock.history.post.length).toBe(1);
+  });
 });
