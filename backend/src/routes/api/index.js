@@ -8,8 +8,6 @@ import autoTagger from "./autoTagger.js";
 
 const router = express.Router();
 
-
-
 router.use("/user", userRouter);
 router.use("/groups", groupRouter);
 router.use("/group", groupRouter);

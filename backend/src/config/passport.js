@@ -12,24 +12,18 @@ export default function passportSetup(passport) {
     callbackURL: "/auth/google/callback",
     passReqToCallback: true  // pass req to callback for req.user
   }, async (req, accessToken, refreshToken, profile, done) => {
-    console.log('Type of req.user before modification:', req.user instanceof mongoose.Document);
     if (req.user) {
-      console.log('User is already logged in,here is req.user:', req.user);
       // check if the user has a googleId
       if (!req.user.googleId) {
-        console.log('No googleId found, linking Google account...');
         // if no googleId, link the account with Google
         req.user.googleId = profile.id;
         req.user.isVerification = true;
-        console.log('req.user after linking:', req.user);
-        console.log('Is Mongoose Document???:', req.user instanceof mongoose.Document);
         await req.user.save();
         return done(null, req.user, { message: 'Google account linked and verified!' });
       } else {
         // if googleId exists, check if the googleId matches the profile id
         if (req.user.googleId === profile.id) {
           req.user.isVerification = true;
-    
           await req.user.save();
           return done(null, req.user, { message: 'Google account verified!' });
         } else {
@@ -85,12 +79,10 @@ export default function passportSetup(passport) {
   );
 
   passport.serializeUser((user, done) => {
-    console.log('Serializing user:', user._id);
     done(null, user._id);
   });
 
   passport.deserializeUser((id, done) => {
-    console.log('Deserializing user by id:', id);
     User.findById(id)
       .populate({
         path: 'profileTags',
@@ -147,7 +139,6 @@ export default function passportSetup(passport) {
       .then((user) => {
         // we directly return the user object, no need to convert to JSON
         // because we are using Mongoose document, and only Mongoose document can be saved to session
-        console.log('Deserialized user:', user);
         return done(null, user);
       })
       .catch((err) => {
