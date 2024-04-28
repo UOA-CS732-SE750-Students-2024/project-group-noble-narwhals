@@ -19,6 +19,8 @@ export default {
           800: "#002a4c",
           900: "#00172a",
         },
+        bg1: "rgba(170, 210, 242, 0.37)",
+        bg2: "rgba(0, 70, 127, 0.4)",
       },
       spacing: {
         mainContent: "1280px",

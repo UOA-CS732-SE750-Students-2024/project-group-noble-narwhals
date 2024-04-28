@@ -1,5 +1,28 @@
 # Dev Notes (look before you start working on the project):
 
+## Test instructions:
+- Remember to run `npm install` in both frontend and backend folders before running the tests.
+- For both frontend and backend, 'cd' to folder and use `npm test` to run the tests.
+- All tests should be written in the `__tests__` folder which is in the same folder as the file you are testing.
+
+### Frontend:
+1. If component contains Link, NavLink, Routes, Outlet, useLocation, useNavigate, useRouteMatch, you need to wrap it with `MemoryRouter`.
+2. If component contains useAuth, you need to wrap it with `AuthProvider`.
+3. if need to test axios, you need to mock axios with `MockAdapter`.
+4. You can use `fireEvent` to simulate events like click, change, submit, etc.
+5. Group tests by `describe`, and use `it` to write individual tests. Each file should have a `describe` block for the component you are testing.
+6. Each file should named as `ComponentName.test.js`.
+
+Every thing mentioned above is already set up in the `/frontend/src/components/__tests__/Navbar.test.js` file, you can just follow the structure and write your tests.
+
+### Backend:
+1. Use `MongoMemoryServer` to create a in-memory database for testing. Which mean it will not connect to the real database.
+2. Use `supertest` to test the API.
+
+Every thing mentioned above is already set up in the `/backend/src/routes/__tests__/user.test.js` file, you can just follow the structure and write your tests.
+
+---
+
 ## Git Workflow:
 
 - Please use the `develop` branch for development work.
@@ -61,4 +84,7 @@ Your team members are:
 # Setup the project:
 - Cd /frontend and run `npm run dev` to start the frontend server
 - Cd /backend and run `npm run dev` to start the backend server(not setup yet).
-````
+
+
+
+
