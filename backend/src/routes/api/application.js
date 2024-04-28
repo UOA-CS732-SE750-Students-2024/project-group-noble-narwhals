@@ -112,6 +112,7 @@ router.patch('/applications-with-details/:id', getApplication, async (req, res) 
            
             const group = await Group.findById(application.groupId).session(session);
             if (group) {
+                console.log('enter application group condition statement...');
                
                 if (application.applicationStatus === 'accepted') {
                     console.log('application accepted');
@@ -126,9 +127,10 @@ router.patch('/applications-with-details/:id', getApplication, async (req, res) 
                         notificationContent: `Your application to join group "${group.groupName}" has been accepted.`,
                         notificationTime: new Date(),
                         notificationType: 'join_request_accepted',
-                        senderId: group._id,
+                        senderId: group.ownerId,
                         receiverId: applicant._id
                     });
+                    console.log('newNotification when accepted:', newNotification);
                     await newNotification.save({ session });
                 }
                 await group.save({ session });
@@ -142,9 +144,10 @@ router.patch('/applications-with-details/:id', getApplication, async (req, res) 
                     notificationContent: `Your application to join group "${group.groupName}" has been rejected.`,
                     notificationTime: new Date(),
                     notificationType: 'join_request_rejected',
-                    senderId: group._id,
+                    senderId: group.ownerId,
                     receiverId: applicant._id
                 });
+                console.log('newNotification when rejected:', newNotification);
                 await newNotification.save({ session });
             }
 

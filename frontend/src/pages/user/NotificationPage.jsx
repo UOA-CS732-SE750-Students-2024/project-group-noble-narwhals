@@ -19,22 +19,15 @@ function NotificationPage() {
    */
   async function fetchNotification() {
     try {
-      
-      await fetch(
-        `${API_BASE_URL}/api/notification/user/${userId}`
-      )
-        .then((response) => {
-          if (response.status === 200) {
-            return response.json();
-          } else {
-            throw new Error("Fail");
-          }
-        })
-        .then((json) => {
-          setNotifications(json);
-        });
+      const response = await fetch(`${API_BASE_URL}/api/notification/user/${userId}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      const notifications = await response.json();
+      console.log('Fetched notifications:', notifications); // 打印出获取到的通知
+      setNotifications(notifications);
     } catch (error) {
-      return;
+      console.error('Error fetching notifications:', error);
     }
   }
 
@@ -47,13 +40,26 @@ function NotificationPage() {
     }
     fetchNotification();
   }, [user]);
+
+  if (isLoading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <img src="/image/Spinner.svg" alt="Loading..." />
+      </div>
+    );
+  } else {
+    console.log("user from accountsetting: ", user);
+  }
+
   return (
     <div className="w-4/5 mx-4 p-4">
       <div className="text-3xl pb-10">Notification</div>
       <div>
-        {notifications.map((notification, idx) => (
-          <SingleNotification key={idx} notification={notification} idx={idx} />
-        ))}
+        {notifications.map((notification, idx) =>
+          notification.senderId ? ( // 只有当 senderId 存在时才渲染 SingleNotification
+            <SingleNotification key={idx} notification={notification} />
+          ) : null
+        )}
       </div>
     </div>
   );
@@ -113,6 +119,7 @@ function SingleNotification({ notification, idx }) {
         </div>
         {/* notification detail */}
         <div className="mt-1">{notification.notificationContent}</div>
+        <div className="mt-1 text-xs text-gray-400">{notification.notificationTime}</div>
       </div>
       <div className="mt-1">
         <Button>Inspect</Button>

@@ -219,7 +219,7 @@ router.patch("/remove-member/:id", getGroup, async (req, res) => {
   const member = await User.findById(memberId);
 
   const group = res.group;
-
+  console.log("delete member from group", group, member);
 
   if (!group) {
     return res.status(404).send({ message: "Group not found" });

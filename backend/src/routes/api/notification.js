@@ -6,9 +6,11 @@ const router = express.Router();
 // get all notifications
 router.get("/user/:userId", async (req, res) => {
   try {
-    const notifications = await Notification.find()
+    const userId = req.params.userId;
+    const notifications = await Notification.find({ receiverId: userId })
       .populate("senderId", ["name", "avatar"]) // fill senderId, select to display username
       .populate("receiverId", "name"); // fill receiverId, select to display username
+      console.log("notifications from back end: ", notifications);
     res.json(notifications);
   } catch (err) {
     res.status(500).json({ message: err.message });
