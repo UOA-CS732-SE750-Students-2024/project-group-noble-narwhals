@@ -1,7 +1,8 @@
 /**
- * Introduction:
+ * Notes:
  * 1. if component contains Link, NavLink, Routes, Outlet, useLocation, useNavigate, useRouteMatch, you need to wrap it with MemoryRouter.
  * 2. if component contains useAuth, you need to wrap it with AuthProvider.
+ * 3. if need to test axios, you need to mock axios with MockAdapter.
  */
 
 import "@testing-library/jest-dom";
@@ -15,10 +16,12 @@ import { AuthProvider } from "../../store/AuthContext";
 
 let axiosMock;
 
+//before all test, create a new instance of MockAdapter
 beforeAll(() => {
   axiosMock = new MockAdapter(axios);
 });
 
+//after each test, reset the mock
 afterEach(() => {
   fireEvent.scroll(window, { target: { scrollY: 0 } });
   axiosMock.reset();
@@ -29,12 +32,8 @@ afterEach(() => {
  */
 describe("Navbar component", () => {
   it("Render <Navbar> ", () => {
-    const context = {
-      isLoggedIn: false,
-    };
-
     const { getByRole } = render(
-      <AuthProvider value={context}>
+      <AuthProvider >
         <MemoryRouter>
           <Navbar />
         </MemoryRouter>
@@ -46,12 +45,8 @@ describe("Navbar component", () => {
   });
 
   it("Search input display and function is ok", () => {
-    const context = {
-      isLoggedIn: false,
-    };
-
     const { getByPlaceholderText, queryByPlaceholderText } = render(
-      <AuthProvider value={context}>
+      <AuthProvider>
         <MemoryRouter>
           <Navbar />
         </MemoryRouter>
@@ -71,12 +66,8 @@ describe("Navbar component", () => {
   });
 
   it("Render correctly when user is not logged in", () => {
-    const context = {
-      isLoggedIn: false,
-    };
-
     render(
-      <AuthProvider value={context}>
+      <AuthProvider >
         <MemoryRouter>
           <Navbar />
         </MemoryRouter>
@@ -103,7 +94,7 @@ describe("Navbar component", () => {
       .reply(201, context);
 
     const { findByText, findByAltText } = render(
-      <AuthProvider value={context}>
+      <AuthProvider>
         <MemoryRouter>
           <Navbar />
         </MemoryRouter>
@@ -118,7 +109,7 @@ describe("Navbar component", () => {
     const avatar = await findByAltText("Avator");
     const parent = avatar.parentElement;
 
-    //click avatar, dropdown should be displayed
+    //click avatar, dropdown should be displayed     
     fireEvent.click(parent);
     expect(await findByText("My profile")).toBeInTheDocument();
     expect(await findByText("Log out")).toBeInTheDocument();

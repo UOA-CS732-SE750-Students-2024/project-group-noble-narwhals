@@ -47,7 +47,7 @@ beforeAll(async () => {
 beforeEach(async () => {
   // Drop existing collections
   await mongoose.connection.db.dropDatabase();
-  await mongoose.connection.db.dropCollection("users");
+  await mongoose.connection.db.dropCollection("users");  //Strange thing here, need to  drop 'users' collection forcely.
   const collUser = await mongoose.connection.db.createCollection("users");
   await collUser.insertMany(users);
 });
