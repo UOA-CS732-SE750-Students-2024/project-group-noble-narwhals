@@ -345,6 +345,12 @@ describe('PATCH /update/:id', () => {
             .expect(404);
     });
 
+    test('should return error when updating user but not owner', async () => {
+        const response = await request(app)
+            .patch(`/api/user/update/${user4._id}`)
+            .send({ email: 'test@example.com' })
+            .expect(403);
+    });
 
 });
 
