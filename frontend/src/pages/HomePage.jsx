@@ -8,6 +8,7 @@ import getAllTags from "../functions/getAllTags";
 import tagSimulator from "../functions/tagSimulator";
 import extractTopTagsFlatList from "../functions/extractTopTagsFlatList";
 import handleGroupData from "../functions/hanldeGroupData";
+import { useNavigate } from "react-router-dom";
 function HomePage() {
   const { isLoggedIn, user } = useAuth();
   const [groupData, setGroupData] = useState([]);
@@ -15,6 +16,13 @@ function HomePage() {
   const [userTags, setUserTags] = useState([]);
   const [tagRecommendation, setTagRecommendation] = useState([]);
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+  const navigate = useNavigate();
+  let word = "";
+  const handleSearchBthClick = () => {
+    word = encodeURIComponent(document.getElementById("Search").value);
+    navigate(`/search`, { state: { keywords: word } });
+    word = "";
+  };
   useEffect(() => {
     const getGroups = async () => {
       try {
@@ -132,7 +140,10 @@ function HomePage() {
               Type in the group name, course name, find your group!
             </p>
             <div className="w-1/2">
-              <LongSearchingBar />
+              <LongSearchingBar
+                searchBtnClick={handleSearchBthClick}
+                value={word}
+              />
             </div>
           </div>
         </div>

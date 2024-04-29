@@ -68,7 +68,7 @@ function GroupInfoPage() {
     };
 
     fetchGroupDetails();
-  }, [groupId, user, applications]);
+  }, [groupId, user]);
 
   const handleApplicationUpdate = (applicationId, status) => {
     setApplications((prevApplications) =>
