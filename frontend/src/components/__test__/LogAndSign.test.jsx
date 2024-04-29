@@ -66,5 +66,6 @@ describe("LogAndSign component", () => {
     fireEvent.click(submitButton);
 
     expect(await axiosMock.history.post.length).toBe(1);
+    expect(await axiosMock.history.post[0].data).toBe(JSON.stringify({email:"user@example.com", password:"password"})) ;
   });
 });

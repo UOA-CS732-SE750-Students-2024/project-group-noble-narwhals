@@ -19,7 +19,7 @@ afterEach(() => {
   axiosMock.reset();
 });
 
-describe("App Router", () => {
+describe("App Router test", () => {
   it("Render login page correctly ", () => {
     const { getByText } = render(
       <AuthProvider>
@@ -99,6 +99,7 @@ describe("App Router", () => {
     expect(getByText("Title")).toBeInTheDocument();
     expect(getByText("Due Date")).toBeInTheDocument();
     expect(getByText("Tags")).toBeInTheDocument();
+    screen.ge
   });
 
 
