@@ -33,6 +33,7 @@ router.get('/userData/:id', getUserData(User, "User"), (req, res) => {
 
 
 router.post('/', async (req, res) => {
+    console.log(req.body); 
     try {
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
@@ -80,7 +81,7 @@ router.post('/', async (req, res) => {
         });
     } catch (err) {
         console.error(err);
-        res.status(400).json({ message: "Error creating user" });
+        res.status(400).json({ message: "Error creating user", error: err.message });
     }
 });
 
@@ -109,9 +110,12 @@ router.post('/like/:groupId', async (req, res) => {
     const { groupId } = req.params;
     const userId = req.user._id;
 
+
     try {
         const group = await Group.findById(groupId);
         const user = await User.findById(userId);
+        console.log("user", user);
+        console.log("group", group);
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
@@ -144,7 +148,7 @@ router.post('/like/:groupId', async (req, res) => {
 router.post('/unlike/:groupId', async (req, res) => {
     const { groupId } = req.params;
     const userId = req.user._id;
-
+   
     try {
         const group = await Group.findById(groupId);
         const user = await User.findById(userId);
@@ -206,7 +210,13 @@ router.patch('/update/:id', getUser, async (req, res) => {
 
 // delete user
 router.delete('/delete/:id', isLoggedIn, getUser, async (req, res) => {
+    console.log("ready to delete user");
     const userId = req.params.id;
+    
+    if (req.user._id.toString() !== userId) {
+        return res.status(403).json({ message: "Unauthorized to delete this user." });
+    }
+
     try {
         console.log("delete user", res.user);
 

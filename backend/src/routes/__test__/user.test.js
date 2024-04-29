@@ -5,12 +5,29 @@ import request from "supertest";
 import mongoose from "mongoose";
 import User from "../../models/userModel";
 import Group from "../../models/groupModel";
+import bcrypt from "bcrypt";
+
+
+/**
+ * 注意：user修改tag的测试文件还没写，因为路由没有挂在api/user下
+ * 我应该会在tag.test.js里面写
+ */
 
 let mongod;
 
 // Create Express server. We don't need to start or stop it ourselves - we'll use the supertest package to manage this for us.
 const app = express();
+app.use(express.json());
+
+app.use((req, res, next) => {
+    req.user = { _id: new mongoose.Types.ObjectId("000000000000000000000003") }; // 模拟用户认证
+    next();
+});
+
+
 app.use("/api/user", router);
+
+
 
 const user1 = {
     _id: new mongoose.Types.ObjectId("000000000000000000000001"),
@@ -170,8 +187,8 @@ describe('GET /api/user/:id', () => {
 describe('GET api/user/userData/:id', () => {
     test('should return user info in details for a valid user ID', async () => {
         const res = await request(app)
-        .get('/api/user/userData/000000000000000000000003')
-        .send();
+            .get('/api/user/userData/000000000000000000000003')
+            .send();
 
         expect(res.status).toBe(200);
         expect(res.body).toHaveProperty('name', 'user3');
@@ -195,3 +212,186 @@ describe('GET api/user/userData/:id', () => {
         }));
     });
 });
+
+describe('POST /api/user', () => {
+
+    test('should create a new user and return the user data', async () => {
+        const newUser = {
+            name: 'Test User',
+            email: 'test@example.com',
+            password: 'password123',
+            accountType: 'email',
+            gender: 'male'
+        };
+
+        const response = await request(app)
+            .post('/api/user')
+            .send(newUser)
+            .expect(201);
+
+        expect(response.body).toHaveProperty('message', 'User created successfully');
+        expect(response.body.user).toHaveProperty('name', newUser.name);
+        expect(response.body.user).toHaveProperty('email', newUser.email);
+        expect(response.body.user).toHaveProperty('gender', newUser.gender);
+        expect(response.body.user).toHaveProperty('accountType', newUser.accountType);
+    });
+});
+
+describe('GET /:id/likes/:groupId', () => {
+
+    test('should able to show whether the group is liked or not?  ', async () => {
+        const likeResponse = await request(app)
+            .get('/api/user/000000000000000000000003/likes/000000000000000000000001')
+            .send();
+
+        expect(likeResponse.status).toBe(200);
+        expect(likeResponse.body).toHaveProperty('liked');
+
+    });
+});
+
+
+describe('POST /like & unlike/:groupId', () => {
+
+    test('should able to like a group', async () => {
+        const likeResponse = await request(app)
+            .post(`/api/user/like/${group2._id.toString()}`)
+            .expect(200);
+
+        expect(likeResponse.body).toHaveProperty('message', 'Group liked successfully');
+
+        const user = await User.findById(user3);
+        expect(user.likedGroups).toContainEqual(group2._id);
+    });
+
+    test('should able to unlike a group', async () => {
+        const unlikeResponse = await request(app)
+            .post(`/api/user/unlike/${group1._id.toString()}`)
+            .expect(200);
+
+        expect(unlikeResponse.body).toHaveProperty('message', 'Group unliked successfully');
+
+        const user = await User.findById(user3);
+        expect(user.likedGroups).not.toContainEqual(group1._id);
+    });
+
+    test('if user like a group which has been liked', async () => {
+        const likeResponse = await request(app)
+            .post(`/api/user/like/${group1._id.toString()}`)
+            .expect(400);
+
+        expect(likeResponse.body).toHaveProperty('message', 'Group already liked');
+    });
+
+    test('if user unlike a group which hasnt been liked', async () => {
+        const unlikeResponse = await request(app)
+            .post(`/api/user/unlike/${group2._id.toString()}`)
+            .expect(400);
+
+        expect(unlikeResponse.body).toHaveProperty('message', 'Group not previously liked');
+    });
+});
+
+describe('PATCH /update/:id', () => {
+
+    test('should update user email correctly', async () => {
+        const updatedEmail = 'newemail@example.com';
+        const response = await request(app)
+            .patch(`/api/user/update/${user3._id.toString()}`)
+            .send({ email: updatedEmail })
+            .expect(200);  // 预期状态码为200
+
+        expect(response.body.email).toBe(updatedEmail);
+    });
+
+    test('should update user username correctly', async () => {
+        const updatedName = 'newName';
+        const response = await request(app)
+            .patch(`/api/user/update/${user3._id.toString()}`)
+            .send({ name: updatedName })
+            .expect(200);  // 预期状态码为200
+
+        expect(response.body.name).toBe(updatedName);
+    });
+
+    test('should update user gender correctly', async () => {
+        const updatedGender = 'newGender';
+        const response = await request(app)
+            .patch(`/api/user/update/${user3._id.toString()}`)
+            .send({ gender: updatedGender })
+            .expect(200);  // 预期状态码为200
+
+        expect(response.body.gender).toBe(updatedGender);
+    });
+
+    test('should update user password correctly', async () => {
+        const updatedPassword = 'newPassword';
+        const response = await request(app)
+            .patch(`/api/user/update/${user3._id.toString()}`)
+            .send({ password: updatedPassword })
+            .expect(200);  // 预期状态码为200
+
+        const updatedUser = await User.findById(user3._id);
+        // compare the updated password (should be encrypted) with the original password
+        const passwordMatch = await bcrypt.compare(updatedPassword, updatedUser.password);
+        expect(passwordMatch).toBe(true);
+    });
+
+    test('should return error when updating non-existent user', async () => {
+        const nonExistentUserId = new mongoose.Types.ObjectId();
+        await request(app)
+            .patch(`/api/user/update/${nonExistentUserId}`)
+            .send({ email: 'test@example.com' })
+            .expect(404);
+    });
+
+
+});
+
+describe('DELETE /delete/:id', () => {
+
+    test('should allow a user to delete their own account', async () => {
+        console.log('user3._id:', user3._id);
+        console.log("going to request", `/api/user/delete/${user3._id}`);
+        const response = await request(app)
+            .delete(`/api/user/delete/${user3._id}`)
+            .expect(200);
+
+        expect(response.body).toHaveProperty('message', 'Deleted User');
+
+        const exists = await User.findById(user4._id);
+        expect(exists).toBeNull();
+    });
+
+    test('should not allow a user to delete other people account', async () => {
+       const response = await request(app)
+            .delete(`/api/user/delete/${user4._id}`)
+            .expect(403);
+
+        expect(response.body).toHaveProperty('message', 'Unauthorized to delete this user.');
+    });
+
+});
+
+describe('POST /regenerate-avatar/:id', () => {
+    test('should regenerate avatar for a user', async () => {
+        const response = await request(app)
+            .post(`/api/user/regenerate-avatar/${user3._id.toString()}`)
+            .expect(200);
+
+        expect(response.body).toHaveProperty('message', 'Avatar updated successfully');
+    });
+
+    test('should return error when regenerating avatar for non-existent user', async () => {
+        const nonExistentUserId = new mongoose.Types.ObjectId();
+        await request(app)
+            .post(`/api/user/regenerate-avatar/${nonExistentUserId}`)
+            .expect(404);
+    });
+
+
+
+});
+
+
+
