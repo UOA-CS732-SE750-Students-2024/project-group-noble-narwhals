@@ -58,30 +58,6 @@ describe("Create group Page test", () => {
   });
 
   it(" Create group function works correctly ", async () => {
-    const context = {
-      isLoggedIn: true,
-      user: { _id: "123", avatar: "test", name: "Bob" },
-    };
-
-    //mock check-session api
-    axiosMock
-      .onGet(`${import.meta.env.VITE_API_BASE_URL}/auth/check-session`)
-      .reply(201, context);
-
-    const data = {
-      _id: "1",
-      title: "test",
-      description: "test",
-      tags: ["test"],
-      dueDate: "2022-12-12",
-      type: "group",
-      members: 6,
-    };
-
-    axiosMock
-      .onPost(`${import.meta.env.VITE_API_BASE_URL}/api/groups/creategroup`)
-      .reply(201, data);
-
     const { getByText, getByPlaceholderText, getByTestId } = render(
       <AuthProvider>
         <MemoryRouter>
