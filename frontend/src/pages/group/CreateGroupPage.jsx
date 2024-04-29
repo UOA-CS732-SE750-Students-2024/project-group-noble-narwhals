@@ -17,7 +17,7 @@ function CreatGroupPage() {
   const [inputTag, setInputTag] = useState(""); //Used to store the value of the input box tag
   const [inputError, setInputError] = useState("");
   const [submitError, setSubmitError] = useState(""); // Used to store the error message when submit
-  const [inputMemNum, setInpuMemNum] = useState();
+  const [inputMemNum, setInputMemNum] = useState("");
   const [inputDueDate, setInputDueDate] = useState("");
   const [inputDescription, setInputDescription] = useState("");
   const [generateStatus, setGenerateStatus] = useState(false);
@@ -114,7 +114,7 @@ function CreatGroupPage() {
       (!isNaN(value) && parseInt(value) >= 0 && parseInt(value) <= 99) ||
       value == ""
     ) {
-      setInpuMemNum(parseInt(value));
+      setInputMemNum(parseInt(value));
     }
   };
 
@@ -203,7 +203,7 @@ function CreatGroupPage() {
               color: randomColor(),
             }))
           );
-          setInpuMemNum(res.data.maxNumber);
+          setInputMemNum(res.data.maxNumber);
           setInputDescription(res.data.groupDescription);
         })
         .catch((err) => {
@@ -287,10 +287,10 @@ function CreatGroupPage() {
             </label>
             <input
               type="number"
+              value={inputMemNum}
               name="members"
               min={0}
               max={99}
-              value={inputMemNum}
               onChange={handleChangeNum}
               className="border-2 border-primary w-1/6 rounded-full h-9 text-center p-0 appearance-none "
               placeholder="0"
