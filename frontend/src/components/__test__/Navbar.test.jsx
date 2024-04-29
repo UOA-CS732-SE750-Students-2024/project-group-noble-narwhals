@@ -39,6 +39,7 @@ describe("Navbar component", () => {
         </MemoryRouter>
       </AuthProvider>
     );
+    
 
     const nav = getByRole("navigation");
     expect(getByRole("navigation").children.length).toBe(1);
