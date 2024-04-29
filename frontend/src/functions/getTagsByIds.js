@@ -12,7 +12,7 @@ import axios from "axios";
 
 async function getTagsByIds(tagIds, baseUrl) {
   if (!tagIds || tagIds.length === 0) {
-    console.error("Invalid or empty tag IDs");
+    console.error("Invalid or empty tag IDs", tagIds);
     return []; // return an empty array if there are no tag IDs
   }
   try {

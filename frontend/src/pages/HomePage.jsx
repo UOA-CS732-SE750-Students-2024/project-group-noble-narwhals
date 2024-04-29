@@ -127,7 +127,6 @@ function HomePage() {
     // After mapping, sort the groups by their new popular score and take the top three
     .sort((a, b) => b.popular - a.popular)
     .slice(0, 3);
-
   return (
     <>
       <div id="main_content" className="">

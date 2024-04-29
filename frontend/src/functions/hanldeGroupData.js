@@ -57,7 +57,9 @@ function handleGroupData(groupData, isLoggedIn, user) {
     const num = group.groupMembers.length;
     if (isLoggedIn) {
       // Find user's likedGroups property to check if the group id is in the likedGroups
-      isFavorite = user.likedGroups.includes(group._id);
+      isFavorite = user.likedGroups.some(
+        (likedGroup) => likedGroup._id === group._id
+      );
     }
     return {
       title: group.groupName,
@@ -66,10 +68,12 @@ function handleGroupData(groupData, isLoggedIn, user) {
       isFavorite: isFavorite,
       imageLink: group.imageLinks,
       num: num,
-      description: group.description ? group.description : "No content.",
+      description: group.groupDescription
+        ? group.groupDescription
+        : "No content.",
       groupType: group.groupType,
       groupTags: group.groupTags,
-      numLimit: group.number0fGroupMember ? group.number0fGroupMember : 0,
+      numLimit: group.maxNumber ? group.maxNumber : 0,
       groupStatus: group.groupStatus,
       likeNumber: group.likeNumber ? group.likeNumber : 0,
     };
