@@ -29,14 +29,13 @@ router.post("/login", (req, res, next) => {
       }
       res.json({ isLoggedIn: true, user: user });
     });
-  })(req,res,next);
+  })(req, res, next);
 });
 
 router.post("/signup", async (req, res) => {
-  const email = req.body.email;
-
   try {
-    
+    const email = req.body.email;
+
     let checkUser = await User.findOne({ email });
     if (checkUser) {
       return res
@@ -45,7 +44,6 @@ router.post("/signup", async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
-
     const user = new User({
       name: email.split("@")[0],
       email,
@@ -60,7 +58,6 @@ router.post("/signup", async (req, res) => {
     const avatarUrl = `https://api.dicebear.com/8.x/${selectedStyle}/svg?seed=${user._id}`;
     user.avatar = avatarUrl;
 
-    console.log("1", user);
     await user.save();
     res
       .status(201)
@@ -78,7 +75,6 @@ router.get(
   "/google",
   passport.authenticate("google", { scope: ["profile", "email"] })
 );
-
 
 router.get(
   "/google/callback",
@@ -99,7 +95,7 @@ router.get(
 );
 
 router.get("/check-session", isLoggedIn, (req, res) => {
-  console.log("check-session", req.user)
+  console.log("check-session", req.user);
   res.json({ isLoggedIn: true, user: req.user });
 });
 

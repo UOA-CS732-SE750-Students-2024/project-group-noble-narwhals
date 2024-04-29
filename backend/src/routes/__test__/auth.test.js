@@ -1,21 +1,43 @@
 import express from "express";
-import router from "../api/user";
+import routes from "../auth";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import request from "supertest";
 import mongoose from "mongoose";
+import session from "express-session";
+import passport from "passport";
+import passportSetup from "../../config/passport";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 let mongod;
 
 // Create Express server. We don't need to start or stop it ourselves - we'll use the supertest package to manage this for us.
 const app = express();
-app.use("/auth", router);
+app.use(express.json());
+app.use(
+  session({
+    secret: test,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      httpOnly: true,
+      secure: false,
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+    },
+  })
+);
+app.use(passport.initialize());
+app.use(passport.session());
+passportSetup(passport);
+app.use("/", routes);
 
 const user1 = {
   _id: new mongoose.Types.ObjectId("000000000000000000000001"),
   name: "user1",
   accountType: "email",
   email: "test1@11.com",
-  password: "asdfasdfalskdfjl23kfjl23",
+  password: "$2b$10$HCyAJOUIeao6emACL01rreyvS6RixMxHxYoK.XpMkwXGMTDjgpQBK",
   isVerification: false,
   avatar: "test",
   gender: "male",
@@ -26,7 +48,7 @@ const user2 = {
   name: "user2",
   accountType: "email",
   email: "test2@11.com",
-  password: "asdfasdfalskdfjl23kfjl23",
+  password: "$2b$10$HCyAJOUIeao6emACL01rreyvS6RixMxHxYoK.XpMkwXGMTDjgpQBK",
   isVerification: false,
   avatar: "test2",
   gender: "male",
@@ -47,7 +69,11 @@ beforeAll(async () => {
 beforeEach(async () => {
   // Drop existing collections
   await mongoose.connection.db.dropDatabase();
-  await mongoose.connection.db.dropCollection("users");  //Strange thing here, need to  drop 'users' collection forcely.
+  const collections = await mongoose.connection.db.listCollections().toArray();
+  for (let collection of collections) {
+    await mongoose.connection.db.dropCollection(collection.name);
+  }
+
   const collUser = await mongoose.connection.db.createCollection("users");
   await collUser.insertMany(users);
 });
@@ -61,18 +87,58 @@ afterAll(async () => {
 });
 
 describe("POST singup from /signup ", (done) => {
-  it("Sign up", async () => {
-    const content ={
-        email: 'test@test.com',
-        password: '12345678'
-    }
+  it("Sign up correctly", async () => {
+    const data = {
+      email: "test@test.com",
+      password: "12345678",
+    };
 
-    const res = await request(app).post("/signup").send(content).expect(201);
-    const userFromApi = res.body;
+    const res = await request(app).post("/signup").send(data).expect(201);
+    const message = res.body;
 
-    
-    expect(userFromApi).toBeTruthy();
-    expect(userFromApi.length).toBe(2);
+    expect(message).toBeTruthy();
+    expect(message.success).toBe(true);
+  });
 
+  it("Sign up with exist user", async () => {
+    const data = {
+      email: "test1@11.com",
+      password: "12345678",
+    };
+
+    const res = await request(app).post("/signup").send(data).expect(400);
+    const message = res.body;
+
+    expect(message).toBeTruthy();
+    expect(message.success).toBe(false);
+  });
+});
+
+describe("POST login from /login ", (done) => {
+  it("Login with wrong email", async () => {
+    const data = {
+      email: "test12@11.com",
+      password: "12345678",
+    };
+
+    const res = await request(app).post("/login").send(data).expect(401);
+    const message = res.body;
+
+    expect(message).toBeTruthy();
+    expect(message.success).toBe(false);
+  });
+
+  it("Login with right information", async () => {
+    const data = {
+      email: "test1@11.com",
+      password: "12345678",
+    };
+
+    const res = await request(app).post("/login").send(data).expect(200);
+    const message = res.body;
+
+    expect(message).toBeTruthy();
+    expect(message.isLoggedIn).toBe(true);
+    expect(message.user._id).toBe("000000000000000000000001");
   });
 });

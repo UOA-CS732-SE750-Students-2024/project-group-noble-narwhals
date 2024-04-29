@@ -47,7 +47,11 @@ beforeAll(async () => {
 beforeEach(async () => {
   // Drop existing collections
   await mongoose.connection.db.dropDatabase();
-  await mongoose.connection.db.dropCollection("users");  //Strange thing here, need to  drop 'users' collection forcely.
+  const collections = await mongoose.connection.db.listCollections().toArray();
+  for (let collection of collections) {
+    await mongoose.connection.db.dropCollection(collection.name);
+  }
+
   const collUser = await mongoose.connection.db.createCollection("users");
   await collUser.insertMany(users);
 });
@@ -72,7 +76,7 @@ describe("GET user from /api/user ", (done) => {
     expect(userFromApi[0].email).toBe("test1@11.com");
     expect(userFromApi[0].accountType).toBe("email");
     expect(userFromApi[0].gender).toBe("male");
-  
+
     expect(userFromApi[1].gender).toBe("male");
     expect(userFromApi[1].avatar).toBe("test2");
     expect(userFromApi[1].isVerification).toBe(false);
