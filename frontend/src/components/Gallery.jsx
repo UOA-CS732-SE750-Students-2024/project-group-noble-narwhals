@@ -20,7 +20,8 @@ const Gallery = ({ name, data }) => {
               dayNum={item.dayNum}
               isFavorite={item.isFavorite}
               imageLink={item.imageLink}
-              num={item.numLimit}
+              num={item.num}
+              numLimit={item.numLimit}
               description={item.description}
             />
           ))}

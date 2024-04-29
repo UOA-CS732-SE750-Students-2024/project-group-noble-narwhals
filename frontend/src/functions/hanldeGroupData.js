@@ -1,3 +1,5 @@
+import { getGroup } from "../../../backend/src/middleware/entityMiddleware";
+
 /**
  * Handle the groupData to make it like dummyData structure
  * @param {Array} groupData - Array of group data
@@ -40,12 +42,14 @@
  * const data = handleGroupData(groupData, isLoggedIn, user);
  * console.log(data);
  */
+import getGroupImageLink from "./getGroupImageLink";
 function handleGroupData(groupData, isLoggedIn, user) {
   if (!Array.isArray(groupData)) {
     console.error("Invalid groupData: ", groupData);
     return []; // Return an empty array or handle the error as appropriate
   }
   let isFavorite = false;
+  const members_imageLinks = [];
   const data = groupData.map((group) => {
     const deadlineDate = group.deadlineDate;
     const now = new Date();
@@ -61,12 +65,13 @@ function handleGroupData(groupData, isLoggedIn, user) {
         (likedGroup) => likedGroup._id === group._id
       );
     }
+    const members_imageLink = getGroupImageLink(group);
     return {
       title: group.groupName,
       id: group._id,
       dayNum: dayNum,
       isFavorite: isFavorite,
-      imageLink: group.imageLinks,
+      imageLink: members_imageLink,
       num: num,
       description: group.groupDescription
         ? group.groupDescription

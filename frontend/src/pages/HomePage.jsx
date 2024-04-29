@@ -4,10 +4,8 @@ import LongSearchingBar from "../components/LongSearchingBar";
 import Gallery from "../components/Gallery";
 import axios from "axios";
 import { useAuth } from "../store/AuthContext";
-import getTagsByIds from "../functions/getTagsByIds";
 import getAllTags from "../functions/getAllTags";
 import tagSimulator from "../functions/tagSimulator";
-import getGroupImageLink from "../functions/getGroupImageLink";
 import extractTopTagsFlatList from "../functions/extractTopTagsFlatList";
 import handleGroupData from "../functions/hanldeGroupData";
 function HomePage() {
@@ -17,21 +15,11 @@ function HomePage() {
   const [userTags, setUserTags] = useState([]);
   const [tagRecommendation, setTagRecommendation] = useState([]);
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
   useEffect(() => {
     const getGroups = async () => {
       try {
         const response = await axios.get(`${API_BASE_URL}/api/group`);
-        const groupsWithImagesAndTags = await Promise.all(
-          response.data.map(async (group) => {
-            const imageLinks = await getGroupImageLink(group, API_BASE_URL);
-            const groupTags = await getTagsByIds(group.groupTags, API_BASE_URL);
-            return { ...group, imageLinks, groupTags };
-          })
-        );
-        setGroupData(
-          handleGroupData(groupsWithImagesAndTags, isLoggedIn, user)
-        );
+        setGroupData(handleGroupData(response.data, isLoggedIn, user));
       } catch (error) {
         console.error(error);
       }
@@ -45,21 +33,16 @@ function HomePage() {
         console.error(error);
       }
     };
-    const fetchUserTags = async () => {
-      if (user && isLoggedIn && user.profileTags) {
-        try {
-          const tags = await getTagsByIds(user.profileTags, API_BASE_URL);
-          setUserTags(tags);
-        } catch (error) {
-          console.error("Error fetching user tags:", error);
-        }
-      }
-    };
-    fetchUserTags();
+    if (user && isLoggedIn && user.profileTags) {
+      const tags = [];
+      user.profileTags.map((tag) => {
+        tags.push(tag.name);
+      });
+      setUserTags(tags);
+    }
     getGroups();
     fetchAllTags();
   }, [isLoggedIn, user]);
-
   // Get the data in groupData which type is group and status is available
   const groupDataGroup = groupData.filter(
     (item) => item.groupType === "group" && item.groupStatus === "available"
