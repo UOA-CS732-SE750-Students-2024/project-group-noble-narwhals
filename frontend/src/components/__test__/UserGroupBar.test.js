@@ -4,8 +4,7 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import MockAdapter from "axios-mock-adapter";
 import axios from "axios";
 import { MemoryRouter } from "react-router-dom";
-import UserPageSideBar from "../UserPageSideBar";
-import Navbar from "../Navbar";
+import UserGroupBar from "../UserGroupBar";
 import { AuthProvider } from "../../store/AuthContext";
 
 
@@ -26,21 +25,12 @@ afterEach(() => {
  * Test for UserPageSideBar component
  */
 
-describe('UserPageSideBar component', () => {
-    it('renders sidebar options correctly for logged in user', () => {
-        const { getByAltText, getByRole } = render(
-            <AuthProvider>
-                <MemoryRouter>
-                    <Navbar />
-                    <UserPageSideBar />
-                </MemoryRouter>
-            </AuthProvider>
-        );
 
-        const element = screen.getByRole("navigation");
-        expect(element).toBeInTheDocument();
-        
+describe("UserGroupBar component", () => {
+    it("Render UserGroupBar correctly ", () => {
+        const { getByText, getByRole } = render(<UserGroupBar />);
+  
+        expect(getByRole("navigation")).toBeInTheDocument();
     });
-
-
-});
+    }
+);

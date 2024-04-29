@@ -20,7 +20,7 @@ const app = express();
 app.use(express.json());
 
 app.use((req, res, next) => {
-    req.user = { _id: new mongoose.Types.ObjectId("000000000000000000000003") }; // 模拟用户认证
+    req.user = { _id: new mongoose.Types.ObjectId("000000000000000000000003") }; 
     next();
 });
 
