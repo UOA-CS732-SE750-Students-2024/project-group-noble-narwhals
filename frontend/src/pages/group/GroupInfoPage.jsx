@@ -136,7 +136,7 @@ function ApplicantList({ applications, isCurrentUserHost, onApplicationHandled, 
       <div className="flex justify-between items-center mb-4 sticky top-0 bg-white">
         <h3 className="font-semibold text-2xl">Applicants<span className="ml-2 text-gray-500">{applications.length}</span></h3>
       </div>
-      <div className="flex overflow-x-auto">
+      <div className="flex overflow-x-auto gap-2">
         {applications.map((application) => (
           <Applicant
             key={application._id}
