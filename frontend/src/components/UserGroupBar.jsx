@@ -24,18 +24,21 @@ export default function UserGroupBar({ group }) {
   const statusColor = pickStatusColor();
 
   const calculateTimeLeft = () => {
-    // use dayjs to calculate the time left
+    // check if the group is closed
+    if (group.groupStatus === 'closed') {
+      return 'Expired';
+    }
+
+    // if the group is not closed, calculate the time left
     const deadline = dayjs(group.deadlineDate);
     const now = dayjs();
 
-    if (deadline.isBefore(now)) {
-      return 'Expired';
-    } else {
-      return deadline.from(now);
-    }
+    return deadline.from(now);
+
   };
 
   const timeLeft = calculateTimeLeft();
+
 
   const handleGroupClick = () => {
     navigate(`/group/${group._id}`);
@@ -74,26 +77,26 @@ export default function UserGroupBar({ group }) {
           {" "}
           {/* Flex container for Owner */}
           <div className="w-1/2 max-w-full">
-       
-              <div className="max-w-full flex flex-row justify-center items-center gap-3">
-                <span>
-                  <img className="w-8 h-8 rounded-full"
-                    src={group.ownerId.avatar} />
-                </span>
-                <span className="text-gray-400 flex-wrap ">{group.ownerId.name}</span>
-                {/* </div>
+
+            <div className="max-w-full flex flex-row justify-center items-center gap-3">
+              <span>
+                <img className="w-8 h-8 rounded-full"
+                  src={group.ownerId.avatar} />
+              </span>
+              <span className="text-gray-400 flex-wrap ">{group.ownerId.name}</span>
+              {/* </div>
 
 
 
           <div className="flex flex-col items-center font-thin text-gray-400 text-sm gap-4"> Flex container for Members */}
-                <span className='text-gray-400'>{`[${group.groupMembers.length}/${group.maxNumber}]`}</span>
-                <div className="flex flex-col items-center">
-                  {" "}
-                  {/* Flex container for Deadline */}
-                  <span className='text-gray-400'>{timeLeft}</span>
-                </div>
+              <span className='text-gray-400'>{`[${group.groupMembers.length}/${group.maxNumber}]`}</span>
+              <div className="flex flex-col items-center">
+                {" "}
+                {/* Flex container for Deadline */}
+                <span className='text-gray-400'>{timeLeft}</span>
               </div>
-         
+            </div>
+
           </div>
         </div>
       </div>

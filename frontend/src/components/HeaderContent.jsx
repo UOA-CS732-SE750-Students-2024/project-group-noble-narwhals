@@ -155,7 +155,9 @@ function HeaderContent({ groupName, groupTags, postedDate, activityDetails, isHo
     if (window.confirm('Are you sure you want to dismiss this group? This action cannot be undone.')) {
 
       try {
+
         const response = await axios.patch(`${apiBaseUrl}/api/groups/dismiss/${groupId}`, {
+
           groupStatus: 'dismissed'
         });
 

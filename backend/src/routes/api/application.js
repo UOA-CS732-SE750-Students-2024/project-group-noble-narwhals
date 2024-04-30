@@ -1,5 +1,7 @@
 import express from 'express';
 import Application from '../../models/applicationModel.js';
+import User from '../../models/userModel.js';
+import Notification from '../../models/notificationModel.js';
 import mongoose from 'mongoose';
 import User from '../../models/userModel.js';
 import Group from '../../models/groupModel.js';
@@ -8,7 +10,6 @@ import { getApplication } from '../../middleware/entityMiddleware.js';
 const router = express.Router();
 
 // get all applications
-
 
 router.get('/', async (req, res) => {
     try {
@@ -51,8 +52,6 @@ router.post('/',
     }
 );
 
-
-
 // update application by id
 router.patch('/:id', getApplication, async (req, res) => {
     const updates = Object.keys(req.body);
@@ -62,7 +61,6 @@ router.patch('/:id', getApplication, async (req, res) => {
     if (!isValidOperation) {
         return res.status(400).send({ error: 'Invalid updates!' });
     }
-
     try {
         updates.forEach((update) => {
             res.application[update] = req.body[update];
@@ -74,12 +72,10 @@ router.patch('/:id', getApplication, async (req, res) => {
     }
 });
 
-
-
 // update application by id in group info page
 router.patch('/applications-with-details/:id', getApplication, async (req, res) => {
     const session = await mongoose.startSession();
-
+    console.log('enter applications-with-details...');
     try {
         session.startTransaction();  // Start the transaction
 
@@ -108,23 +104,54 @@ router.patch('/applications-with-details/:id', getApplication, async (req, res) 
 
         // If application is accepted, add the applicant to the group and remove from applicants
         if (application.applicationStatus === 'accepted' || application.applicationStatus === 'rejected') {
+           
             const group = await Group.findById(application.groupId).session(session);
             if (group) {
+                console.log('enter application group condition statement...');
+               
                 if (application.applicationStatus === 'accepted') {
+
                     if (group.groupMembers.length >= group.maxNumber) {
                         await session.abortTransaction();
                         session.endSession();
                         return res.status(400).json({ message: "Group is full" });
                     }
-                    
+
                     group.groupMembers.push(application.applicantId);
                     group.groupApplicants.pull(application.applicantId);
                     group.application.pull(application._id);  // also remove the application reference
                     
                     applicant.participatingGroups.push(group._id); // add group to participating groups
-               
+
+
+                    // Create a new notification for the applicant
+                    const newNotification = new Notification({
+                        notificationContent: `Your application to join group "${group.groupName}" has been accepted.`,
+                        notificationTime: new Date(),
+                        notificationType: 'join_request_accepted',
+                        senderId: group.ownerId,
+                        receiverId: applicant._id
+                    });
+                    console.log('newNotification when accepted:', newNotification);
+                    await newNotification.save({ session });
+
                 }
                 await group.save({ session });
+            }else if (application.applicationStatus === 'rejected') {
+                console.log('application rejected');
+                group.groupApplicants.pull(application.applicantId);
+                group.application.pull(application._id);  // also remove the application reference
+
+                // Create a new notification for the applicant
+                const newNotification = new Notification({
+                    notificationContent: `Your application to join group "${group.groupName}" has been rejected.`,
+                    notificationTime: new Date(),
+                    notificationType: 'join_request_rejected',
+                    senderId: group.ownerId,
+                    receiverId: applicant._id
+                });
+                console.log('newNotification when rejected:', newNotification);
+                await newNotification.save({ session });
             }
 
             // Remove the application record
