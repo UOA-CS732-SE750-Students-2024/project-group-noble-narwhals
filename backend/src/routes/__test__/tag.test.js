@@ -1,5 +1,5 @@
 import express from "express";
-import router from "../api/user";
+import router from "../tag/user";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import request from "supertest";
 import mongoose from "mongoose";

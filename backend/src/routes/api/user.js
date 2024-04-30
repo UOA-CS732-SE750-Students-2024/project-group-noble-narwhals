@@ -115,8 +115,7 @@ router.post('/like/:groupId', async (req, res) => {
     try {
         const group = await Group.findById(groupId);
         const user = await User.findById(userId);
-        console.log("user", user);
-        console.log("group", group);
+
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }

@@ -23,8 +23,12 @@ function NotificationPage() {
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
-      const notifications = await response.json();
-      console.log('Fetched notifications:', notifications);
+      let notifications = await response.json();
+
+      // sort notifications by time
+      notifications.sort((a, b) => {
+        return new Date(b.notificationTime) - new Date(a.notificationTime);
+      });
       setNotifications(notifications);
     } catch (error) {
       console.error('Error fetching notifications:', error);
