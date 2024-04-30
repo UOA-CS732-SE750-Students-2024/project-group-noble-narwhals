@@ -66,25 +66,28 @@ function Applicant({
       onMouseLeave={() => setHover(false)}
     >
       <div className="flex-shrink overflow-hidden">
-        <div
-          className={`flex justify-start items-center ${
-            hover && isLongMessage ? "flex-row" : "flex-col"
-          }`}
+      <div
+          className={`flex justify-start items-center ${hover && isLongMessage ? "flex-row" : "flex-col"
+            }`}
         >
-          <img
-            src={avatar}
-            alt="avatar"
-            className={`rounded-full transition-transform duration-300 ease-in-out ${
-              hover && isLongMessage ? "w-12 h-12" : "w-24 h-24"
-            }`}
-          />
-          <div
-            className={`mt-2 text-xl transition-transform duration-300 ease-in-out ${
-              hover && isLongMessage ? "translate-x-2" : ""
-            }`}
-          >
-            {username}
-          </div>
+          <Link to={`/user/profile/${userId}`}>
+
+            <img
+              src={avatar}
+              alt="avatar"
+              className={`rounded-full transition-transform duration-300 ease-in-out ${hover && isLongMessage ? "w-12 h-12" : "w-24 h-24"
+                }`}
+            />
+          </Link>
+          <Link to={`/user/profile/${userId}`}>
+
+            <div
+              className={`mt-2 text-xl transition-transform duration-300 ease-in-out ${hover && isLongMessage ? "translate-x-2" : ""
+                }`}
+            >
+              {username}
+            </div>
+          </Link>
         </div>
         <div
           className={`h-full my-2 text-center overflow-auto cursor-pointer ${
