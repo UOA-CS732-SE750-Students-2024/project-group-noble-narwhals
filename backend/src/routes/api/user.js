@@ -107,12 +107,16 @@ router.get('/:id/likes/:groupId', async (req, res) => {
 // Route to like a group
 router.post('/like/:groupId', async (req, res) => {
     const { groupId } = req.params;
-    const userId = req.user._id; 
+    const userId = req.user._id;
 
     try {
+        const group = await Group.findById(groupId);
         const user = await User.findById(userId);
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
+        }
+        if (!group) {
+            return res.status(404).json({ message: 'Group not found' });
         }
 
         // Check if the group is already liked by the user
@@ -123,6 +127,11 @@ router.post('/like/:groupId', async (req, res) => {
         // Add group to user's liked groups
         user.likedGroups.push(groupId);
         await user.save();
+
+        // Increment the like count on the group
+        group.likeNumber = (group.likeNumber || 0) + 1;
+        await group.save();
+
         res.status(200).json({ message: 'Group liked successfully' });
     } catch (error) {
         console.error('Error liking the group:', error);
@@ -130,15 +139,20 @@ router.post('/like/:groupId', async (req, res) => {
     }
 });
 
-// // Route to unlike a group
+
+// Route to unlike a group
 router.post('/unlike/:groupId', async (req, res) => {
     const { groupId } = req.params;
-    const userId = req.user._id; 
+    const userId = req.user._id;
 
     try {
+        const group = await Group.findById(groupId);
         const user = await User.findById(userId);
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
+        }
+        if (!group) {
+            return res.status(404).json({ message: 'Group not found' });
         }
 
         // Check if the group is in user's liked groups
@@ -149,12 +163,18 @@ router.post('/unlike/:groupId', async (req, res) => {
         // Remove group from user's liked groups
         user.likedGroups.pull(groupId);
         await user.save();
+
+        // Decrement the like count on the group, ensuring it does not go below zero
+        group.likeNumber = (group.likeNumber > 0) ? group.likeNumber - 1 : 0;
+        await group.save();
+
         res.status(200).json({ message: 'Group unliked successfully' });
     } catch (error) {
         console.error('Error unliking the group:', error);
         res.status(500).json({ message: 'Error unliking the group', error });
     }
 });
+
 
 
 // update user

@@ -1,10 +1,18 @@
 import { useEffect, useState } from "react";
 import Button from "../../components/Button";
+import { useAuth } from "../../store/AuthContext";
+import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "";
 
 function NotificationPage() {
+  const { userId } = useParams();
+  console.log("userId from notification: ", userId);
+  const navigate = useNavigate();
+  const { user, setUser, isLoading, setIsLoading, isLoggedIn } = useAuth();
   const [notifications, setNotifications] = useState([]);
+  
 
   /**
    * get all notifications
@@ -12,7 +20,7 @@ function NotificationPage() {
   async function fetchNotification() {
     try {
       await fetch(
-        `${API_BASE_URL}/api/notification/user/660624d75d210ffadab318bc`
+        `${API_BASE_URL}/api/notification/user/${userId}`
       )
         .then((response) => {
           if (response.status === 200) {
@@ -30,10 +38,16 @@ function NotificationPage() {
   }
 
   useEffect(() => {
+    if (!isLoading && (!isLoggedIn || user._id !== userId)) {
+      console.log("user._id is not the owner of this page: ", user._id);
+      // if the user is not logged in, or logged in but not the user ID to be viewed
+      // then he/she should be redirected to the home page
+      navigate('/');
+    }
     fetchNotification();
-  }, []);
+  }, [user]);
   return (
-    <div className="w-4/5 mx-auto p-4">
+    <div className="w-4/5 mx-4 p-4">
       <div className="text-3xl pb-10">Notification</div>
       <div>
         {notifications.map((notification, idx) => (

@@ -75,7 +75,7 @@ function UserPageSideBar() {
   }
 
   if (!user) {
-    return <div>User not found.</div>;
+    return <div></div>;
   }
 
   return (
