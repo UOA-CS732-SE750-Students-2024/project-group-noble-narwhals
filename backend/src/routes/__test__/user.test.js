@@ -127,6 +127,7 @@ beforeEach(async () => {
  */
 afterAll(async () => {
     await mongoose.disconnect();
+    await mongoose.connection.db.dropDatabase();
     await mongod.stop();
 });
 

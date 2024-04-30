@@ -352,7 +352,7 @@ router.post("/join/:id/group", getGroup, async (req, res) => {
 
     //create a new notification
     const newNotification = new Notification({
-      notificationContent: `New application from ${user.name} to join group ${res.group.groupName}`,
+      notificationContent: `${newApplication.message}`,
       isRead: false,
       notificationTime: new Date(),
       notificationType: "new_applicant",

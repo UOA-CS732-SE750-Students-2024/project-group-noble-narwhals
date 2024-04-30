@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Button from "../../components/Button";
 import { useAuth } from "../../store/AuthContext";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "";
@@ -24,7 +24,7 @@ function NotificationPage() {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
       const notifications = await response.json();
-      console.log('Fetched notifications:', notifications); 
+      console.log('Fetched notifications:', notifications);
       setNotifications(notifications);
     } catch (error) {
       console.error('Error fetching notifications:', error);
@@ -78,7 +78,7 @@ function SingleNotification({ notification, idx }) {
       case "group_started":
         return "";
       case "new_applicant":
-        return "applied to join:";
+        return "applied to join your group.";
       case "member_quit":
         return "quit the group:";
       case "group_updated":
@@ -106,7 +106,9 @@ function SingleNotification({ notification, idx }) {
     >
       {/* avatar */}
       <div className="w-10 h-10 rounded-full mt-1 overflow-hidden border border-hmblue-500">
-        <img src={notification.senderId.avatar} />
+        <Link to={`/user/profile/${notification.senderId._id}`}>
+          <img src={notification.senderId.avatar} />
+        </Link>
       </div>
       <div
         className={`flex-grow ml-3${notification.isRead === "true" ? " text-gray-400" : ""

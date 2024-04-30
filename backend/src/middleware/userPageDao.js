@@ -61,9 +61,10 @@ function getUserData(Model, entityName) {
       if (!entity) {
         console.log(`User not found with ID ${req.params.id}`);
         return res.status(404).json({ message: `${entityName} not found` });
-      } else {
-        console.log("User found:", entity);
-      }
+      } 
+      // else {
+      //   console.log("User found:", entity);
+      // }
 
 
       res[entityName.toLowerCase()] = entity;
