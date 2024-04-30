@@ -13,7 +13,9 @@ const router = express.Router();
 // get all groups
 router.get("/", async (req, res) => {
   try {
-    const groups = await Group.find();
+    const groups = await Group.find()
+      .populate("groupMembers", "avatar")
+      .populate("groupTags", "name");
     res.json(groups);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -97,7 +99,6 @@ router.post(
   isVerifiedUser,
   async (req, res) => {
 
-    console.log(0, req.user)
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
@@ -129,8 +130,6 @@ router.post(
       groupType: req.body.type,
       likeNumber: 0,
     });
-
-    console.log(2, group);
 
     try {
       const newGroup = await group.save();
@@ -576,19 +575,15 @@ router.patch("/dismiss/:groupId", async (req, res) => {
       group.groupApplicants = []; // Clear all applicants
 
       await group.save();
-      res
-        .status(200)
-        .json({
-          message:
-            "Group successfully dismissed and all members and applicants have been removed.",
-        });
+      res.status(200).json({
+        message:
+          "Group successfully dismissed and all members and applicants have been removed.",
+      });
     } else {
-      res
-        .status(403)
-        .json({
-          message:
-            "You are not authorized to dismiss this group or group is full.",
-        });
+      res.status(403).json({
+        message:
+          "You are not authorized to dismiss this group or group is full.",
+      });
     }
   } catch (error) {
     console.error("Error dismissing the group:", error);
