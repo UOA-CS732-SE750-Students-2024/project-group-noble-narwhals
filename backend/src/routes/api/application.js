@@ -129,7 +129,8 @@ router.patch('/applications-with-details/:id', getApplication, async (req, res) 
                         notificationTime: new Date(),
                         notificationType: 'join_request_accepted',
                         senderId: group.ownerId,
-                        receiverId: applicant._id
+                        receiverId: applicant._id,
+                        groupId: group._id
                     });
                     console.log('newNotification when accepted:', newNotification);
                     await newNotification.save({ session });
@@ -147,7 +148,8 @@ router.patch('/applications-with-details/:id', getApplication, async (req, res) 
                     notificationTime: new Date(),
                     notificationType: 'join_request_rejected',
                     senderId: group.ownerId,
-                    receiverId: applicant._id
+                    receiverId: applicant._id,
+                    groupId: group._id
                 });
                 console.log('newNotification when rejected:', newNotification);
                 await newNotification.save({ session });

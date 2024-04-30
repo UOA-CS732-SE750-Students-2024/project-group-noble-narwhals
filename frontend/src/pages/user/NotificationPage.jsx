@@ -11,7 +11,7 @@ function NotificationPage() {
   const navigate = useNavigate();
   const { user, setUser, isLoading, setIsLoading, isLoggedIn } = useAuth();
   const [notifications, setNotifications] = useState([]);
-  
+
   /**
    * get all notifications
    */
@@ -55,9 +55,10 @@ function NotificationPage() {
   }
 
   return (
-    <div className="w-4/5 mx-4 p-4">
+    <div className="w-4/5 mt-2 mx-4 p-4">
       <div className="text-3xl pb-10">Notification</div>
       <div>
+        {notifications.length === 0 ? <p>No notifications found.</p> : null}
         {notifications.map((notification, idx) =>
           notification.senderId ? ( // check if senderId is not null
             <SingleNotification key={idx} notification={notification} />
@@ -70,6 +71,7 @@ function NotificationPage() {
 export default NotificationPage;
 
 function SingleNotification({ notification, idx }) {
+  console.log("notification from singleNotification: ", notification);
   function notificationTypeDesc(type) {
     switch (type) {
       case "join_request_accepted":
@@ -102,6 +104,13 @@ function SingleNotification({ notification, idx }) {
       { method: "PATCH" }
     ).then();
   }
+
+  async function handleInspect() {
+    await fetch(`${API_BASE_URL}/api/notification/${notification._id}/read`, {
+      method: "PATCH",
+    });
+  }
+
   return (
     <div
       className={`flex justify-between py-2${idx === 0 ? "" : " border-t-2 border-t-hmblue-700"
@@ -114,7 +123,7 @@ function SingleNotification({ notification, idx }) {
         </Link>
       </div>
       <div
-        className={`flex-grow ml-3${notification.isRead === "true" ? " text-gray-400" : ""
+        className={`flex-grow ml-3${notification.isRead === true ? " text-gray-400" : ""
           }`}
       >
         {/* notification title */}
@@ -127,7 +136,9 @@ function SingleNotification({ notification, idx }) {
         <div className="mt-1 text-xs text-gray-400">{notification.notificationTime}</div>
       </div>
       <div className="mt-1">
-        <Button>Inspect</Button>
+        <Link to={`/group/${notification.groupId._id}`}>
+          <Button onClick={handleInspect}>Inspect</Button>
+        </Link>
       </div>
     </div>
   );

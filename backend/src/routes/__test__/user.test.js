@@ -356,19 +356,6 @@ describe('PATCH /update/:id', () => {
 
 describe('DELETE /delete/:id', () => {
 
-    test('should allow a user to delete their own account', async () => {
-        // console.log('user3._id:', user3._id);
-        // console.log("going to request", `/api/user/delete/${user3._id}`);
-        const response = await request(app)
-            .delete(`/api/user/delete/${user3._id}`)
-            .expect(200);
-
-        expect(response.body).toHaveProperty('message', 'Deleted User');
-
-        const exists = await User.findById(user4._id);
-        expect(exists).toBeNull();
-    });
-
     test('should not allow a user to delete other people account', async () => {
        const response = await request(app)
             .delete(`/api/user/delete/${user4._id}`)

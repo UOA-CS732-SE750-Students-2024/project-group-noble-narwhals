@@ -35,7 +35,13 @@ function LikedGroupPage() {
     return <div>User not found</div>;
   }
 
-  const likedGroups = user.likedGroups;
+  let likedGroups = user.likedGroups;
+  // sort the groups by time
+  if (likedGroups && likedGroups.length > 0) {
+    likedGroups.sort((a, b) => {
+      return new Date(b.createDate) - new Date(a.createDate);
+    });
+  }
 
 
 
