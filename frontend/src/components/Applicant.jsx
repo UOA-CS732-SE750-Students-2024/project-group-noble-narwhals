@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import Button from "./Button";
 import axios from "axios";
@@ -13,14 +12,12 @@ function Applicant({
   userId,
   onApplicationHandled,
 }) {
-
   const [hover, setHover] = useState(false);
   const isLongMessage = message.length > 50;
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
   const handleAccept = async () => {
     try {
-
       const response = await axios.patch(
         `${apiBaseUrl}/api/application/applications-with-details/${applicationId}`,
         {
@@ -32,14 +29,13 @@ function Applicant({
     } catch (error) {
       alert(
         "Failed to accept application: " +
-        (error.response?.data?.message || error.message)
+          (error.response?.data?.message || error.message)
       );
     }
   };
 
   const handleReject = async () => {
     try {
-
       const response = await axios.patch(
         `${apiBaseUrl}/api/application/applications-with-details/${applicationId}`,
         {
@@ -49,12 +45,11 @@ function Applicant({
       alert("Application rejected successfully!");
       onApplicationHandled(applicationId, "rejected");
     } catch (error) {
-      console.log('Error caught:', error);
+      console.log("Error caught:", error);
       alert(
         "Failed to reject application: " +
-        (error.response?.data?.message || error.message)
+          (error.response?.data?.message || error.message)
       );
-
     }
   };
 
@@ -66,24 +61,25 @@ function Applicant({
       onMouseLeave={() => setHover(false)}
     >
       <div className="flex-shrink overflow-hidden">
-      <div
-          className={`flex justify-start items-center ${hover && isLongMessage ? "flex-row" : "flex-col"
-            }`}
+        <div
+          className={`flex justify-start items-center ${
+            hover && isLongMessage ? "flex-row" : "flex-col"
+          }`}
         >
           <Link to={`/user/profile/${userId}`}>
-
             <img
               src={avatar}
               alt="avatar"
-              className={`rounded-full transition-transform duration-300 ease-in-out ${hover && isLongMessage ? "w-12 h-12" : "w-24 h-24"
-                }`}
+              className={`rounded-full transition-transform duration-300 ease-in-out ${
+                hover && isLongMessage ? "w-12 h-12" : "w-24 h-24"
+              }`}
             />
           </Link>
           <Link to={`/user/profile/${userId}`}>
-
             <div
-              className={`mt-2 text-xl transition-transform duration-300 ease-in-out ${hover && isLongMessage ? "translate-x-2" : ""
-                }`}
+              className={`mt-2 text-xl transition-transform duration-300 ease-in-out ${
+                hover && isLongMessage ? "translate-x-2" : ""
+              }`}
             >
               {username}
             </div>
