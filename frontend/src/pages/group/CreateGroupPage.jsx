@@ -239,6 +239,7 @@ function CreatGroupPage() {
               placeholder="Enter a title"
               value={inputTitle}
               onChange={handleChangeTitle}
+              maxLength={60}
             />
           </div>
           <div className="flex pb-8 w-4/5 mx-auto items-center">
