@@ -149,11 +149,28 @@ router.post(
 );
 
 // update group by id
-router.patch("/update/:id", getGroup, async (req, res) => {
-  // update group properties
-  Object.entries(req.body).forEach(([key, value]) => {
-    res.group[key] = value;
-  });
+router.patch("/update/:id", isVerifiedUser, getGroup, async (req, res) => {
+
+  // add new tag
+  const modifiedTags = await Promise.all(
+    req.body.tags.map(async (tag) => {
+      const tagExist = await checkTagExist(tag.name);
+      if (tagExist) {
+        return tagExist;
+      } else {
+        const tagNew = await addGroupTag(tag);
+        return tagNew;
+      }
+    })
+  );
+
+  res.group.groupName = req.body.title;
+  res.group.deadlineDate = req.body.dueDate;
+  res.group.maxNumber = req.body.members;
+  res.group.groupDescription = req.body.description;
+  res.group.groupTags = modifiedTags;
+  res.group.groupType = req.body.type;
+  res.group.groupStatus = 'available';
 
   try {
     const updatedGroup = await res.group.save();

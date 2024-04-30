@@ -129,7 +129,7 @@ function HeaderContent({ groupName, groupTags, postedDate, activityDetails, isHo
   };
 
   const handleEditGroup = () => {
-    navigate(`/creategroup/${groupId}`);
+    navigate(`/updategroup/${groupId}`);
   };
 
   const handleQuitGroup = async () => {

@@ -22,8 +22,8 @@ function GroupInfoPage() {
   useEffect(() => {
     const fetchGroupDetails = async () => {
       try {
+
         const response = await axios.get(`${apiBaseUrl}/api/groups/${groupId}/detail`);
-        console.log('response:', response.data)
         const data = response.data || {};
         const tagsText = data.groupTags ? data.groupTags.map(tag => tag.name).join(', ') : 'No tags';
         const ownerId = data.ownerId ? data.ownerId._id : null;

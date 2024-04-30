@@ -30,6 +30,7 @@ function App() {
         <Route path="group/:groupId" element={<GroupInfoPage />} />
         <Route path="search" element={<SearchPage />} />
         <Route path="creategroup" element={<CreateGroupPage />} />
+        <Route path="updategroup/:groupId" element={<CreateGroupPage />} />
       </Route>
       <Route path="user" element={<LayoutUserPages />}>
         <Route index element={<Navigate to={"profile/:userId"} replace />} />
