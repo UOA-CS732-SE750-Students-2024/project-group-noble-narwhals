@@ -152,9 +152,9 @@ router.patch("/update/:id", isVerifiedUser, getGroup, async (req, res) => {
   try {
     const updatedGroup = await res.group.save();
     // create a new notification for each of the group member
-    const notificationContent = `Group ${res.group.groupName} has been closed.`;
+    const notificationContent = `Group ${res.group.groupName} has been updated.`;
     const notificationTime = new Date();
-    const notificationType = "group_closed";
+    const notificationType = "group_updated";
     const notificationPromises = res.group.groupMembers.map(async (id) => {
       const newNotification = new Notification({
         notificationContent,

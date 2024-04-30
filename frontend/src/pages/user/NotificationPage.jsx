@@ -81,13 +81,15 @@ function SingleNotification({ notification, idx }) {
         return `applied to join your group: ${notification.groupId.groupName}`;
       case "member_quit":
         return "quit the group:";
-      case "group_updated":
+      case "group_closed":
         return "closed the group:";
       case "group_dismissed":
         return "dismissed the group:";
       case "group_dismissed":
       case "delete_member":
         return "removed you from:";
+        case "group_updated":
+          return "updated the group:";
       default:
         return "Said:";
     }
