@@ -19,6 +19,7 @@ function getEntityMiddleware(Model, entityName) {
         let entity;
         try {
             if(entityName === 'User') {
+                console.log('getUser');
                 entity = await Model.findById(req.params.id).populate('profileTags');
             } else {
             entity = await Model.findById(req.params.id);

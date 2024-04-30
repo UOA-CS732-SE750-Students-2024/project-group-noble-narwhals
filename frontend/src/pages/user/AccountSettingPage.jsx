@@ -51,7 +51,6 @@ function AccountSettingsPage() {
     );
   } else {
     console.log("user from accountsetting: ", user);
-    console.log("password: ", password)
   }
 
   // if user is not found (is null)
@@ -112,11 +111,29 @@ function AccountSettingsPage() {
       console.error('Tag name is required.');
       return;
     }
+    // Format input: trim whitespace, replace spaces with hyphens, convert to lower case
+    const formattedTag = newTagName.trim().replace(/\s+/g, '-').toLowerCase();
+    if (tags.length >= 6) {
+      alert('You can only have 6 tags maximum.');
+      return;
+    }
+
+    // Check tag length constraint
+    if (formattedTag.length > 20) {
+      alert('The tag length should be within 20 characters.');
+      return;
+    }
+
+    // Check if the formatted tag is already in the profileTags
+    if (tags.some(tag => tag.name.toLowerCase() === formattedTag)) {
+      alert('Please add a unique tag.');
+      return;
+    }
     try {
       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/tag`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: newTagName.trim(), isProfileTag: true, isGroupTag: false })
+        body: JSON.stringify({ name: formattedTag, isProfileTag: true, isGroupTag: false })
       });
 
       if (!response.ok) {
@@ -155,7 +172,7 @@ function AccountSettingsPage() {
 
     if (isPasswordChanged && password.length < 8) {
       alert('Password must be at least 8 characters long.');
-      return; 
+      return;
     }
     console.log('Updated user data is:', updatedUserData)
 
@@ -241,7 +258,7 @@ function AccountSettingsPage() {
     }
   };
 
-  const handleVerifyAccount = async() => {
+  const handleVerifyAccount = async () => {
     console.log('Verify account clicked.');
     window.location.href = `${import.meta.env.VITE_API_BASE_URL}/auth/google`;
   };
@@ -333,7 +350,7 @@ function AccountSettingsPage() {
                 </label>
               </>
             ) : (
-              <p className="text-gray-500">{gender}</p>
+              <p className="text-gray-500 ml-1">{gender}</p>
             )}
           </div>
         </div>
@@ -392,7 +409,7 @@ function AccountSettingsPage() {
             </>
           )}
           {/**user's current tags */}
-          <div className="max-w-lg mr-4 flex flex-row">
+          <div className="mr-4 flex flex-row flex-wrap">
             {" "}
             {/**user's tags list */}
             {tags && tags.map((tag, index) => (

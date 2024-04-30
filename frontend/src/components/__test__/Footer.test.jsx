@@ -1,3 +1,4 @@
+
 import "@testing-library/jest-dom";
 import { describe, expect, it } from "vitest";
 import { render } from "@testing-library/react";
@@ -9,5 +10,6 @@ describe("Footer component", () => {
 
     expect(getByAltText("Footer")).toBeInTheDocument();
     expect(getByRole("img")).toBeInTheDocument();
+
   });
 });

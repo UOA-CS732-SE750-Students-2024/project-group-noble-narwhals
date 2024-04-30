@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "nodemon ./src/app.js",
     "start": "node ./src/app.js",
-    "test" : "jest --watchAll"
+    "test": "jest --watchAll"
   },
   "author": "noble narwhals",
   "license": "ISC",
