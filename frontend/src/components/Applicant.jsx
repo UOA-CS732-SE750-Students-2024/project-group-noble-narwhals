@@ -25,7 +25,7 @@ function Applicant({
         }
       );
       alert("Application accepted successfully!");
-      onApplicationHandled(applicationId, "accepted");
+      onApplicationHandled(applicationId);
     } catch (error) {
       alert(
         "Failed to accept application: " +
@@ -43,7 +43,7 @@ function Applicant({
         }
       );
       alert("Application rejected successfully!");
-      onApplicationHandled(applicationId, "rejected");
+      onApplicationHandled(applicationId);
     } catch (error) {
       console.log("Error caught:", error);
       alert(

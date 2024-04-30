@@ -15,14 +15,15 @@ function GroupInfoPage() {
   const { groupId } = useParams();
   const [groupDetails, setGroupDetails] = useState(null);
   const [applications, setApplications] = useState([]);
+  const [members, setMembers] = useState([]);
   const { user } = useAuth();
-  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
   useEffect(() => {
     const fetchGroupDetails = async () => {
       try {
-
-        const response = await axios.get(`${apiBaseUrl}/api/groups/${groupId}/detail`);
+        const response = await axios.get(
+          `${API_BASE_URL}/api/groups/${groupId}/detail`
+        );
 
         const data = response.data || {};
         const tagsText = data.groupTags
@@ -32,24 +33,20 @@ function GroupInfoPage() {
 
         const isCurrentUserHost = user && user._id === ownerId;
 
-        let members = data.groupMembers || [];
-        if (ownerId && !members.some((member) => member._id === ownerId)) {
-          members.unshift({
-            _id: ownerId,
-            name: data.ownerId.name,
-            avatar: data.ownerId.avatar,
-          });
-        }
         if (data.application) {
           setApplications(data.application);
         }
+        if (data.groupMembers.length > 0) {
+          setMembers(data.groupMembers);
+        }
 
         const activityDetails = [
-
-          { icon: <IoMdTime />, text: new Date(data.deadlineDate).toLocaleDateString() },
+          {
+            icon: <IoMdTime />,
+            text: new Date(data.deadlineDate).toLocaleDateString(),
+          },
           { icon: <MdPeople />, text: `${data.maxNumber} people wanted` },
-          { icon: <IoPricetag />, text: tagsText }
-
+          { icon: <IoPricetag />, text: tagsText },
         ];
 
         setGroupDetails({
@@ -67,7 +64,7 @@ function GroupInfoPage() {
     fetchGroupDetails();
   }, [groupId, user]);
 
-  const handleApplicationUpdate = (applicationId, status) => {
+  const handleApplicationUpdate = (applicationId) => {
     setApplications((prevApplications) =>
       prevApplications.filter((app) => app._id !== applicationId)
     );
@@ -98,7 +95,7 @@ function GroupInfoPage() {
         groupId={groupId}
       />
       <ApplicantList
-        applications={groupDetails.application || []}
+        applications={applications }
         isCurrentUserHost={groupDetails.isCurrentUserHost}
         groupId={groupId}
         onApplicationHandled={handleApplicationUpdate}
