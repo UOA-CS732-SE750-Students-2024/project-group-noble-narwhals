@@ -62,28 +62,6 @@ router.get("/search/:keywords", async (req, res) => {
   }
 });
 
-    if (!group) {
-      return res.status(404).send("Group not found");
-    }
-
-    // Check and update the group status based on the number of members
-    const isFull = group.groupMembers.length >= group.maxNumber;
-    if (isFull && group.groupStatus !== 'full') {
-      group.groupStatus = 'full';
-      await group.save();
-    } else if (!isFull && group.groupStatus === 'full') {
-      group.groupStatus = 'available';
-      await group.save();  // Update status if no longer full
-    }
-
-    res.json(group);
-  } catch (err) {
-    console.error("Error fetching group:", err);
-    res.status(500).json({ message: err.message });
-  }
-});
-
-
 
 // create a new group
 router.post(
@@ -281,8 +259,6 @@ router.post("/quit/:groupId", async (req, res) => {
   console.log("Quit group route");
   const { groupId } = req.params;
   const userId = req.user._id; // User ID from authentication/session
-  const user = await User.findById(userId);
-
   const user = await User.findById(userId);
 
   try {

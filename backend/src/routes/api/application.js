@@ -1,6 +1,5 @@
 import express from 'express';
 import Application from '../../models/applicationModel.js';
-import User from '../../models/userModel.js';
 import Notification from '../../models/notificationModel.js';
 import mongoose from 'mongoose';
 import User from '../../models/userModel.js';
