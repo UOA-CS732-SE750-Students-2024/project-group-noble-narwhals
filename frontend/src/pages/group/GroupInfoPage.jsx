@@ -10,6 +10,7 @@ import axios from "axios";
 import { useParams } from 'react-router-dom';
 import { useAuth } from "../../store/AuthContext";
 
+
 function GroupInfoPage() {
   const { groupId } = useParams();
   const [groupDetails, setGroupDetails] = useState(null);
@@ -143,6 +144,7 @@ function ApplicantList({ applications, isCurrentUserHost, onApplicationHandled, 
             username={application.applicantId.name}
             message={application.message}
             avatar={application.applicantId.avatar}
+            userId={application.applicantId._id}
             isHost={isCurrentUserHost}
             applicationId={application._id}
             groupId={groupId}

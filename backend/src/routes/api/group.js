@@ -58,51 +58,7 @@ router.get("/search/:keywords", async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
-// get group by id with  details populated
-router.get("/:id/detail", getGroup, async (req, res) => {
-  try {
-    const group = await Group.findById(req.params.id)
-      .populate({
-        path: "groupMembers",
-        select: "name avatar",
-      })
-      .populate({
-        path: "groupApplicants",
-        select: "name message avatar",
-      })
-      .populate({
-        path: "application",
-        populate: {
-          path: "applicantId",
-          select: "name avatar",
-        },
-      })
-      .populate("groupTags", "name")
-      .populate({
-        path: "ownerId",
-        select: "name avatar",
-      });
 
-    if (!group) {
-      return res.status(404).send("Group not found");
-    }
-
-    // Check and update the group status based on the number of members
-    const isFull = group.groupMembers.length >= group.maxNumber;
-    if (isFull && group.groupStatus !== 'full') {
-      group.groupStatus = 'full';
-      await group.save();  
-    } else if (!isFull && group.groupStatus === 'full') {
-      group.groupStatus = 'available';
-      await group.save();  // Update status if no longer full
-    }
-
-    res.json(group);
-  } catch (err) {
-    console.error("Error fetching group:", err);
-    res.status(500).json({ message: err.message });
-  }
-});
 
 
 // create a new group
@@ -339,7 +295,51 @@ router.post("/join/:id/group", getGroup, async (req, res) => {
   }
 });
 
+// get group by id with  details populated
+router.get("/:id/detail", getGroup, async (req, res) => {
+  try {
+    const group = await Group.findById(req.params.id)
+      .populate({
+        path: "groupMembers",
+        select: "name avatar",
+      })
+      .populate({
+        path: "groupApplicants",
+        select: "name message avatar",
+      })
+      .populate({
+        path: "application",
+        populate: {
+          path: "applicantId",
+          select: "name avatar",
+        },
+      })
+      .populate("groupTags", "name")
+      .populate({
+        path: "ownerId",
+        select: "name avatar",
+      });
 
+    if (!group) {
+      return res.status(404).send("Group not found");
+    }
+
+    // Check and update the group status based on the number of members
+    const isFull = group.groupMembers.length >= group.maxNumber;
+    if (isFull && group.groupStatus !== 'full') {
+      group.groupStatus = 'full';
+      await group.save();  
+    } else if (!isFull && group.groupStatus === 'full') {
+      group.groupStatus = 'available';
+      await group.save();  // Update status if no longer full
+    }
+
+    res.json(group);
+  } catch (err) {
+    console.error("Error fetching group:", err);
+    res.status(500).json({ message: err.message });
+  }
+});
 
 // check if user has applied to a group
 router.get("/:groupId/has-applied", async (req, res) => {
@@ -416,6 +416,7 @@ router.post("/cancel-application/:groupId", async (req, res) => {
   }
 });
 
+// Dismiss a group by the host
 router.patch("/dismiss/:groupId", async (req, res) => {
   const { groupId } = req.params;
   const userId = req.user._id; // Assuming you have user ID from session or token
