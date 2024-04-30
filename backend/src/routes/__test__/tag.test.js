@@ -1,5 +1,5 @@
 import express from "express";
-import router from "../tag/user";
+import router from "../api/tag";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import request from "supertest";
 import mongoose from "mongoose";
@@ -95,7 +95,7 @@ beforeEach(async () => {
     await Tag.insertMany(tags);
 });
 
-fdescribe("GET /", () => {
+describe("GET /", () => {
 
     test("It should respond with an array of tags", async () => {
         const response = await request(app).get("/api/tag").send().expect(200);
@@ -104,7 +104,55 @@ fdescribe("GET /", () => {
         expect(response.body[0].name).toBe("tag1");
         expect(response.body[1].name).toBe("tag2");
     });
-
-
 })
 
+
+describe("GET /:id", () => {
+    test("It should respond with a single tag", async () => {
+        const response = await request(app).get("/api/tag/000000000000000000000001").send().expect(200);
+        expect(response.body.name).toBe("tag1");
+    });
+
+});
+
+describe("POST /", () => {
+    test("It should respond with a new tag", async () => {
+        const newTag = {
+            name: "tag3",
+            isProfileTag: true,
+            isGroupTag: true,
+        };
+
+        const response = await request(app).post("/api/tag").send(newTag).expect(201);
+        expect(response.body.name).toBe("tag3");
+    });
+});
+
+describe("PATCH /:id", () => {
+    test("It should respond with an updated tag", async () => {
+        const updatedTag = {
+            name: "tag3",
+            isProfileTag: true,
+            isGroupTag: true,
+        };
+
+        const response = await request(app).patch("/api/tag/000000000000000000000001").send(updatedTag).expect(200);
+        expect(response.body.name).toBe("tag3");
+    });
+}
+
+);
+
+describe("DELETE /:id", () => {
+    test("It should respond with a message of 'Deleted Tag'", async () => {
+        const response = await request(app).delete("/api/tag/000000000000000000000001").send().expect(200);
+        expect(response.body.message).toBe("Deleted Tag");
+    });
+});
+
+describe("POST /check", () => {
+    test("It should respond with a tag", async () => {
+        const response = await request(app).post("/api/tag/check").send({ name: "tag1" }).expect(200);
+        expect(response.body.name).toBe("tag1");
+    });
+});
