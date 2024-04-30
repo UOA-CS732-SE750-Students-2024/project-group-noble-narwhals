@@ -12,7 +12,6 @@ export const AuthProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);  // add loading status, default is true
 
   useEffect(() => {
-    console.log("initialize useEffect in AuthContext.jsx");
     axios
       .get(`${import.meta.env.VITE_API_BASE_URL}/auth/check-session`)
       .then((res) => {

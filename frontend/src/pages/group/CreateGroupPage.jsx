@@ -4,9 +4,12 @@ import axios from "axios";
 import { useAuth } from "../../store/AuthContext";
 import { WiStars } from "react-icons/wi";
 import { AiOutlineLoading } from "react-icons/ai";
+import { useParams } from "react-router-dom";
+
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "";
 
 function CreatGroupPage() {
+  const { groupId } = useParams();
   const { user } = useAuth();
   const [inputTitle, setInputTitle] = useState("");
   const [selectedButton, setSelectedButton] = useState("");
@@ -14,7 +17,7 @@ function CreatGroupPage() {
   const [inputTag, setInputTag] = useState(""); //Used to store the value of the input box tag
   const [inputError, setInputError] = useState("");
   const [submitError, setSubmitError] = useState(""); // Used to store the error message when submit
-  const [inputMemNum, setInpuMemNum] = useState();
+  const [inputMemNum, setInputMemNum] = useState("");
   const [inputDueDate, setInputDueDate] = useState("");
   const [inputDescription, setInputDescription] = useState("");
   const [generateStatus, setGenerateStatus] = useState(false);
@@ -56,7 +59,7 @@ function CreatGroupPage() {
       setInputError("You can only add up to 6 tags");
       return;
     }
-    const trimInput = inputTag.trim().replace(/\s+/g, '-').toLowerCase();
+    const trimInput = inputTag.trim().replace(/\s+/g, "-").toLowerCase();
     const tagExists = tags.some((tag) => tag.name.toLowerCase() === trimInput);
 
     if (tagExists) {
@@ -88,9 +91,7 @@ function CreatGroupPage() {
           .post(`${API_BASE_URL}/api/autoTagger`, { messages: content })
           .then((res) => {
             const AItags = JSON.parse(res.data[0].message.content).keywords;
-            console.log(1, AItags);
             setGenerateStatus(false);
-
             const newTags = AItags.map((element) => ({
               name: element.toLowerCase(),
               color: randomColor(),
@@ -113,7 +114,7 @@ function CreatGroupPage() {
       (!isNaN(value) && parseInt(value) >= 0 && parseInt(value) <= 99) ||
       value == ""
     ) {
-      setInpuMemNum(parseInt(value));
+      setInputMemNum(parseInt(value));
     }
   };
 
@@ -160,6 +161,17 @@ function CreatGroupPage() {
       description: inputDescription,
     };
 
+    if(groupId){
+      await axios
+      .patch(`${API_BASE_URL}/api/groups/update/${groupId}`, formData)
+      .then((res) => {
+        window.location.href = `/group/${res.data._id}`;
+      })
+      .catch((err) => {
+        setSubmitError("Failed to update group");
+      });
+    }
+    else{
     // Use Axios to POST request to server
     await axios
       .post(`${API_BASE_URL}/api/groups/creategroup`, formData)
@@ -169,6 +181,7 @@ function CreatGroupPage() {
       .catch((err) => {
         setSubmitError("Failed to create group");
       });
+    }
   };
 
   const handleCancel = async (event) => {
@@ -176,20 +189,43 @@ function CreatGroupPage() {
     window.history.back();
   };
 
+  useEffect(() => {
+    if (groupId) {
+      axios
+        .get(`${API_BASE_URL}/api/group/${groupId}/detail`)
+        .then((res) => {
+          setInputTitle(res.data.groupName);
+          setSelectedButton(res.data.groupType);
+          setInputDueDate(res.data.deadlineDate.split("T")[0]);
+          setTags(
+            res.data.groupTags.map((tag) => ({
+              name: tag.name,
+              color: randomColor(),
+            }))
+          );
+          setInputMemNum(res.data.maxNumber);
+          setInputDescription(res.data.groupDescription);
+        })
+        .catch((err) => {
+          console.error("Error fetching group details", err);
+        });
+    }
+  }, []);
+
   return (
     <div className="flex justify-center items-center h-createImageHeight">
       <div
-        className=" bg-cover h-screen  absolute inset-0 -z-10 "
+        className=" bg-cover h-screen absolute inset-0 -z-10 "
         style={{
           backgroundImage: "url('../../../image/creategroup_bg.jpg')",
           filter: "blur(1px)",
         }}
       ></div>
 
-      <div className="bg-white max-w-mainContent w-2/3 lg:w-4/5  relative m-auto flex flex-col items-center ">
+      <div className="bg-white max-w-mainContent w-full lg:w-4/5  relative m-auto flex flex-col items-center ">
         <div>
           <h1 className="text-center text-5xl font-black text-primary pt-12 ">
-            Create A New Group/Activity
+          {groupId ? "Update " :"Create "}A New Group/Activity
           </h1>
         </div>
         <form action="" className=" w-4/5">
@@ -203,6 +239,7 @@ function CreatGroupPage() {
               placeholder="Enter a title"
               value={inputTitle}
               onChange={handleChangeTitle}
+              maxLength={60}
             />
           </div>
           <div className="flex pb-8 w-4/5 mx-auto items-center">
@@ -211,7 +248,7 @@ function CreatGroupPage() {
             </label>
             <button
               className={`h-9 border-2 border-primary w-1/6 h-7 mr-4 rounded-full p-0 ${
-                selectedButton === "group" ? "bg-primary text-white" : ""
+                selectedButton == "group" ? "bg-primary text-white" : ""
               } `}
               onClick={(e) => {
                 e.preventDefault();
@@ -222,7 +259,7 @@ function CreatGroupPage() {
             </button>
             <button
               className={`h-9 border-2 border-primary w-1/6 h-7 mr-4 rounded-full p-0 ${
-                selectedButton === "activity" ? "bg-primary text-white" : ""
+                selectedButton == "activity" ? "bg-primary text-white" : ""
               } `}
               onClick={(e) => {
                 e.preventDefault();
@@ -251,9 +288,10 @@ function CreatGroupPage() {
             </label>
             <input
               type="number"
+              value={inputMemNum}
+              name="members"
               min={0}
               max={99}
-              value={inputMemNum}
               onChange={handleChangeNum}
               className="border-2 border-primary w-1/6 rounded-full h-9 text-center p-0 appearance-none "
               placeholder="0"
@@ -344,7 +382,7 @@ function CreatGroupPage() {
           </div>
           <div className=" flex pb-12 w-1/2 mx-auto justify-between ">
             <Button className="w-28" style_type="fill" onClick={handleSubmit}>
-              Create
+              {groupId ? "Update" :"Create"}
             </Button>
             <Button className="w-28" style_type="fill" onClick={handleCancel}>
               Cancel

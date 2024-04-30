@@ -99,7 +99,6 @@ router.get(
 );
 
 router.get("/check-session", isLoggedIn, (req, res) => {
-  console.log("check-session", req.user)
   res.json({ isLoggedIn: true, user: req.user });
 });
 

@@ -10,20 +10,27 @@ const Gallery = ({ name, data }) => {
           More
         </a>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-        {data.map((item, index) => (
-          <GalleryCard
-            key={index}
-            title={item.title}
-            id={item.id}
-            dayNum={item.dayNum}
-            isFavorite={item.isFavorite}
-            imageLink={item.imageLink}
-            num={item.num}
-            description={item.description}
-          />
-        ))}
-      </div>
+      {data.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+          {data.map((item, index) => (
+            <GalleryCard
+              key={index}
+              title={item.title}
+              id={item.id}
+              dayNum={item.dayNum}
+              isFavorite={item.isFavorite}
+              imageLink={item.imageLink}
+              num={item.num}
+              numLimit={item.numLimit}
+              description={item.description}
+            />
+          ))}
+        </div>
+      ) : (
+        <p className="text-gray-500">
+          Sorry, no information is currently available on the platform
+        </p>
+      )}
     </div>
   );
 };

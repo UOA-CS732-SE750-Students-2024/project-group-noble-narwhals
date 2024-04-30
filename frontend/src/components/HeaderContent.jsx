@@ -1,30 +1,37 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import Button from './Button';
-import { useAuth } from '../store/AuthContext';
-import { MdFavorite, MdFavoriteBorder } from 'react-icons/md';
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import Button from "./Button";
+import { useAuth } from "../store/AuthContext";
+import { MdFavorite, MdFavoriteBorder } from "react-icons/md";
 
-function HeaderContent({ groupName, groupTags, postedDate, activityDetails, isHost, groupId, deadlineDate, groupStatus, groupMembers }) {
+function HeaderContent({
+  groupName,
+  groupTags,
+  postedDate,
+  activityDetails,
+  isHost,
+  groupId,
+  deadlineDate,
+  groupStatus,
+  groupMembers,
+}) {
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const [hasApplied, setHasApplied] = useState(false);
-  const [applicationStatus, setApplicationStatus] = useState('');
+  const [applicationStatus, setApplicationStatus] = useState("");
   const [showModal, setShowModal] = useState(false);
-  const [applicationMessage, setApplicationMessage] = useState('');
+  const [applicationMessage, setApplicationMessage] = useState("");
   const { isLoggedIn, user } = useAuth();
   const [liked, setLiked] = useState(false);
   const navigate = useNavigate();
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
 
-  const isGroupMember = user && groupMembers.some(member => member._id === user._id);
+  const isGroupMember =
+    user && groupMembers.some((member) => member._id === user._id);
   const deadline = deadlineDate ? new Date(deadlineDate) : new Date(); // Fallback to current date if undefined
   const now = new Date();
   const isPastDeadline = now > deadline;
-
-
-
-
-
   useEffect(() => {
     if (isLoggedIn && groupId && user) {
       fetchApplicationStatus();
@@ -34,30 +41,34 @@ function HeaderContent({ groupName, groupTags, postedDate, activityDetails, isHo
 
   const fetchApplicationStatus = async () => {
     try {
+
       const response = await axios.get(`${apiBaseUrl}/api/groups/${groupId}/has-applied`, {
         params: { userId: user._id }
       });
+
       setHasApplied(response.data.hasApplied);
       setApplicationStatus(response.data.status);
     } catch (error) {
-      console.error('Error checking application status:', error);
+      console.error("Error checking application status:", error);
     }
   };
 
   const checkLikeStatus = async () => {
     if (isLoggedIn && groupId && user._id) {
       try {
+
         const response = await axios.get(`${apiBaseUrl}/api/user/${user._id}/likes/${groupId}`);
+
         setLiked(response.data.liked);
       } catch (error) {
-        console.error('Error checking like status:', error);
+        console.error("Error checking like status:", error);
       }
     }
   };
 
   const toggleLike = async () => {
     if (!isLoggedIn) {
-      navigate('/login');
+      navigate("/login");
       return;
     }
 
@@ -67,22 +78,23 @@ function HeaderContent({ groupName, groupTags, postedDate, activityDetails, isHo
     const endpoint = newLikedStatus ? `like/${groupId}` : `unlike/${groupId}`;
     try {
       await axios.post(`${apiBaseUrl}/api/user/${endpoint}`, { userId: user._id });
+
     } catch (error) {
-      console.error('Failed to toggle like:', error);
+      console.error("Failed to toggle like:", error);
       setLiked(!newLikedStatus);
     }
   };
 
   const handleJoinButtonClick = () => {
     if (!isLoggedIn) {
-      navigate('/login');
+      navigate("/login");
     } else {
       // Handle application status before showing modal
-      if (applicationStatus === 'accepted') {
-        alert('You are already a member of this group.');
-      } else if (applicationStatus === 'pending') {
-        alert('Your application is still pending.');
-      } else if (applicationStatus === 'rejected' || !hasApplied) {
+      if (applicationStatus === "accepted") {
+        alert("You are already a member of this group.");
+      } else if (applicationStatus === "pending") {
+        alert("Your application is still pending.");
+      } else if (applicationStatus === "rejected" || !hasApplied) {
         setShowModal(true); // Allow re-application if rejected or no prior application
       }
     }
@@ -90,19 +102,25 @@ function HeaderContent({ groupName, groupTags, postedDate, activityDetails, isHo
 
   const handleCancelApplication = async () => {
     if (!isLoggedIn) {
-      navigate('/login');
+      navigate("/login");
       return;
     }
-    if (hasApplied && applicationStatus !== 'accepted') { // Prevent canceling if already accepted
+    if (hasApplied && applicationStatus !== "accepted") {
+      // Prevent canceling if already accepted
       if (window.confirm("Are you sure you want to cancel your application?")) {
         try {
+
           const response = await axios.post(`${apiBaseUrl}/api/groups/cancel-application/${groupId}`, { userId: user._id });
+
           setHasApplied(false);
-          setApplicationStatus('');
-          alert('Your application has been cancelled.');
+          setApplicationStatus("");
+          alert("Your application has been cancelled.");
           setShowModal(false);
         } catch (error) {
-          alert('Failed to cancel the application: ' + (error.response?.data?.message || error.message));
+          alert(
+            "Failed to cancel the application: " +
+              (error.response?.data?.message || error.message)
+          );
         }
       }
     }
@@ -115,26 +133,31 @@ function HeaderContent({ groupName, groupTags, postedDate, activityDetails, isHo
     }
 
     try {
+
       const response = await axios.post(`${apiBaseUrl}/api/groups/join/${groupId}/group`, {
         userId: user._id,
         message: applicationMessage
       });
+
       setHasApplied(true);
-      setApplicationStatus('pending');
+      setApplicationStatus("pending");
       setShowModal(false);
-      alert('Your application to join the group has been submitted!');
+      alert("Your application to join the group has been submitted!");
     } catch (error) {
-      alert('Failed to apply to the group: ' + (error.response?.data?.message || error.message));
+      alert(
+        "Failed to apply to the group: " +
+          (error.response?.data?.message || error.message)
+      );
     }
   };
 
   const handleEditGroup = () => {
-    navigate(`/creategroup/${groupId}`);
+    navigate(`/updategroup/${groupId}`);
   };
 
   const handleQuitGroup = async () => {
     if (!isLoggedIn) {
-      navigate('/login');
+      navigate("/login");
       return;
     }
     if (!window.confirm('Are you sure you want to quit the group?')) {
@@ -142,19 +165,27 @@ function HeaderContent({ groupName, groupTags, postedDate, activityDetails, isHo
   }
 
     try {
+
       const response = await axios.post(`${apiBaseUrl}/api/groups/quit/${groupId}`, { userId: user._id });
       alert('You have successfully left the group.');
       
     } catch (error) {
-      alert('Failed to leave the group: ' + (error.response?.data?.message || error.message));
+      alert(
+        "Failed to leave the group: " +
+          (error.response?.data?.message || error.message)
+      );
     }
   };
 
   const handleDismissGroup = async () => {
     if (!isHost) return;
-    if (window.confirm('Are you sure you want to dismiss this group? This action cannot be undone.')) {
-
+    if (
+      window.confirm(
+        "Are you sure you want to dismiss this group? This action cannot be undone."
+      )
+    ) {
       try {
+
 
         const response = await axios.patch(`${apiBaseUrl}/api/groups/dismiss/${groupId}`, {
 
@@ -163,8 +194,12 @@ function HeaderContent({ groupName, groupTags, postedDate, activityDetails, isHo
 
         alert('Group has been successfully dismissed.');
         navigate('/');
+
       } catch (error) {
-        alert('Failed to dismiss the group: ' + (error.response?.data?.message || error.message));
+        alert(
+          "Failed to dismiss the group: " +
+            (error.response?.data?.message || error.message)
+        );
       }
     }
   };
@@ -172,30 +207,42 @@ function HeaderContent({ groupName, groupTags, postedDate, activityDetails, isHo
   const handleCloseGroup = async () => {
     if (!isHost) return;
 
-    if (window.confirm('Are you sure you want to close this group? This action will set the group status to closed.')) {
+    if (
+      window.confirm(
+        "Are you sure you want to close this group? This action will set the group status to closed."
+      )
+    ) {
       try {
+
         const response = await axios.patch(`${apiBaseUrl}/api/groups/update/${groupId}`, {
           groupStatus: 'closed'
         });
         navigate('/');
         alert('The group has been closed successfully.');
         navigate('/');
+
       } catch (error) {
-        alert('Failed to close the group: ' + (error.response?.data?.message || error.message));
+        alert(
+          "Failed to close the group: " +
+            (error.response?.data?.message || error.message)
+        );
       }
     }
   };
-
 
   return (
     <div className="max-w-main_content mx-auto mt-20 px-6 py-4">
       <div className="header-content flex justify-between items-start mb-4">
         <div className="header-title">
           <div className="text-4xl font-bold mb-2">{groupName}</div>
-          <Link to="/" className="text-primary">Activity</Link>
+          <Link to="/" className="text-primary">
+            Activity
+          </Link>
           <div className="activity-detail py-6 mt-1">
             <p className="mb-2 flex items-center text-1xl">{groupTags}</p>
-            <p className="mb-2 -mt-6 text-sm text-gray-500">Posted {postedDate}</p>
+            <p className="mb-2 -mt-6 text-sm text-gray-500">
+              Posted {postedDate}
+            </p>
           </div>
           <div className="activity-detail py-6 -mt-10">
             {activityDetails.map((detail, index) => (
@@ -209,6 +256,7 @@ function HeaderContent({ groupName, groupTags, postedDate, activityDetails, isHo
         <div className="actions flex flex-col space-y-2">
           {isHost && (
             <>
+
               <Button className="py-3 px-16" style_type="border" onClick={handleEditGroup}>Edit</Button>
               {groupStatus !== 'closed' && groupStatus !== 'dismissed' && (
                 <>
@@ -264,20 +312,23 @@ function HeaderContent({ groupName, groupTags, postedDate, activityDetails, isHo
                 <div className="py-3 px-16" style_type="border">
                   This group is {groupStatus}
                 </div>
+
               )}
             </>
           )}
         </div>
 
-
-
-
       </div>
       {showModal && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full" id="my-modal">
+        <div
+          className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full"
+          id="my-modal"
+        >
           <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
             <div className="mt-3 text-center">
-              <h3 className="text-lg leading-6 font-medium text-gray-900">Application Message</h3>
+              <h3 className="text-lg leading-6 font-medium text-gray-900">
+                Application Message
+              </h3>
               <textarea
                 className="mt-2 px-7 py-3 w-full text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
                 rows="3"

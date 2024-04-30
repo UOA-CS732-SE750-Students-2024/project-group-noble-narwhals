@@ -7,11 +7,12 @@ import Applicant from "../../components/Applicant";
 import Description from "../../components/Description";
 import HeaderContent from "../../components/HeaderContent";
 import axios from "axios";
-import { useParams } from 'react-router-dom';
+import { useParams } from "react-router-dom";
 import { useAuth } from "../../store/AuthContext";
 
 
 function GroupInfoPage() {
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const { groupId } = useParams();
   const [groupDetails, setGroupDetails] = useState(null);
   const [applications, setApplications] = useState([]);
@@ -22,59 +23,65 @@ function GroupInfoPage() {
   useEffect(() => {
     const fetchGroupDetails = async () => {
       try {
+
+
         const response = await axios.get(`${apiBaseUrl}/api/groups/${groupId}/detail`);
-        console.log('response:', response.data)
+
         const data = response.data || {};
-        const tagsText = data.groupTags ? data.groupTags.map(tag => tag.name).join(', ') : 'No tags';
+        const tagsText = data.groupTags
+          ? data.groupTags.map((tag) => tag.name).join(", ")
+          : "No tags";
         const ownerId = data.ownerId ? data.ownerId._id : null;
 
         const isCurrentUserHost = user && user._id === ownerId;
 
         let members = data.groupMembers || [];
-        if (ownerId && !members.some(member => member._id === ownerId)) {
+        if (ownerId && !members.some((member) => member._id === ownerId)) {
           members.unshift({
             _id: ownerId,
             name: data.ownerId.name,
-            avatar: data.ownerId.avatar
+            avatar: data.ownerId.avatar,
           });
         }
         if (data.application) {
           setApplications(data.application);
         }
 
-       
-
         const activityDetails = [
+
           { icon: <IoMdTime />, text: new Date(data.deadlineDate).toLocaleDateString() },
           { icon: <MdPeople />, text: `${data.maxNumber} people wanted` },
           { icon: <IoPricetag />, text: tagsText }
+
         ];
 
-        setGroupDetails({ ...data, activityDetails, ownerId, isCurrentUserHost });
+        setGroupDetails({
+          ...data,
+          activityDetails,
+          ownerId,
+          isCurrentUserHost,
+        });
       } catch (error) {
-        console.error('Error fetching group details', error);
+        console.error("Error fetching group details", error);
         setGroupDetails(null);
       }
     };
 
-    
     fetchGroupDetails();
   }, [groupId, user]);
 
   const handleApplicationUpdate = (applicationId, status) => {
-    setApplications(prevApplications => prevApplications.filter(app => app._id !== applicationId));
-    console.log(`Application ${applicationId} was ${status}.`);
+    setApplications((prevApplications) =>
+      prevApplications.filter((app) => app._id !== applicationId)
+    );
   };
-
 
   if (!groupDetails) {
     return <div>Loading...</div>;
   }
 
   return (
-
     <div className="content">
-
       <HeaderContent
         groupName={groupDetails.groupName}
         groupTags={groupDetails.tagsText}
@@ -103,10 +110,7 @@ function GroupInfoPage() {
   );
 }
 
-
 function MemberList({ members, ownerId, isCurrentUserHost, groupId }) {
-
-
   return (
     <div className="member-list p-6 mt-2">
       <div className="flex justify-between items-center mb-4">
@@ -120,7 +124,7 @@ function MemberList({ members, ownerId, isCurrentUserHost, groupId }) {
             key={member._id}
             username={member.name}
             avatar={member.avatar}
-            role={member._id === ownerId ? 'Host' : 'Member'}
+            role={member._id === ownerId ? "Host" : "Member"}
             ownerId={ownerId}
             memberId={member._id}
             isCurrentUserHost={isCurrentUserHost}
@@ -132,12 +136,19 @@ function MemberList({ members, ownerId, isCurrentUserHost, groupId }) {
   );
 }
 
-function ApplicantList({ applications, isCurrentUserHost, onApplicationHandled, groupId }) {
-
+function ApplicantList({
+  applications,
+  isCurrentUserHost,
+  onApplicationHandled,
+  groupId,
+}) {
   return (
     <div className="applicant-list p-6 mt-6">
       <div className="flex justify-between items-center mb-4 sticky top-0 bg-white">
-        <h3 className="font-semibold text-2xl">Applicants<span className="ml-2 text-gray-500">{applications.length}</span></h3>
+        <h3 className="font-semibold text-2xl">
+          Applicants
+          <span className="ml-2 text-gray-500">{applications.length}</span>
+        </h3>
       </div>
       <div className="flex overflow-x-auto">
         {applications.map((application) => (
@@ -153,13 +164,9 @@ function ApplicantList({ applications, isCurrentUserHost, onApplicationHandled, 
             onApplicationHandled={onApplicationHandled}
           />
         ))}
-
       </div>
     </div>
   );
 }
-
-
-
 
 export default GroupInfoPage;

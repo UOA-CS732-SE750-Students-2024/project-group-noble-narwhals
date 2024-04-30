@@ -1,5 +1,4 @@
 function isLoggedIn(req, res, next) {
-  console.log("enter isLoggedIn, req.isAuthenticated(): ", req.isAuthenticated());
   if (req.isAuthenticated()) {
     return next();
   }
