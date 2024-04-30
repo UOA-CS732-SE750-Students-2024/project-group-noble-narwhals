@@ -7,7 +7,6 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "";
 
 function NotificationPage() {
   const { userId } = useParams();
-  console.log("userId from notification: ", userId);
   const navigate = useNavigate();
   const { user, setUser, isLoading, setIsLoading, isLoggedIn } = useAuth();
   const [notifications, setNotifications] = useState([]);
@@ -36,7 +35,6 @@ function NotificationPage() {
 
   useEffect(() => {
     if (!isLoading && (!isLoggedIn || user._id !== userId)) {
-      console.log("user._id is not the owner of this page: ", user._id);
       // if the user is not logged in, or logged in but not the user ID to be viewed
       // then he/she should be redirected to the home page
       navigate('/');
@@ -50,10 +48,8 @@ function NotificationPage() {
         <img src="/image/Spinner.svg" alt="Loading..." />
       </div>
     );
-  } else {
-    console.log("user from accountsetting: ", user);
-  }
-
+  } 
+  
   return (
     <div className="w-4/5 mt-2 mx-4 p-4">
       <div className="text-3xl pb-10">Notification</div>
@@ -71,7 +67,6 @@ function NotificationPage() {
 export default NotificationPage;
 
 function SingleNotification({ notification, idx }) {
-  console.log("notification from singleNotification: ", notification);
   function notificationTypeDesc(type) {
     switch (type) {
       case "join_request_accepted":
