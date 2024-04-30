@@ -10,7 +10,6 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import { useAuth } from "../../store/AuthContext";
 
-
 function GroupInfoPage() {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const { groupId } = useParams();
