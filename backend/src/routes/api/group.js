@@ -63,7 +63,6 @@ router.get("/search/:keywords", async (req, res) => {
 });
 
 
-
 // create a new group
 router.post(
   "/creategroup",

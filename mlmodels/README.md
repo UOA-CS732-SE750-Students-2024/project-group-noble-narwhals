@@ -43,6 +43,10 @@ Run the server
 
 ```sh
 flask run
+
+or
+
+flask run -h localhost -p 5050
 ```
 
 The server will be running on 5000 port

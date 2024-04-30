@@ -15,13 +15,11 @@ export const AuthProvider = ({ children }) => {
     axios
       .get(`${import.meta.env.VITE_API_BASE_URL}/auth/check-session`)
       .then((res) => {
-        console.log("res.data", res.data)
         if (res.data.isLoggedIn) {
           setUser(res.data.user);
           setIsLoggedIn(true);
           window.localStorage.setItem("isLoggedIn", true);
         } else {
-          console.log("ready to set loggedIn to false")
           setIsLoggedIn(false);
           setUser(null);
           window.localStorage.setItem("isLoggedIn", false);
@@ -36,8 +34,6 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    console.log("current login status:", isLoggedIn);
-    console.log("curent user data from AuthContext:", user);
   }, [isLoggedIn, user]); 
 
   return (
