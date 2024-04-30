@@ -1,0 +1,83 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: 'Circular-Book';
+  src: url('./fonts/Circular-Book.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Bungee-Regular';
+  src: url('./fonts/Bungee-Regular.ttf') format('truetype');
+}
+
+* {
+  font-size: 16px;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Circular-Book', sans-serif;
+}
+
+em,
+i {
+  font-style: normal;
+}
+
+ul {
+  list-style: none;
+}
+
+li {
+  list-style: none;
+}
+
+img {
+  border: 0;
+  vertical-align: middle;
+}
+
+button {
+  height: 40px;
+  padding: 0 20px;
+  border-radius: 20px;
+  cursor: pointer;
+  line-height: 0.8;
+} 
+
+.hide,
+.none {
+  display: none;
+}
+
+.clearfix:after {
+  visibility: hidden;
+  clear: both;
+  display: block;
+  content: ".";
+  height: 0;
+}
+.clearfix {
+  zoom: 1;
+}
+
+/* hide auto scroll  */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* for Chrome, Safari, 和 Opera */
+}
+
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;  /* for Edge */
+  scrollbar-width: none;  /*  for Firefox */
+}
+
+

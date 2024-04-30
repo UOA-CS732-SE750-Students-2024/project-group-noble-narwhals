@@ -1,0 +1,16 @@
+import React from "react";
+import { Outlet } from "react-router-dom";
+import Navbar from "../../components/Navbar";
+import Footer from "../../components/Footer";
+
+export default function PageLayout() {
+  return (
+    <>
+      <Navbar />
+      <div id="main_content" className="w-4/5 sm:w-10/12 max-w-mainContent mx-auto">
+        <Outlet />
+      </div>
+      <Footer />
+    </>
+  );
+}
