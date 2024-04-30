@@ -2,6 +2,7 @@ import express from 'express';
 import bcrypt from 'bcrypt';
 import User from '../../models/userModel.js';
 import Group from '../../models/groupModel.js';
+import Application from '../../models/applicationModel.js';
 import { getUser } from '../../middleware/entityMiddleware.js';
 import { getUserData } from '../../middleware/userPageDao.js';
 import isLoggedIn from '../../middleware/authMiddleware.js';
@@ -242,8 +243,10 @@ router.delete('/delete/:id', isLoggedIn, getUser, async (req, res) => {
         const removeFromMembers = Group.updateMany({ groupMembers: userId }, { $pull: { groupMembers: userId } });
         const removeFromApplicants = Group.updateMany({ groupApplicants: userId }, { $pull: { groupApplicants: userId } });
 
-        await Promise.all([ownedGroupsDeletion, removeFromMembers, removeFromApplicants]);
-
+        // Step 4: Delete the application related to user
+        const removeFromApplications = Application.deleteMany({ applicantId: userId });
+        await Promise.all([ownedGroupsDeletion, removeFromMembers, removeFromApplicants, removeFromApplications]);
+    
         // Finally, delete the user
         await res.user.deleteOne();
         req.logout(function(err) {

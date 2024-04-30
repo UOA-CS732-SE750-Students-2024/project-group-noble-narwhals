@@ -1,7 +1,8 @@
 
 module.exports = {
-    transform: {
-      '^.+\\.jsx?$': 'babel-jest',  
-    },
-  };
-  
+  testEnvironment: "node",
+  roots: ["./src"],
+  transform: {
+    '^.+\\.jsx?$': 'babel-jest',
+  },
+};
