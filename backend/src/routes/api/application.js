@@ -3,13 +3,13 @@ import Application from '../../models/applicationModel.js';
 import User from '../../models/userModel.js';
 import Notification from '../../models/notificationModel.js';
 import mongoose from 'mongoose';
+import User from '../../models/userModel.js';
 import Group from '../../models/groupModel.js';
 import { body, validationResult } from 'express-validator';
 import { getApplication } from '../../middleware/entityMiddleware.js';
 const router = express.Router();
 
 // get all applications
-
 
 router.get('/', async (req, res) => {
     try {
@@ -52,8 +52,6 @@ router.post('/',
     }
 );
 
-
-
 // update application by id
 router.patch('/:id', getApplication, async (req, res) => {
     const updates = Object.keys(req.body);
@@ -63,7 +61,6 @@ router.patch('/:id', getApplication, async (req, res) => {
     if (!isValidOperation) {
         return res.status(400).send({ error: 'Invalid updates!' });
     }
-
     try {
         updates.forEach((update) => {
             res.application[update] = req.body[update];
@@ -74,8 +71,6 @@ router.patch('/:id', getApplication, async (req, res) => {
         res.status(400).json({ message: err.message });
     }
 });
-
-
 
 // update application by id in group info page
 router.patch('/applications-with-details/:id', getApplication, async (req, res) => {
@@ -115,12 +110,19 @@ router.patch('/applications-with-details/:id', getApplication, async (req, res) 
                 console.log('enter application group condition statement...');
                
                 if (application.applicationStatus === 'accepted') {
-                    console.log('application accepted');
+
+                    if (group.groupMembers.length >= group.maxNumber) {
+                        await session.abortTransaction();
+                        session.endSession();
+                        return res.status(400).json({ message: "Group is full" });
+                    }
+
                     group.groupMembers.push(application.applicantId);
                     group.groupApplicants.pull(application.applicantId);
                     group.application.pull(application._id);  // also remove the application reference
                     
                     applicant.participatingGroups.push(group._id); // add group to participating groups
+
 
                     // Create a new notification for the applicant
                     const newNotification = new Notification({
@@ -132,6 +134,7 @@ router.patch('/applications-with-details/:id', getApplication, async (req, res) 
                     });
                     console.log('newNotification when accepted:', newNotification);
                     await newNotification.save({ session });
+
                 }
                 await group.save({ session });
             }else if (application.applicationStatus === 'rejected') {

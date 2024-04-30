@@ -5,6 +5,8 @@ import  axios from 'axios';
 
 function Member({ username, avatar, memberId, ownerId, isCurrentUserHost, groupId }) {
   const navigate = useNavigate();
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+
 
   const viewProfile = () => {
     navigate(`/user/profile/${memberId}`);
@@ -13,17 +15,22 @@ function Member({ username, avatar, memberId, ownerId, isCurrentUserHost, groupI
   const handleDelete = async (groupId, memberId) => {
     const confirmDelete = confirm("Are you sure you want to remove this member from the group?");
     if (confirmDelete) {
-        console.log('Deleting member with groupId:', groupId);
-        try {
-            const response = await axios.patch(`http://localhost:3000/api/groups/remove-member/${groupId}`, {
-                memberId: memberId 
-            });
-            console.log('Member removed successfully:', response.data);
-            alert('Member removed successfully!');  
-        } catch (error) {
-            console.error('Error in removing member:', error.response.data);
-            alert('Failed to remove member: ' + error.response.data.message);  
-        }
+
+      console.log("Deleting member with groupId:", groupId);
+      try {
+        const response = await axios.patch(
+          `${apiBaseUrl}/api/groups/remove-member/${groupId}`,
+          {
+            memberId: memberId,
+          }
+        );
+        console.log("Member removed successfully:", response.data);
+        alert("Member removed successfully!");
+      } catch (error) {
+        console.error("Error in removing member:", error.response.data);
+        alert("Failed to remove member: " + error.response.data.message);
+      }
+
     } else {
         alert("Member removal canceled.");  
     }

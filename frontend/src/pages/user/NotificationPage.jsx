@@ -3,7 +3,6 @@ import Button from "../../components/Button";
 import { useAuth } from "../../store/AuthContext";
 import { Link, useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "";
 
 function NotificationPage() {
@@ -12,8 +11,7 @@ function NotificationPage() {
   const navigate = useNavigate();
   const { user, setUser, isLoading, setIsLoading, isLoggedIn } = useAuth();
   const [notifications, setNotifications] = useState([]);
-
-
+  
   /**
    * get all notifications
    */
@@ -30,6 +28,7 @@ function NotificationPage() {
         return new Date(b.notificationTime) - new Date(a.notificationTime);
       });
       setNotifications(notifications);
+
     } catch (error) {
       console.error('Error fetching notifications:', error);
     }

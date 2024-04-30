@@ -148,7 +148,7 @@ router.post('/like/:groupId', async (req, res) => {
 router.post('/unlike/:groupId', async (req, res) => {
     const { groupId } = req.params;
     const userId = req.user._id;
-   
+
     try {
         const group = await Group.findById(groupId);
         const user = await User.findById(userId);

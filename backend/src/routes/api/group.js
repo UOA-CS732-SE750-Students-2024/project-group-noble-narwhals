@@ -59,30 +59,6 @@ router.get("/search/:keywords", async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
-// get group by id with  details populated
-router.get("/:id/detail", getGroup, async (req, res) => {
-  try {
-    const group = await Group.findById(req.params.id)
-      .populate({
-        path: "groupMembers",
-        select: "name avatar",
-      })
-      .populate({
-        path: "groupApplicants",
-        select: "name message avatar",
-      })
-      .populate({
-        path: "application",
-        populate: {
-          path: "applicantId",
-          select: "name avatar",
-        },
-      })
-      .populate("groupTags", "name")
-      .populate({
-        path: "ownerId",
-        select: "name avatar",
-      });
 
     if (!group) {
       return res.status(404).send("Group not found");
@@ -104,6 +80,7 @@ router.get("/:id/detail", getGroup, async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
+
 
 
 // create a new group
@@ -219,7 +196,6 @@ router.patch("/remove-member/:id", getGroup, async (req, res) => {
   const member = await User.findById(memberId);
 
   const group = res.group;
-  console.log("delete member from group", group, member);
 
   if (!group) {
     return res.status(404).send({ message: "Group not found" });
@@ -248,6 +224,7 @@ router.patch("/remove-member/:id", getGroup, async (req, res) => {
     await group.save();
     await member.save();
     await newNotification.save();
+
     res.send({ message: "Member removed successfully" });
   } catch (error) {
     console.error("Error in remove-member route:", error);
@@ -268,7 +245,9 @@ router.post("/join/:id", getGroup, async (req, res) => {
   res.group.groupMembers.push(userId);
 
   //check if group is full
+
   if (res.group.groupMembers.length >= res.group.maxNumber) {
+
     res.group.groupStatus = 'full';
   }
 
@@ -286,6 +265,8 @@ router.post("/quit/:groupId", async (req, res) => {
   console.log("Quit group route");
   const { groupId } = req.params;
   const userId = req.user._id; // User ID from authentication/session
+  const user = await User.findById(userId);
+
   const user = await User.findById(userId);
 
   try {
@@ -316,6 +297,7 @@ router.post("/quit/:groupId", async (req, res) => {
     await user.save();
     // Save the notification
     await newNotification.save();
+
     res.status(200).json({ message: "Successfully quit the group" });
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -325,6 +307,7 @@ router.post("/quit/:groupId", async (req, res) => {
 // Join group by applying to it at group info
 router.post("/join/:id/group", getGroup, async (req, res) => {
   const userId = req.user._id;
+
   const user = await User.findById(userId);
 
   // Check if the user is already a member of the group
@@ -387,6 +370,54 @@ router.post("/join/:id/group", getGroup, async (req, res) => {
     });
   } catch (err) {
     console.error("Failed to join group:", err);
+
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// get group by id with  details populated
+router.get("/:id/detail", getGroup, async (req, res) => {
+  try {
+    const group = await Group.findById(req.params.id)
+      .populate({
+        path: "groupMembers",
+        select: "name avatar",
+      })
+      .populate({
+        path: "groupApplicants",
+        select: "name message avatar",
+      })
+      .populate({
+        path: "application",
+        populate: {
+          path: "applicantId",
+          select: "name avatar",
+        },
+      })
+      .populate("groupTags", "name")
+      .populate({
+        path: "ownerId",
+        select: "name avatar",
+      });
+
+    if (!group) {
+      return res.status(404).send("Group not found");
+    }
+
+    // Check and update the group status based on the number of members
+    const isFull = group.groupMembers.length >= group.maxNumber;
+    if (isFull && group.groupStatus !== 'full') {
+      group.groupStatus = 'full';
+      await group.save();  
+    } else if (!isFull && group.groupStatus === 'full') {
+      group.groupStatus = 'available';
+      await group.save();  // Update status if no longer full
+    }
+
+    res.json(group);
+  } catch (err) {
+    console.error("Error fetching group:", err);
+
     res.status(500).json({ message: err.message });
   }
 });
@@ -468,6 +499,7 @@ router.post("/cancel-application/:groupId", async (req, res) => {
   }
 });
 
+// Dismiss a group by the host
 router.patch("/dismiss/:groupId", async (req, res) => {
   const { groupId } = req.params;
   const userId = req.user._id; // Assuming you have user ID from session or token
@@ -501,6 +533,7 @@ router.patch("/dismiss/:groupId", async (req, res) => {
         { $pull: { likedGroups: groupId } }
       );
 
+
       // Create a new notification for each user in the group
       const notificationContent = `Group ${group.groupName} has been dismissed by the host.`;
       const notificationTime = new Date();
@@ -519,6 +552,7 @@ router.patch("/dismiss/:groupId", async (req, res) => {
 
       // Wait for all notifications to be saved
       await Promise.all(notificationPromises);
+
       // Setting group status to 'closed' and clearing members and applicants
       group.groupStatus = "dismissed";
       group.groupMembers = []; // Clear all members
