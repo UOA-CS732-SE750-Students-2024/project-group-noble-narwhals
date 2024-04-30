@@ -12,10 +12,10 @@ export const AuthProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);  // add loading status, default is true
 
   useEffect(() => {
-    console.log("initialize useEffect in AuthContext.jsx");
     axios
       .get(`${import.meta.env.VITE_API_BASE_URL}/auth/check-session`)
       .then((res) => {
+        console.log("res.data", res.data)
         if (res.data.isLoggedIn) {
           setUser(res.data.user);
           setIsLoggedIn(true);
@@ -34,6 +34,11 @@ export const AuthProvider = ({ children }) => {
         window.localStorage.setItem("isLoggedIn", false);
       });
   }, []);
+
+  useEffect(() => {
+    console.log("current login status:", isLoggedIn);
+    console.log("curent user data from AuthContext:", user);
+  }, [isLoggedIn, user]); 
 
   return (
     <AuthContext.Provider value={{ isLoggedIn, user, setUser, setIsLoggedIn, isLoading, setIsLoading }}>

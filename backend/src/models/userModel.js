@@ -8,6 +8,7 @@ const userSchema = new Schema({
     password: String,
     googleId: String,
     isVerification: Boolean,
+    avatar: String,
     gender: String,
     profileTags:[{
         type: Schema.Types.ObjectId,

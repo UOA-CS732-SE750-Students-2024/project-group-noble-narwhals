@@ -88,7 +88,7 @@ router.get(
   }),
   (req, res) => {
     if (req.user) {
-      res.redirect(`${process.env.CLIENT_URL}/`);
+      res.redirect(`${process.env.CLIENT_URL}/user/settings/${req.user._id}`);
     } else {
       res.status(500).redirect(`${process.env.CLIENT_URL}/signup`).json({
         success: false,
@@ -99,7 +99,6 @@ router.get(
 );
 
 router.get("/check-session", isLoggedIn, (req, res) => {
-  console.log("check-session", req.user)
   res.json({ isLoggedIn: true, user: req.user });
 });
 

@@ -15,6 +15,7 @@ export default function passportSetup(passport) {
     if (req.user) {
       // check if the user has a googleId
       if (!req.user.googleId) {
+        console.log('No googleId found, linking Google account...');
         // if no googleId, link the account with Google
         req.user.googleId = profile.id;
         req.user.isVerification = true;
@@ -24,6 +25,7 @@ export default function passportSetup(passport) {
         // if googleId exists, check if the googleId matches the profile id
         if (req.user.googleId === profile.id) {
           req.user.isVerification = true;
+    
           await req.user.save();
           return done(null, req.user, { message: 'Google account verified!' });
         } else {
@@ -83,6 +85,7 @@ export default function passportSetup(passport) {
   });
 
   passport.deserializeUser((id, done) => {
+    console.log('Deserializing user by id:', id);
     User.findById(id)
       .populate({
         path: 'profileTags',

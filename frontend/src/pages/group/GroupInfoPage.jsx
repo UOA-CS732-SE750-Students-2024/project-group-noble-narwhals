@@ -10,19 +10,23 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import { useAuth } from "../../store/AuthContext";
 
+
 function GroupInfoPage() {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const { groupId } = useParams();
   const [groupDetails, setGroupDetails] = useState(null);
   const [applications, setApplications] = useState([]);
   const { user } = useAuth();
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+
 
   useEffect(() => {
     const fetchGroupDetails = async () => {
       try {
-        const response = await axios.get(
-          `${API_BASE_URL}/api/groups/${groupId}/detail`
-        );
+
+
+        const response = await axios.get(`${apiBaseUrl}/api/groups/${groupId}/detail`);
+
         const data = response.data || {};
         const tagsText = data.groupTags
           ? data.groupTags.map((tag) => tag.name).join(", ")
@@ -44,15 +48,11 @@ function GroupInfoPage() {
         }
 
         const activityDetails = [
-          {
-            icon: <IoMdTime />,
-            text: new Date(data.deadlineDate).toLocaleDateString(),
-          },
-          {
-            icon: <MdPeople />,
-            text: `${data.numberOfGroupMember} people wanted`,
-          },
-          { icon: <IoPricetag />, text: tagsText },
+
+          { icon: <IoMdTime />, text: new Date(data.deadlineDate).toLocaleDateString() },
+          { icon: <MdPeople />, text: `${data.maxNumber} people wanted` },
+          { icon: <IoPricetag />, text: tagsText }
+
         ];
 
         setGroupDetails({
@@ -157,6 +157,7 @@ function ApplicantList({
             username={application.applicantId.name}
             message={application.message}
             avatar={application.applicantId.avatar}
+            userId={application.applicantId._id}
             isHost={isCurrentUserHost}
             applicationId={application._id}
             groupId={groupId}

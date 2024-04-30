@@ -12,10 +12,12 @@ let axiosMock;
 //before all test, create a new instance of MockAdapter
 beforeAll(() => {
   axiosMock = new MockAdapter(axios);
+
 });
 
 //after each test, reset the mock
 afterEach(() => {
+
   axiosMock.reset();
 });
 
@@ -101,6 +103,9 @@ describe("App Router", () => {
     expect(getByText("Tags")).toBeInTheDocument();
   });
 
+ 
+
 
 
 });
+

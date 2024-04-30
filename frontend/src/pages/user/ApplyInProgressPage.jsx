@@ -35,7 +35,7 @@ function ApplyInProgressPage() {
   const appliedGroups = user.appliedGroups;
   console.log("appliedGroups: ", appliedGroups);
   return (
-    <div className="w-4/5 flex flex-col m-4 p-4">
+    <div className="flex flex-col m-4 p-4">
       <div className="text-3xl mb-8">Apply in Progress</div>
       {/* Groups table */}
       {appliedGroups && appliedGroups.length > 0 ? appliedGroups.map((group) => (
