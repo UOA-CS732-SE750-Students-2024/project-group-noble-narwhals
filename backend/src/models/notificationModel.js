@@ -21,7 +21,12 @@ const notificationSchema = new Schema({
     receiverId: {
         type: Schema.Types.ObjectId,
         ref: 'User'  
-    }
+    },
+    groupId: {
+        type: Schema.Types.ObjectId,
+        ref: 'Group'
+    },
+    
 });
 
 const Notification = mongoose.model('Notification', notificationSchema);

@@ -213,7 +213,7 @@ router.patch('/update/:id', getUser, async (req, res) => {
 });
 
 // delete user
-router.delete('/delete/:id', isLoggedIn, getUser, async (req, res) => {
+router.delete('/delete/:id', getUser, async (req, res) => {
     console.log("ready to delete user");
     const userId = req.params.id;
     
