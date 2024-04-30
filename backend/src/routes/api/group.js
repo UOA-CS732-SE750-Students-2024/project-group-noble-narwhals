@@ -180,6 +180,7 @@ router.patch("/update/:id", isVerifiedUser, getGroup, async (req, res) => {
   res.group.groupDescription = req.body.description;
   res.group.groupTags = modifiedTags;
   res.group.groupType = req.body.type;
+  res.group.groupStatus = 'available';
 
   try {
     const updatedGroup = await res.group.save();
