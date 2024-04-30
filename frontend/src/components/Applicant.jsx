@@ -59,51 +59,58 @@ function Applicant({
   };
 
   return (
-    <div className="flex flex-col items-center justify-between py-6 px-4 bg-gradient-to-br from-blue-100 to-blue-300 rounded-lg overflow-hidden m-2 transition-all duration-300 ease-in-out relative" style={{ width: '240px', height: '300px' }}
+    <div
+      className="flex flex-col items-center justify-between py-6 px-4 bg-gradient-to-br from-bg1 to-bg2 rounded-lg overflow-hidden mb-14 transition-all duration-500 ease-in-out relative"
+      style={{ width: "240px", height: "300px" }}
       onMouseEnter={() => setHover(true)}
-
       onMouseLeave={() => setHover(false)}
     >
       <div className="flex-shrink overflow-hidden">
         <div
-          className={`flex justify-start items-center ${hover && isLongMessage ? "flex-row" : "flex-col"
-            }`}
+          className={`flex justify-start items-center ${
+            hover && isLongMessage ? "flex-row" : "flex-col"
+          }`}
         >
-          <Link to={`/user/profile/${userId}`}>
-
-            <img
-              src={avatar}
-              alt="avatar"
-              className={`rounded-full transition-transform duration-300 ease-in-out ${hover && isLongMessage ? "w-12 h-12" : "w-24 h-24"
-                }`}
-            />
-          </Link>
-          <Link to={`/user/profile/${userId}`}>
-
-            <div
-              className={`mt-2 text-xl transition-transform duration-300 ease-in-out ${hover && isLongMessage ? "translate-x-2" : ""
-                }`}
-            >
-              {username}
-            </div>
-          </Link>
+          <img
+            src={avatar}
+            alt="avatar"
+            className={`rounded-full transition-transform duration-300 ease-in-out ${
+              hover && isLongMessage ? "w-12 h-12" : "w-24 h-24"
+            }`}
+          />
+          <div
+            className={`mt-2 text-xl transition-transform duration-300 ease-in-out ${
+              hover && isLongMessage ? "translate-x-2" : ""
+            }`}
+          >
+            {username}
+          </div>
         </div>
-
         <div
-          className={`h-full my-2 text-center overflow-auto cursor-pointer ${hover && isLongMessage
+          className={`h-full my-2 text-center overflow-auto cursor-pointer ${
+            hover && isLongMessage
               ? "overflow-auto  hide-scrollbar"
               : " overflow-hidden"
-            }`}
+          }`}
         >
-
           <div className="text-sm text-gray-600">{message}</div>
         </div>
       </div>
-
       {isHost && (
-        <div className="absolute bottom-4 left-0 right-0 px-4 flex justify-between">
-          <Button onClick={handleAccept} className="w-20 py-1 px-0" style_type="fill">Allow</Button>
-          <Button onClick={handleReject} className="w-20 py-1 px-0" style_type="border">Reject</Button>
+        <div className=" flex flex-row justify-between grow-0 shrink-0 mt-2 gap-5 ">
+          <Button
+            onClick={handleAccept}
+            className="w-20 h-9 py-1 px-0"
+            style_type="fill"
+          >
+            Allow
+          </Button>
+          <Button
+            onClick={handleReject}
+            className="w-20 h-9 py-1 px-0 border-none bg-slate-400 hover:bg-slate-700 text-slate-900"
+          >
+            Reject
+          </Button>
         </div>
       )}
     </div>

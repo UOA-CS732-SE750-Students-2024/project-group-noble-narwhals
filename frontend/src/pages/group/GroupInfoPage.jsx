@@ -150,7 +150,7 @@ function ApplicantList({
           <span className="ml-2 text-gray-500">{applications.length}</span>
         </h3>
       </div>
-      <div className="flex overflow-x-auto">
+      <div className="flex gap-2 overflow-x-auto">
         {applications.map((application) => (
           <Applicant
             key={application._id}
