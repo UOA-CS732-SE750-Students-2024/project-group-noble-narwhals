@@ -357,8 +357,8 @@ describe('PATCH /update/:id', () => {
 describe('DELETE /delete/:id', () => {
 
     test('should allow a user to delete their own account', async () => {
-        console.log('user3._id:', user3._id);
-        console.log("going to request", `/api/user/delete/${user3._id}`);
+        // console.log('user3._id:', user3._id);
+        // console.log("going to request", `/api/user/delete/${user3._id}`);
         const response = await request(app)
             .delete(`/api/user/delete/${user3._id}`)
             .expect(200);

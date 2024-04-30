@@ -1,13 +1,12 @@
 import express from "express";
-import router from "../api/tag";
+import router from "../api/notification";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import request from "supertest";
 import mongoose from "mongoose";
 import User from "../../models/userModel";
 import Group from "../../models/groupModel";
-import Tag from "../../models/tagModel";
+import Notification from "../../models/notificationModel";
 import bcrypt from "bcrypt";
-
 
 let mongod;
 
@@ -16,7 +15,7 @@ const app = express();
 app.use(express.json());
 
 
-app.use("/api/tag", router);
+app.use("/api/notification", router);
 
 
 const user1 = {
@@ -61,21 +60,16 @@ const group1 = {
 
 const groups = [group1];
 
-const tag1 = {
+const notification1 = {
     _id: new mongoose.Types.ObjectId("000000000000000000000001"),
-    name: "tag1",
-    isProfileTag: true,
-    isGroupTag: true,
+    senderId: "000000000000000000000003",
+    receiverId: "000000000000000000000004",
+    notificationContent: "notification1",
+    notificationType: "new_applicant",
+    isRead: false,
 };
 
-const tag2 = {
-    _id: new mongoose.Types.ObjectId("000000000000000000000002"),
-    name: "tag2",
-    isProfileTag: true,
-    isGroupTag: true,
-};
-
-const tags = [tag1, tag2];
+const notifications = [notification1];
 
 beforeAll(async () => {
     mongod = await MongoMemoryServer.create();
@@ -92,7 +86,7 @@ beforeEach(async () => {
 
     await User.insertMany(users);
     await Group.insertMany(groups);
-    await Tag.insertMany(tags);
+    await Notification.insertMany(notifications);
 });
 
 /**
@@ -103,64 +97,49 @@ afterAll(async () => {
     await mongod.stop();
 });
 
-describe("GET /", () => {
+describe("GET /api/notification/user/:userId", () => {
+    it("should return all notifications for a user", async () => {
+        const res = await request(app).get("/api/notification/user/000000000000000000000004");
 
-    test("It should respond with an array of tags", async () => {
-        const response = await request(app).get("/api/tag").send().expect(200);
-        console.log(response.body);
-        expect(response.body.length).toBe(2);
-        expect(response.body[0].name).toBe("tag1");
-        expect(response.body[1].name).toBe("tag2");
+        expect(res.statusCode).toEqual(200);
+        expect(res.body.length).toEqual(1);
+        expect(res.body[0].notificationContent).toEqual("notification1");
+    
     });
-})
-
-
-describe("GET /:id", () => {
-    test("It should respond with a single tag", async () => {
-        const response = await request(app).get("/api/tag/000000000000000000000001").send().expect(200);
-        expect(response.body.name).toBe("tag1");
-    });
-
 });
 
-describe("POST /", () => {
-    test("It should respond with a new tag", async () => {
-        const newTag = {
-            name: "tag3",
-            isProfileTag: true,
-            isGroupTag: true,
+
+describe("GET /api/notification/:id", () => {
+    it("should return a notification by id", async () => {
+        const res = await request(app).get("/api/notification/000000000000000000000001");
+
+        expect(res.statusCode).toEqual(200);
+        expect(res.body.notificationContent).toEqual("notification1");
+    });
+});
+
+describe("POST /api/notification", () => {
+    it("should create a new notification", async () => {
+        const newNotification = {
+            senderId: "000000000000000000000003",
+            receiverId: "000000000000000000000004",
+            notificationContent: "new notification",
+            notificationType: "new_applicant",
+            isRead: false,
         };
 
-        const response = await request(app).post("/api/tag").send(newTag).expect(201);
-        expect(response.body.name).toBe("tag3");
+        const res = await request(app).post("/api/notification").send(newNotification);
+
+        expect(res.statusCode).toEqual(201);
+        expect(res.body.notificationContent).toEqual("new notification");
     });
 });
 
-describe("PATCH /:id", () => {
-    test("It should respond with an updated tag", async () => {
-        const updatedTag = {
-            name: "tag3",
-            isProfileTag: true,
-            isGroupTag: true,
-        };
+describe("PATCH /api/notification/:id/read", () => {
+    it("should update a notification by id", async () => {
+        const res = await request(app).patch("/api/notification/000000000000000000000001/read");
 
-        const response = await request(app).patch("/api/tag/000000000000000000000001").send(updatedTag).expect(200);
-        expect(response.body.name).toBe("tag3");
-    });
-}
-
-);
-
-describe("DELETE /:id", () => {
-    test("It should respond with a message of 'Deleted Tag'", async () => {
-        const response = await request(app).delete("/api/tag/000000000000000000000001").send().expect(200);
-        expect(response.body.message).toBe("Deleted Tag");
-    });
-});
-
-describe("POST /check", () => {
-    test("It should respond with a tag", async () => {
-        const response = await request(app).post("/api/tag/check").send({ name: "tag1" }).expect(200);
-        expect(response.body.name).toBe("tag1");
+        expect(res.statusCode).toEqual(200);
+        expect(res.body.isRead).toEqual(true);
     });
 });
