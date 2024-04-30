@@ -18,11 +18,9 @@ function GroupInfoPage() {
   const { user } = useAuth();
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
-
   useEffect(() => {
     const fetchGroupDetails = async () => {
       try {
-
 
         const response = await axios.get(`${apiBaseUrl}/api/groups/${groupId}/detail`);
 
@@ -143,7 +141,7 @@ function ApplicantList({
 }) {
   return (
     <div className="applicant-list p-6 mt-6">
-      <div className="flex justify-between items-center mb-4 sticky top-0 bg-white">
+      <div className="flex justify-between items-center mb-4 bg-white">
         <h3 className="font-semibold text-2xl">
           Applicants
           <span className="ml-2 text-gray-500">{applications.length}</span>
