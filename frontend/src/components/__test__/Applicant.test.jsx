@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { render, fireEvent, waitFor } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import Applicant from '../Applicant';
 import '@testing-library/jest-dom';
 import axios from 'axios';
@@ -7,6 +8,7 @@ import MockAdapter from 'axios-mock-adapter';
 
 // Mocking axios
 const mockAxios = new MockAdapter(axios);
+const API_BASE_URL = process.env.VITE_API_BASE_URL
 
 describe('Applicant Component', () => {
   // Mock data
@@ -21,7 +23,7 @@ describe('Applicant Component', () => {
 
   // Setup mock API responses and mock alert
   beforeEach(() => {
-    mockAxios.onPatch(`http://localhost:3000/api/application/applications-with-details/${props.applicationId}`).reply(200, {
+    mockAxios.onPatch(`${API_BASE_URL}/api/application/applications-with-details/${props.applicationId}`).reply(200, {
       message: "Application status updated successfully"
     });
     window.alert = vi.fn(); // Mock the alert function
@@ -33,13 +35,21 @@ describe('Applicant Component', () => {
   });
 
   it('renders correctly', () => {
-    const { getByText, getByAltText } = render(<Applicant {...props} />);
+    const { getByText, getByAltText } = render(
+      <MemoryRouter>
+        <Applicant {...props} />
+      </MemoryRouter>
+    );
     expect(getByText(props.username)).toBeInTheDocument();
     expect(getByAltText('avatar')).toBeInTheDocument();
   });
 
   it('handles accept action correctly', async () => {
-    const { getByText } = render(<Applicant {...props} />);
+    const { getByText } = render(
+      <MemoryRouter>
+        <Applicant {...props} />
+      </MemoryRouter>
+    );
     const acceptButton = getByText('Allow');
     fireEvent.click(acceptButton);
 
@@ -50,7 +60,11 @@ describe('Applicant Component', () => {
   });
 
   it('handles reject action correctly', async () => {
-    const { getByText } = render(<Applicant {...props} />);
+    const { getByText } = render(
+      <MemoryRouter>
+        <Applicant {...props} />
+      </MemoryRouter>
+    );
     const rejectButton = getByText('Reject');
     fireEvent.click(rejectButton);
 
@@ -61,8 +75,12 @@ describe('Applicant Component', () => {
   });
 
   it('displays an error message on API failure', async () => {
-    mockAxios.onPatch(`http://localhost:3000/api/application/applications-with-details/${props.applicationId}`).networkError();
-    const { getByText } = render(<Applicant {...props} />);
+    mockAxios.onPatch(`${API_BASE_URL}/api/application/applications-with-details/${props.applicationId}`).networkError();
+    const { getByText } = render(
+      <MemoryRouter>
+        <Applicant {...props} />
+      </MemoryRouter>
+    );
     const acceptButton = getByText('Allow');
     fireEvent.click(acceptButton);
 

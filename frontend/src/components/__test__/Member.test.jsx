@@ -7,6 +7,7 @@ import { MemoryRouter } from "react-router-dom";
 import Member from "../Member";  
 
 let axiosMock;
+const API_BASE_URL = process.env.VITE_API_BASE_URL
 
 beforeEach(() => {
     window.confirm = vi.fn(() => true); // Simulate user confirmation as true
@@ -52,7 +53,7 @@ describe("Member Component", () => {
 
     });
     it("calls API to delete a member when deletion is confirmed", async () => {
-        axiosMock.onPatch(`http://localhost:3000/api/groups/remove-member/${props.groupId}`).reply(200);
+        axiosMock.onPatch(`${API_BASE_URL}/api/groups/remove-member/${props.groupId}`).reply(200);
     
         render(
           <MemoryRouter>

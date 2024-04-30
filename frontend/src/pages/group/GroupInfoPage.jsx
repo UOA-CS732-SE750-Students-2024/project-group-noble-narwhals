@@ -16,11 +16,13 @@ function GroupInfoPage() {
   const [groupDetails, setGroupDetails] = useState(null);
   const [applications, setApplications] = useState([]);
   const { user } = useAuth();
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+
 
   useEffect(() => {
     const fetchGroupDetails = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/api/groups/${groupId}/detail`);
+        const response = await axios.get(`${apiBaseUrl}/api/groups/${groupId}/detail`);
         console.log('response:', response.data)
         const data = response.data || {};
         const tagsText = data.groupTags ? data.groupTags.map(tag => tag.name).join(', ') : 'No tags';

@@ -14,11 +14,12 @@ function Applicant({
 }) {
   const [hover, setHover] = useState(false);
   const isLongMessage = message.length > 50;
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
   const handleAccept = async () => {
     try {
       const response = await axios.patch(
-        `http://localhost:3000/api/application/applications-with-details/${applicationId}`,
+        `${apiBaseUrl}/api/application/applications-with-details/${applicationId}`,
         {
           applicationStatus: "accepted",
         }
@@ -36,7 +37,7 @@ function Applicant({
   const handleReject = async () => {
     try {
       const response = await axios.patch(
-        `http://localhost:3000/api/application/applications-with-details/${applicationId}`,
+        `${apiBaseUrl}/api/application/applications-with-details/${applicationId}`,
         {
           applicationStatus: "rejected",
         }

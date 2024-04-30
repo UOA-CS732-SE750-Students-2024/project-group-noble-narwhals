@@ -13,6 +13,8 @@ function HeaderContent({ groupName, groupTags, postedDate, activityDetails, isHo
   const { isLoggedIn, user } = useAuth();
   const [liked, setLiked] = useState(false);
   const navigate = useNavigate();
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+
 
   const isGroupMember = user && groupMembers.some(member => member._id === user._id);
   const deadline = deadlineDate ? new Date(deadlineDate) : new Date(); // Fallback to current date if undefined
@@ -32,7 +34,7 @@ function HeaderContent({ groupName, groupTags, postedDate, activityDetails, isHo
 
   const fetchApplicationStatus = async () => {
     try {
-      const response = await axios.get(`http://localhost:3000/api/groups/${groupId}/has-applied`, {
+      const response = await axios.get(`${apiBaseUrl}/api/groups/${groupId}/has-applied`, {
         params: { userId: user._id }
       });
       setHasApplied(response.data.hasApplied);
@@ -45,7 +47,7 @@ function HeaderContent({ groupName, groupTags, postedDate, activityDetails, isHo
   const checkLikeStatus = async () => {
     if (isLoggedIn && groupId && user._id) {
       try {
-        const response = await axios.get(`http://localhost:3000/api/user/${user._id}/likes/${groupId}`);
+        const response = await axios.get(`${apiBaseUrl}/api/user/${user._id}/likes/${groupId}`);
         setLiked(response.data.liked);
       } catch (error) {
         console.error('Error checking like status:', error);
@@ -64,7 +66,7 @@ function HeaderContent({ groupName, groupTags, postedDate, activityDetails, isHo
 
     const endpoint = newLikedStatus ? `like/${groupId}` : `unlike/${groupId}`;
     try {
-      await axios.post(`http://localhost:3000/api/user/${endpoint}`, { userId: user._id });
+      await axios.post(`${apiBaseUrl}/api/user/${endpoint}`, { userId: user._id });
     } catch (error) {
       console.error('Failed to toggle like:', error);
       setLiked(!newLikedStatus);
@@ -94,7 +96,7 @@ function HeaderContent({ groupName, groupTags, postedDate, activityDetails, isHo
     if (hasApplied && applicationStatus !== 'accepted') { // Prevent canceling if already accepted
       if (window.confirm("Are you sure you want to cancel your application?")) {
         try {
-          const response = await axios.post(`http://localhost:3000/api/groups/cancel-application/${groupId}`, { userId: user._id });
+          const response = await axios.post(`${apiBaseUrl}/api/groups/cancel-application/${groupId}`, { userId: user._id });
           setHasApplied(false);
           setApplicationStatus('');
           alert('Your application has been cancelled.');
@@ -113,7 +115,7 @@ function HeaderContent({ groupName, groupTags, postedDate, activityDetails, isHo
     }
 
     try {
-      const response = await axios.post(`http://localhost:3000/api/groups/join/${groupId}/group`, {
+      const response = await axios.post(`${apiBaseUrl}/api/groups/join/${groupId}/group`, {
         userId: user._id,
         message: applicationMessage
       });
@@ -140,10 +142,9 @@ function HeaderContent({ groupName, groupTags, postedDate, activityDetails, isHo
   }
 
     try {
-      const response = await axios.post(`http://localhost:3000/api/groups/quit/${groupId}`, { userId: user._id });
+      const response = await axios.post(`${apiBaseUrl}/api/groups/quit/${groupId}`, { userId: user._id });
       alert('You have successfully left the group.');
-      // Optionally navigate away from the group page or refresh group data
-      navigate('/');
+      
     } catch (error) {
       alert('Failed to leave the group: ' + (error.response?.data?.message || error.message));
     }
@@ -154,7 +155,7 @@ function HeaderContent({ groupName, groupTags, postedDate, activityDetails, isHo
     if (window.confirm('Are you sure you want to dismiss this group? This action cannot be undone.')) {
 
       try {
-        const response = await axios.patch(`http://localhost:3000/api/groups/dismiss/${groupId}`, {
+        const response = await axios.patch(`${apiBaseUrl}/api/groups/dismiss/${groupId}`, {
           groupStatus: 'dismissed'
         });
 
@@ -171,7 +172,7 @@ function HeaderContent({ groupName, groupTags, postedDate, activityDetails, isHo
 
     if (window.confirm('Are you sure you want to close this group? This action will set the group status to closed.')) {
       try {
-        const response = await axios.patch(`http://localhost:3000/api/groups/update/${groupId}`, {
+        const response = await axios.patch(`${apiBaseUrl}/api/groups/update/${groupId}`, {
           groupStatus: 'closed'
         });
         navigate('/');

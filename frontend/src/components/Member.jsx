@@ -12,6 +12,8 @@ function Member({
   groupId,
 }) {
   const navigate = useNavigate();
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+
 
   const viewProfile = () => {
     navigate(`/user/profile/${memberId}`);
@@ -25,7 +27,7 @@ function Member({
       console.log("Deleting member with groupId:", groupId);
       try {
         const response = await axios.patch(
-          `http://localhost:3000/api/groups/remove-member/${groupId}`,
+          `${apiBaseUrl}/api/groups/remove-member/${groupId}`,
           {
             memberId: memberId,
           }

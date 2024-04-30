@@ -10,6 +10,8 @@ import '@testing-library/jest-dom';
 const mock = new MockAdapter(axios);
 const groupId = 'testGroupId';
 const user = { _id: 'testUserId' };
+const API_BASE_URL = process.env.VITE_API_BASE_URL
+
 const baseMockProps = {
     groupName: "Test Group",
     groupTags: ["Tag1", "Tag2"],
@@ -24,47 +26,47 @@ const baseMockProps = {
 
 beforeAll(() => {
     // Mock for checking application status
-    mock.onGet(`http://localhost:3000/api/groups/${groupId}/has-applied`).reply(200, {
+    mock.onGet(`${API_BASE_URL}/api/groups/${groupId}/has-applied`).reply(200, {
         hasApplied: false,
         status: 'Not Applied'
     });
 
     // Mock for checking like status
-    mock.onGet(`http://localhost:3000/api/user/${user._id}/likes/${groupId}`).reply(200, {
+    mock.onGet(`${API_BASE_URL}/api/user/${user._id}/likes/${groupId}`).reply(200, {
         liked: false
     });
 
     // Mock for toggling like status
-    mock.onPost(`http://localhost:3000/api/user/like/${groupId}`).reply(200, {
+    mock.onPost(`${API_BASE_URL}/api/user/like/${groupId}`).reply(200, {
         message: "Liked successfully"
     });
-    mock.onPost(`http://localhost:3000/api/user/unlike/${groupId}`).reply(200, {
+    mock.onPost(`${API_BASE_URL}/api/user/unlike/${groupId}`).reply(200, {
         message: "Unliked successfully"
     });
 
 
     // Mock for joining a group
-    mock.onPost(`http://localhost:3000/api/groups/join/${groupId}/group`).reply(200, {
+    mock.onPost(`${API_BASE_URL}/api/groups/join/${groupId}/group`).reply(200, {
         message: "Your application to join the group has been submitted!"
     });
 
     // Mock for canceling a join application
-    mock.onPost(`http://localhost:3000/api/groups/cancel-application/${groupId}`).reply(200, {
+    mock.onPost(`${API_BASE_URL}/api/groups/cancel-application/${groupId}`).reply(200, {
         message: "Your application has been cancelled."
     });
 
     // Mock for quitting a group
-    mock.onPost(`http://localhost:3000/api/groups/quit/${groupId}`).reply(200, {
+    mock.onPost(`${API_BASE_URL}/api/groups/quit/${groupId}`).reply(200, {
         message: "You have successfully left the group."
     });
 
     // Mock for dismissing a group
-    mock.onPatch(`http://localhost:3000/api/groups/dismiss/${groupId}`).reply(200, {
+    mock.onPatch(`${API_BASE_URL}/api/groups/dismiss/${groupId}`).reply(200, {
         message: "Group has been successfully dismissed."
     });
 
     // Mock for closing a group
-    mock.onPatch(`http://localhost:3000/api/groups/update/${groupId}`).reply(200, {
+    mock.onPatch(`${API_BASE_URL}/api/groups/update/${groupId}`).reply(200, {
         message: "The group has been closed successfully."
     });
 });
