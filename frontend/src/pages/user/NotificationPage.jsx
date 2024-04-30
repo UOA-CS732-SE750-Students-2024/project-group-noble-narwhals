@@ -109,7 +109,7 @@ function SingleNotification({ notification, idx }) {
         }`}
     >
       {/* avatar */}
-      <div className="w-10 h-10 rounded-full mt-1 overflow-hidden border border-hmblue-500">
+      <div className="flex-shrink-0 w-10 h-10 rounded-full mt-1 overflow-hidden border border-hmblue-500">
         <Link to={`/user/profile/${notification.senderId._id}`}>
           <img src={notification.senderId.avatar} />
         </Link>
