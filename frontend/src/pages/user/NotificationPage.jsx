@@ -11,13 +11,15 @@ function NotificationPage() {
   const navigate = useNavigate();
   const { user, setUser, isLoading, setIsLoading, isLoggedIn } = useAuth();
   const [notifications, setNotifications] = useState([]);
-  
+
   /**
    * get all notifications
    */
   async function fetchNotification() {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/notification/user/${userId}`);
+      const response = await fetch(
+        `${API_BASE_URL}/api/notification/user/${userId}`
+      );
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
@@ -28,9 +30,8 @@ function NotificationPage() {
         return new Date(b.notificationTime) - new Date(a.notificationTime);
       });
       setNotifications(notifications);
-
     } catch (error) {
-      console.error('Error fetching notifications:', error);
+      console.error("Error fetching notifications:", error);
     }
   }
 
@@ -39,14 +40,21 @@ function NotificationPage() {
       console.log("user._id is not the owner of this page: ", user._id);
       // if the user is not logged in, or logged in but not the user ID to be viewed
       // then he/she should be redirected to the home page
-      navigate('/');
+      navigate("/");
     }
     fetchNotification();
   }, [user]);
 
   if (isLoading) {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
         <img src="/image/Spinner.svg" alt="Loading..." />
       </div>
     );
@@ -88,7 +96,6 @@ function SingleNotification({ notification, idx }) {
         return "closed the group:";
       case "group_dismissed":
         return "dismissed the group:";
-      case "group_dismissed":
       case "delete_member":
         return "removed you from:";
       default:
@@ -97,15 +104,15 @@ function SingleNotification({ notification, idx }) {
   }
 
   async function setRead(notificationId) {
-    await fetch(
-      `${API_BASE_URL}/api/notification/${notificationId}/read`,
-      { method: "PATCH" }
-    ).then();
+    await fetch(`${API_BASE_URL}/api/notification/${notificationId}/read`, {
+      method: "PATCH",
+    }).then();
   }
   return (
     <div
-      className={`flex justify-between py-2${idx === 0 ? "" : " border-t-2 border-t-hmblue-700"
-        }`}
+      className={`flex justify-between py-2${
+        idx === 0 ? "" : " border-t-2 border-t-hmblue-700"
+      }`}
     >
       {/* avatar */}
       <div className="flex-shrink-0 w-10 h-10 rounded-full mt-1 overflow-hidden border border-hmblue-500">
@@ -114,8 +121,9 @@ function SingleNotification({ notification, idx }) {
         </Link>
       </div>
       <div
-        className={`flex-grow ml-3${notification.isRead === "true" ? " text-gray-400" : ""
-          }`}
+        className={`flex-grow ml-3${
+          notification.isRead === "true" ? " text-gray-400" : ""
+        }`}
       >
         {/* notification title */}
         <div className="font-bold text-lg ">
@@ -124,7 +132,9 @@ function SingleNotification({ notification, idx }) {
         </div>
         {/* notification detail */}
         <div className="mt-1">{notification.notificationContent}</div>
-        <div className="mt-1 text-xs text-gray-400">{notification.notificationTime}</div>
+        <div className="mt-1 text-xs text-gray-400">
+          {notification.notificationTime}
+        </div>
       </div>
       <div className="mt-1">
         <Button>Inspect</Button>

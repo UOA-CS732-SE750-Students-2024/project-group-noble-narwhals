@@ -30,11 +30,11 @@ function GroupInfoPage() {
           ? data.groupTags.map((tag) => tag.name).join(", ")
           : "No tags";
         const ownerId = data.ownerId ? data.ownerId._id : null;
-
         const isCurrentUserHost = user && user._id === ownerId;
 
         if (data.application) {
           setApplications(data.application);
+          console.log(111, data.application)
         }
         if (data.groupMembers.length > 0) {
           setMembers(data.groupMembers);
@@ -64,10 +64,32 @@ function GroupInfoPage() {
     fetchGroupDetails();
   }, [groupId, user]);
 
-  const handleApplicationUpdate = (applicationId) => {
+  const handleApplicationUpdate = (applicationId) => {   //remove application from the list
     setApplications((prevApplications) =>
       prevApplications.filter((app) => app._id !== applicationId)
     );
+  };
+
+  const handleCurrentDeleteApplicant = (userId) => {   //remove application from the list
+    setApplications((prevApplications) =>
+      prevApplications.filter((app) => app.applicantId._id !== userId)
+    );
+  };
+
+  const handleAddApplication = (application) => {
+    setApplications((prevApplications) => [...prevApplications, application]);
+  };
+
+  const handleMemberUpdate = (memberId, type) => {
+    if (type === "remove") {
+      setMembers((prevMembers) =>
+        prevMembers.filter((member) => member._id !== memberId)
+      );
+    } else {
+      const newMember = applications.find((app) => app._id === memberId);
+      console.log(1.5, newMember);
+      setMembers((prevMembers) => [...prevMembers, newMember.applicantId]);
+    }
   };
 
   if (!groupDetails) {
@@ -86,25 +108,35 @@ function GroupInfoPage() {
         groupMembers={groupDetails.groupMembers}
         deadlineDate={groupDetails.deadlineDate}
         groupStatus={groupDetails.groupStatus}
+        onAddApplication={handleAddApplication}
+        onApplicationRemove={handleCurrentDeleteApplicant}
       />
       <Description description={groupDetails.groupDescription} />
       <MemberList
-        members={groupDetails.groupMembers || []}
+        members={members}
         ownerId={groupDetails.ownerId}
         isCurrentUserHost={groupDetails.isCurrentUserHost}
         groupId={groupId}
+        onMemberHandler={handleMemberUpdate}
       />
       <ApplicantList
-        applications={applications }
+        applications={applications}
         isCurrentUserHost={groupDetails.isCurrentUserHost}
         groupId={groupId}
         onApplicationHandled={handleApplicationUpdate}
+        onMemberHandler={handleMemberUpdate}
       />
     </div>
   );
 }
 
-function MemberList({ members, ownerId, isCurrentUserHost, groupId }) {
+function MemberList({
+  members,
+  ownerId,
+  isCurrentUserHost,
+  groupId,
+  onMemberHandler,
+}) {
   return (
     <div className="member-list p-6 mt-2">
       <div className="flex justify-between items-center mb-4">
@@ -123,6 +155,7 @@ function MemberList({ members, ownerId, isCurrentUserHost, groupId }) {
             memberId={member._id}
             isCurrentUserHost={isCurrentUserHost}
             groupId={groupId}
+            onMemberHandler={onMemberHandler}
           />
         ))}
       </div>
@@ -135,6 +168,7 @@ function ApplicantList({
   isCurrentUserHost,
   onApplicationHandled,
   groupId,
+  onMemberHandler,
 }) {
   return (
     <div className="applicant-list p-6 mt-6">
@@ -156,6 +190,7 @@ function ApplicantList({
             applicationId={application._id}
             groupId={groupId}
             onApplicationHandled={onApplicationHandled}
+            onMemberHandler={onMemberHandler}
           />
         ))}
       </div>
