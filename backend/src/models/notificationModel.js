@@ -10,7 +10,8 @@ const notificationSchema = new Schema({
     },
     notificationType: {
         type: String,
-        enum: ['join_request_accepted', 'group_closed', 'join_request_rejected', 'group_started'],  
+        enum: ['join_request_accepted', 'group_closed', 'join_request_rejected', 'group_started',
+            'group_updated', 'group_dismissed', "delete_member", "new_applicant", "member_quit"],  
         default: 'group_started'  
     },  
     senderId: {
@@ -20,7 +21,12 @@ const notificationSchema = new Schema({
     receiverId: {
         type: Schema.Types.ObjectId,
         ref: 'User'  
-    }
+    },
+    groupId: {
+        type: Schema.Types.ObjectId,
+        ref: 'Group'
+    },
+    
 });
 
 const Notification = mongoose.model('Notification', notificationSchema);

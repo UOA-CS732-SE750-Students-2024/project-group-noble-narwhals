@@ -1,13 +1,16 @@
 # Tag similarity calculate restful API
 
 ## Introduction
-This is a python programme, and required to install python 3.   
+
+This is a python programme, and required to install python 3.  
 Python 3 can be downloaded form [https://www.python.org/downloads/](https://www.python.org/downloads/)  
 This programme based on pre-trained BERT model `bert-base-uncased` from [Hugging face](https://huggingface.co/)
 
 ## Installation
+
 After installing python 3, change to current directory.
 You may like to create a new virtual environment to run the programme.
+
 ```sh
 # Create a virtual environment named .venv
 # This will create a new folder named .venv in current directory.
@@ -21,36 +24,48 @@ python -m venv .venv
 source .venv/bin/activate
 ```
 
-Install dependencies 
+Install dependencies
+
 ```sh
 pip install -r requirements.txt
 ```
 
+Note: If you are using MacOS M series chip, you may need to install the comments in the requirements.txt file manually.
+
+````sh
 ## Run HTTP Server
 Change directory to scripts.
 ```sh
 cd script
-```
+````
+
 Run the server
+
 ```sh
 flask run
+
+or
+
+flask run -h localhost -p 5050
 ```
 
 The server will be running on 5000 port
 
 ## Request
+
 Send a POST request.  
 The first request will take some time to download the pre-trained model.
 Return words and similarities
+
 ```jsx
 // sample
 POST `{$url}/tagsim`
 Content-Type: application/json
 
 {
-    "tag":["fishing","develop"], 
-    "taglist":["computer", "react", "CSS", "javascript", "AI", 
-                "commerce", "management", "IT","CS732", "CS751", "INFOSYS703", 
+    "tag":["fishing","develop"],
+    "taglist":["computer", "react", "CSS", "javascript", "AI",
+                "commerce", "management", "IT","CS732", "CS751", "INFOSYS703",
                 "statistics", "R", "seafood", "entertainment","fish", "outdoor"],
     "topn":20 // will return top 20 words
 }

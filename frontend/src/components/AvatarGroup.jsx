@@ -1,6 +1,6 @@
 import React from "react";
 
-const AvatarGroup = ({ imageSources, num }) => {
+const AvatarGroup = ({ imageSources, num, numLimit }) => {
   const linkNum = imageSources.length;
   const imagesToShow =
     typeof num === "number" ? imageSources.slice(0, linkNum) : imageSources;
@@ -19,9 +19,9 @@ const AvatarGroup = ({ imageSources, num }) => {
       </div>
       <p className="inline-block font-bold ml-1">
         <span className={`${linkNum < num ? "text-sky-800" : "text-sky-800"}`}>
-          {linkNum}
+          {num}
         </span>
-        /{num}
+        /{numLimit}
       </p>
     </div>
   );

@@ -35,9 +35,14 @@ function Navbar() {
 
   useEffect(() => {
     const handleScroll = () => {
-      const checkPath = location.pathname === "/";
-      const visible = window.scrollY < 320;
-      setShowSearch(!(visible && checkPath));
+      const checkPath = location.pathname === "/" ;
+      if(location.pathname === "/search"){
+        setShowSearch(false);
+      } else {
+        const visible = window.scrollY < 320;
+        setShowSearch(!(visible && checkPath));
+      }
+      
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -45,6 +50,8 @@ function Navbar() {
 
     return () => window.removeEventListener("scroll", handleScroll);
   }, [location]);
+
+
 
   return (
     <>
@@ -162,7 +169,7 @@ function Navbar() {
                   }`}
                 >
                   <Link
-                    to={`/user/notification/${user._id}}`}
+                    to={`/user/notification/${user._id}`}
                     className={`text-xl flex flex-row items-center justify-center gap-1 `}
                   >
                     <IoMdNotificationsOutline />
