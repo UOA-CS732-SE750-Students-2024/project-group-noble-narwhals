@@ -85,7 +85,6 @@ export default function passportSetup(passport) {
   });
 
   passport.deserializeUser((id, done) => {
-    console.log('Deserializing user by id:', id);
     User.findById(id)
       .populate({
         path: 'profileTags',

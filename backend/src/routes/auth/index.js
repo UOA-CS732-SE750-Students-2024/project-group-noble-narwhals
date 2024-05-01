@@ -79,23 +79,6 @@ router.get(
 );
 
 router.get(
-  "/verify",
-  passport.authenticate("google", {
-    scope: ["profile", "email"],
-  }),
-  (req, res) => {
-    if (req.user) {
-      res.redirect(`${process.env.CLIENT_URL}/user/settings/${req.user._id}}`);
-    } else {
-      res.status(500).redirect(`${process.env.CLIENT_URL}/signup`).json({
-        success: false,
-        message: "Failed to create user due to server error.",
-      });
-    }
-  }
-);
-
-router.get(
   "/google/callback",
   passport.authenticate("google", {
     scope: ["profile", "email"],
@@ -103,7 +86,11 @@ router.get(
   }),
   (req, res) => {
     if (req.user) {
-      res.redirect(`${process.env.CLIENT_URL}/`);
+      if (req.user.accountType === "google") {
+        res.redirect(`${process.env.CLIENT_URL}/`);
+      } else {
+        res.redirect(`${process.env.CLIENT_URL}/user/settings/${req.user._id}`);
+      }
     } else {
       res.status(500).redirect(`${process.env.CLIENT_URL}/signup`).json({
         success: false,
