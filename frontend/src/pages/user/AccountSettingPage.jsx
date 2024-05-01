@@ -259,8 +259,7 @@ function AccountSettingsPage() {
   };
 
   const handleVerifyAccount = async () => {
-    console.log('Verify account clicked.');
-    window.location.href = `${import.meta.env.VITE_API_BASE_URL}/auth/google`;
+    window.location.href = `${import.meta.env.VITE_API_BASE_URL}/auth/verify`;
   };
 
 

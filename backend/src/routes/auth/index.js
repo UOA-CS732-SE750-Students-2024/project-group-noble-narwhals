@@ -29,14 +29,13 @@ router.post("/login", (req, res, next) => {
       }
       res.json({ isLoggedIn: true, user: user });
     });
-  })(req,res,next);
+  })(req, res, next);
 });
 
 router.post("/signup", async (req, res) => {
   const email = req.body.email;
 
   try {
-    
     let checkUser = await User.findOne({ email });
     if (checkUser) {
       return res
@@ -79,6 +78,22 @@ router.get(
   passport.authenticate("google", { scope: ["profile", "email"] })
 );
 
+router.get(
+  "/verify",
+  passport.authenticate("google", {
+    scope: ["profile", "email"],
+  }),
+  (req, res) => {
+    if (req.user) {
+      res.redirect(`${process.env.CLIENT_URL}/user/settings/${req.user._id}}`);
+    } else {
+      res.status(500).redirect(`${process.env.CLIENT_URL}/signup`).json({
+        success: false,
+        message: "Failed to create user due to server error.",
+      });
+    }
+  }
+);
 
 router.get(
   "/google/callback",
@@ -88,7 +103,7 @@ router.get(
   }),
   (req, res) => {
     if (req.user) {
-      res.redirect(`${process.env.CLIENT_URL}/user/settings/${req.user._id}`);
+      res.redirect(`${process.env.CLIENT_URL}/`);
     } else {
       res.status(500).redirect(`${process.env.CLIENT_URL}/signup`).json({
         success: false,
