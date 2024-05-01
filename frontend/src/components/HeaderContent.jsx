@@ -17,6 +17,7 @@ function HeaderContent({
   groupMembers,
   onAddApplication,
   onApplicationRemove,
+  onMemberHandler,
 }) {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const [hasApplied, setHasApplied] = useState(false);
@@ -185,7 +186,7 @@ function HeaderContent({
         `${API_BASE_URL}/api/groups/quit/${groupId}`,
         { userId: user._id }
       );
-      alert("You have successfully left the group.");
+      onMemberHandler(user._id, "remove");
     } catch (error) {
       alert(
         "Failed to leave the group: " +

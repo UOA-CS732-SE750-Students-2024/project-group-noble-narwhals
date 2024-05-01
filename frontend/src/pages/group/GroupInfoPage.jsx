@@ -87,7 +87,6 @@ function GroupInfoPage() {
       );
     } else {
       const newMember = applications.find((app) => app._id === memberId);
-      console.log(1.5, newMember);
       setMembers((prevMembers) => [...prevMembers, newMember.applicantId]);
     }
   };
@@ -110,6 +109,7 @@ function GroupInfoPage() {
         groupStatus={groupDetails.groupStatus}
         onAddApplication={handleAddApplication}
         onApplicationRemove={handleCurrentDeleteApplicant}
+        onMemberHandler={handleMemberUpdate}
       />
       <Description description={groupDetails.groupDescription} />
       <MemberList
