@@ -59,7 +59,6 @@ router.post("/signup", async (req, res) => {
     const avatarUrl = `https://api.dicebear.com/8.x/${selectedStyle}/svg?seed=${user._id}`;
     user.avatar = avatarUrl;
 
-    console.log("1", user);
     await user.save();
     res
       .status(201)

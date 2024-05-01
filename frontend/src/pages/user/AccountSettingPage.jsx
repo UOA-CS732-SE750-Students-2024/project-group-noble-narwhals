@@ -61,7 +61,6 @@ function AccountSettingsPage() {
   /* if the user's account type is "google", then the password field should be hidden,
    because google account doesn't need password */
   const isGoogleAccount = user.accountType === "google";
-  console.log("isGoogleAccount: ", isGoogleAccount);
 
   const handleEditClick = () => {
     setIsEditing(!isEditing); // toggle isEditing state
@@ -97,10 +96,8 @@ function AccountSettingsPage() {
       const data = await response.json();
 
       setAvatar(data.avatar);
-      console.log('Avatar changed to:', data.avatar);
       setUser(prevUser => ({ ...prevUser, avatar: data.avatar }));
 
-      console.log('Avatar changed successfully:', data.message);
     } catch (error) {
       console.error('Failed to change avatar:', error);
     }
@@ -144,7 +141,6 @@ function AccountSettingsPage() {
 
       const newTag = await response.json();
       setTags(prevTags => [...prevTags, newTag]);
-      console.log('Tag added successfully, now tags are:', tags);
       setNewTag('');
     } catch (error) {
       console.error('Failed to add tag:', error);
@@ -174,7 +170,6 @@ function AccountSettingsPage() {
       alert('Password must be at least 8 characters long.');
       return;
     }
-    console.log('Updated user data is:', updatedUserData)
 
     setIsEditing(false); // Disable editing mode after submitting the form
 
@@ -245,7 +240,6 @@ function AccountSettingsPage() {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        console.log('Account deleted successfully.');
         // Redirect to the login page or home page
         alert('Account deleted successfully. Redirecting to the login page.');
         navigate('/login');
