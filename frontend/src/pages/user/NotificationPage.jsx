@@ -88,7 +88,6 @@ function SingleNotification({ notification, idx }) {
         return "closed the group:";
       case "group_dismissed":
         return "dismissed the group:";
-      case "group_dismissed":
       case "delete_member":
         return "removed you from:";
       default:
