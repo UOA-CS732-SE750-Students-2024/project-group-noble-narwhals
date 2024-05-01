@@ -33,8 +33,9 @@ function NotificationPage() {
     fetchNotification();
   }, []);
   return (
-    <div className="w-4/5 mx-auto p-4">
-      <div className="text-3xl pb-10">Notification</div>
+    <div className="flex flex-col m-4 p-4">
+      <div className="text-3xl mb-8">Notification</div>
+      {notifications.length > 0 ? "" : "No notification found."}
       <div>
         {notifications.map((notification, idx) => (
           <SingleNotification key={idx} notification={notification} idx={idx} />
