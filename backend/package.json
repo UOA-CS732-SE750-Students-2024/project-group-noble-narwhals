@@ -6,8 +6,8 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon ./src/app.js",
-    "start": "node ./src/app.js",
-    "test": "jest --watchAll"
+    "start": "node ./dist/app.js",
+    "build": "babel src -d dist"
   },
   "author": "noble narwhals",
   "license": "ISC",
