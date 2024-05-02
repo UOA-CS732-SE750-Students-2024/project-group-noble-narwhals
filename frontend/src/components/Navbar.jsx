@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Button from "./Button";
 import { IoAdd } from "react-icons/io5";
@@ -9,6 +9,7 @@ import { useAuth } from "../store/AuthContext";
 import axios from "axios";
 
 function Navbar() {
+  const inputRef = useRef();
   const navigate = useNavigate();
   const { isLoggedIn, user, setIsLoggedIn, setUser } = useAuth();
   const [showSearch, setShowSearch] = useState(true);
@@ -31,6 +32,13 @@ function Navbar() {
   const [showMenu, setShowMenu] = useState(false);
   const switchMenu = () => {
     setShowMenu((preState) => !preState);
+  };
+
+  const searchHandler = (e) => {
+    e.preventDefault();
+    const word = inputRef.current.value;
+    inputRef.current.value = "";
+    navigate(`/search`, { state: { keywords: word } });
   };
 
   useEffect(() => {
@@ -90,6 +98,7 @@ function Navbar() {
                     }  `}
                   >
                     <input
+                      ref={inputRef}
                       type="text"
                       placeholder="Search"
                       className={`w-72 h-8 outline-none transition-all duration-300 `}
@@ -98,6 +107,7 @@ function Navbar() {
                       className={` w-7 h-7 rounded-full hover:bg-gray-200 flex items-center justify-center ${
                         darkMode && "text-primary"
                       } z-10`}
+                      onClick={searchHandler}
                     >
                       <IoSearchOutline />
                     </div>
@@ -136,6 +146,7 @@ function Navbar() {
                     }  `}
                   >
                     <input
+                      ref={inputRef}
                       type="text"
                       placeholder="Search"
                       className={`w-72 h-8 outline-none transition-all duration-300 `}
@@ -144,6 +155,7 @@ function Navbar() {
                       className={` w-7 h-7 rounded-full hover:bg-gray-200 flex items-center justify-center ${
                         darkMode && "text-primary"
                       } z-10`}
+                      onClick={searchHandler}
                     >
                       <IoSearchOutline />
                     </div>
