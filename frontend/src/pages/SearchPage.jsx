@@ -10,7 +10,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import LongSearchingBar from "../components/LongSearchingBar";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "";
 
@@ -119,7 +119,15 @@ function SearchPage() {
         ))}
       </div>
       {/* search result list */}
-      <div className="border-t-4 border-t-hmblue-700">
+      <div className="border-t-4 border-t-hmblue-700 min-h-96">
+        {displayedGroups.length === 0 ? (
+          <p className="mt-10 text-xl">
+            No groups found, try some other key words. You can separete keywords
+            with blank.
+          </p>
+        ) : (
+          ""
+        )}
         {displayedGroups.map((group, idx) => (
           <SingleSearchedGroup key={idx} group={group} keywords={keywordList} />
         ))}
@@ -160,6 +168,7 @@ function TabButton({
  * Single item of search result
  */
 function SingleSearchedGroup({ group, keywords }) {
+  const navigate = useNavigate();
   const pickStatusColor = () => {
     switch (group.groupStatus) {
       case "available":
@@ -167,6 +176,8 @@ function SingleSearchedGroup({ group, keywords }) {
       case "full":
         return "bg-red-400";
       case "closed":
+        return "bg-gray-400";
+      case "dismissed":
         return "bg-gray-400";
     }
   };
@@ -182,7 +193,12 @@ function SingleSearchedGroup({ group, keywords }) {
   }
 
   return (
-    <div className="flex flex-col border-2 border-hmblue-100 m-4 rounded-lg px-4 py-2">
+    <div
+      className="group flex flex-col border-2 border-hmblue-100 m-4 rounded-lg px-4 py-2 cursor-pointer"
+      onClick={() => {
+        navigate(`/group/${group._id}`);
+      }}
+    >
       <div className="flex font-bold">
         <div>
           <span
@@ -192,13 +208,13 @@ function SingleSearchedGroup({ group, keywords }) {
           </span>
         </div>
         <div
-          className="flex-grow"
+          className="flex-grow group-hover:underline"
           dangerouslySetInnerHTML={{
             __html: highlightKeywords(group.groupName, keywords),
           }}
         ></div>
         <div className="font-thin text-gray-400 text-sm">
-          {`Members: ${group.numberOfGroupMember}/${group.maxNumber}`}
+          {`Members: ${group.groupMembers.length}/${group.maxNumber}`}
         </div>
       </div>
       <div className="flex justify-start space-x-1 text-xs mt-2 overflow-hidden">
