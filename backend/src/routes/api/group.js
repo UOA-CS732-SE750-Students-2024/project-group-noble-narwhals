@@ -176,6 +176,18 @@ router.patch("/update/:id", isVerifiedUser, getGroup, async (req, res) => {
   }
 });
 
+//close the group by id
+router.patch("/close/:id", getGroup, async (req, res) => {
+  res.group.groupStatus = "closed";
+  try {
+    const updatedGroup = await res.group.save();
+    res.json(updatedGroup);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
+
 // delete group by id
 router.delete("/delete/:id", getGroup, async (req, res) => {
   try {
@@ -540,7 +552,7 @@ router.patch("/dismiss/:groupId", async (req, res) => {
       // Wait for all notifications to be saved
       await Promise.all(notificationPromises);
 
-      // Setting group status to 'closed' and clearing members and applicants
+      // Setting group status to 'dismissed' and clearing members and applicants
       group.groupStatus = "dismissed";
       group.groupMembers = []; // Clear all members
       group.groupApplicants = []; // Clear all applicants

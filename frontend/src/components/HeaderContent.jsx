@@ -228,7 +228,7 @@ function HeaderContent({
     ) {
       try {
         const response = await axios.patch(
-          `${API_BASE_URL}/api/groups/update/${groupId}`,
+          `${API_BASE_URL}/api/groups/close/${groupId}`,
           {
             groupStatus: "closed",
           }
