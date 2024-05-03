@@ -161,7 +161,7 @@ function SingleNotification({ notification, idx }) {
           </div>
         </div>
         <div className="flex items-center">
-          <span className="text-hmblue-700 invisible group-hover:visible">
+          <span className="mr-4 text-hmblue-700 invisible group-hover:visible">
             &gt;&gt;&gt;
           </span>
         </div>
