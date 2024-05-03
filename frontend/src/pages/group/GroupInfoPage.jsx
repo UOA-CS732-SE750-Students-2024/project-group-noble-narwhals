@@ -63,13 +63,15 @@ function GroupInfoPage() {
     fetchGroupDetails();
   }, [groupId, user]);
 
-  const handleApplicationUpdate = (applicationId) => {   //remove application from the list
+  const handleApplicationUpdate = (applicationId) => {
+    //remove application from the list
     setApplications((prevApplications) =>
       prevApplications.filter((app) => app._id !== applicationId)
     );
   };
 
-  const handleCurrentDeleteApplicant = (userId) => {   //remove application from the list
+  const handleCurrentDeleteApplicant = (userId) => {
+    //remove application from the list
     setApplications((prevApplications) =>
       prevApplications.filter((app) => app.applicantId._id !== userId)
     );
@@ -91,7 +93,18 @@ function GroupInfoPage() {
   };
 
   if (!groupDetails) {
-    return <div>Loading...</div>;
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <img src="/image/Spinner.svg" alt="Loading..." />
+      </div>
+    );
   }
 
   return (
