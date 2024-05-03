@@ -105,13 +105,19 @@ function SingleNotification({ notification, idx }) {
     }
   }
 
-  async function notificationClickHandler(notificationId, groupId) {
+  async function notificationClickHandler(notification, groupId) {
+    console.log(1,notification)
+    if (notification.isRead == true) {
+      navigate(`/group/${groupId._id}`);
+      return;
+    }
 
-    await fetch(`${API_BASE_URL}/api/notification/${notificationId}/read`, {
+    await fetch(`${API_BASE_URL}/api/notification/${notification._id}/read`, {
       method: "PATCH",
     }).then(() => {
       navigate(`/group/${groupId._id}`);
       setUser((prev) => {
+        if(prev.unreadMessages === 0) return prev;
         return { ...prev, unreadMessages: prev.unreadMessages - 1 };
       });
     });
@@ -135,7 +141,7 @@ function SingleNotification({ notification, idx }) {
           notification.isRead == true ? " text-gray-400" : ""
         }`}
         onClick={() => {
-          notificationClickHandler(notification._id, notification.groupId);
+          notificationClickHandler(notification, notification.groupId);
         }}
       >
         <div className="flex-grow">
