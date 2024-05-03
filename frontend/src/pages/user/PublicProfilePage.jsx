@@ -67,7 +67,6 @@ const PublicProfilePage = () => {
       });
 
       setGroups(loggedInUser.participatingGroups);
-      console.log(loggedInUser.participatingGroups);
       setIsLoading(false);
     } else {
       fetchUserData();

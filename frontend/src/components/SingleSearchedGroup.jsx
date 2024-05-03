@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
  * Single item of search result
  */
 function SingleSearchedGroup({ group, keywords = "" }) {
-  console.log(group);
   const navigate = useNavigate();
   const pickStatusColor = () => {
     switch (group.groupStatus) {

@@ -106,7 +106,6 @@ function SingleNotification({ notification, idx }) {
   }
 
   async function notificationClickHandler(notification, groupId) {
-    console.log(1,notification)
     if (notification.isRead == true) {
       navigate(`/group/${groupId._id}`);
       return;
