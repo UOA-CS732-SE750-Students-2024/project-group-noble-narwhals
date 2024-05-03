@@ -51,7 +51,6 @@ const PublicProfilePage = () => {
         return new Date(b.createDate) - new Date(a.createDate);
       });
       setGroups(loggedInUser.participatingGroups);
-      console.log(loggedInUser.participatingGroups);
       setIsLoading(false);
     } else {
       fetchUserData();
@@ -100,7 +99,7 @@ const PublicProfilePage = () => {
             )}
           <div className="flex items-center mb-2">
             <img
-              className="w-40 h-40 rounded-full mr-4"
+              className="w-24 h-24 md:w-40 md:h-40 rounded-full mr-4"
               src={user.avatar}
               alt="User Avatar"
             />

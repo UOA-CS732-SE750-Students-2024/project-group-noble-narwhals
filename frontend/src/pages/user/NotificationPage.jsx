@@ -78,7 +78,7 @@ function NotificationPage() {
 export default NotificationPage;
 
 function SingleNotification({ notification, idx }) {
-  const {  setUser } = useAuth();
+  const { setUser } = useAuth();
   const navigate = useNavigate();
   function notificationTypeDesc(type) {
     switch (type) {
@@ -89,7 +89,9 @@ function SingleNotification({ notification, idx }) {
       case "group_started":
         return "";
       case "new_applicant":
-        return `applied to join your group: ${notification == null ? notification.groupId.groupName : ""}`;
+        return `applied to join your group: ${
+          notification == null ? notification.groupId.groupName : ""
+        }`;
       case "member_quit":
         return "quit the group:";
       case "group_closed":
@@ -106,7 +108,6 @@ function SingleNotification({ notification, idx }) {
   }
 
   async function notificationClickHandler(notification, groupId) {
-    console.log(1,notification)
     if (notification.isRead == true) {
       navigate(`/group/${groupId._id}`);
       return;
@@ -117,7 +118,7 @@ function SingleNotification({ notification, idx }) {
     }).then(() => {
       navigate(`/group/${groupId._id}`);
       setUser((prev) => {
-        if(prev.unreadMessages === 0) return prev;
+        if (prev.unreadMessages === 0) return prev;
         return { ...prev, unreadMessages: prev.unreadMessages - 1 };
       });
     });

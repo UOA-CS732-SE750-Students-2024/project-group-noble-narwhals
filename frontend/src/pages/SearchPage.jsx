@@ -113,7 +113,7 @@ function SearchPage() {
       </div>
       <input className="appearance-none" max="99" type="number" />
       {/* tab control */}
-      <div className="mt-5 flex space-x-5">
+      <div className="flex space-x-5">
         {groupTypes.map((type) => (
           <TabButton
             key={type.id}
