@@ -182,9 +182,9 @@ function Navbar() {
                   >
                     <IoMdNotificationsOutline />
                     <span>Notifications</span>
-                    <span className=" rounded-full w-5 h-5 text-white bg-gray-500 flex items-center justify-center text-xs">
+                    {user.unreadMessages ?  (<span className=" rounded-full w-5 h-5 text-white bg-gray-500 flex items-center justify-center text-xs">
                       {user.unreadMessages}
-                    </span>
+                    </span>) : null}
                   </Link>
                 </div>
                 <div
