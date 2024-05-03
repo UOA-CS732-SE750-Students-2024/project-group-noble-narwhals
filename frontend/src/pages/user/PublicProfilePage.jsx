@@ -31,8 +31,15 @@ const PublicProfilePage = () => {
           data.participatingGroups &&
           data.participatingGroups.length > 0
         ) {
-          // sort the groups by time
+          // sort the groups by groupStatus and createDate
           data.participatingGroups.sort((a, b) => {
+
+            if (a.groupStatus === 'available' && b.groupStatus !== 'available') {
+              return -1; 
+            }
+            if (b.groupStatus === 'available' && a.groupStatus !== 'available') {
+              return 1; 
+            }
             return new Date(b.createDate) - new Date(a.createDate);
           });
           setGroups(data.participatingGroups);
@@ -48,8 +55,17 @@ const PublicProfilePage = () => {
 
       setUser(loggedInUser);
       loggedInUser.participatingGroups.sort((a, b) => {
+ 
+        if (a.groupStatus === 'available' && b.groupStatus !== 'available') {
+          return -1; 
+        }
+        if (b.groupStatus === 'available' && a.groupStatus !== 'available') {
+          return 1; 
+        }
+        
         return new Date(b.createDate) - new Date(a.createDate);
       });
+
       setGroups(loggedInUser.participatingGroups);
       console.log(loggedInUser.participatingGroups);
       setIsLoading(false);
