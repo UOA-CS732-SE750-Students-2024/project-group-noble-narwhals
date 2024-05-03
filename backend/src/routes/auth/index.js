@@ -101,12 +101,12 @@ router.get(
 );
 
 router.get("/check-session", isLoggedIn, async (req, res) => {
-    //get unread messages number
-    const messages = await Notification.find({
-      receiverId: req.user._id,
-      isRead: false,
-    })
-    const newUser = { ...req.user._doc , unreadMessages: messages.length}
+  //get unread messages number
+  const messages = await Notification.find({
+    receiverId: req.user._id,
+    isRead: false,
+  });
+  const newUser = { ...req.user._doc, unreadMessages: messages.length };
 
   res.json({ isLoggedIn: true, user: newUser });
 });
