@@ -1,13 +1,3 @@
-/**
- * To navigate to this page with a default keyword:
- *
- * import { useNavigate } from "react-router-dom";
- * const navigate = useNavigate();
- * const word = "tech";
- * navigate(`/search`, { state: { keywords: word } });
- *
- */
-
 import React, { useEffect, useRef, useState } from "react";
 import LongSearchingBar from "../components/LongSearchingBar";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -16,11 +6,19 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "";
 
 /**
  * Search group page
- * @param {*} keywords if navigate form other page with a keyword
+ *
+ * To navigate to this page with a default keyword or a group:
+ *
+ * import { useNavigate } from "react-router-dom";
+ * const navigate = useNavigate();
+ * const word = "tech";
+ * navigate(`/search`, { state: { keywords: word, grouptype: type["group", "activaty"] } });
  */
 function SearchPage() {
   const location = useLocation();
-  let mykeywords = location.state ? location.state.keywords : "";
+  let mykeywords = location.state?.keywords || "";
+  let srcGroupType = location.state?.groupType || "group";
+
   // clear the state in location
   window.history.replaceState({}, document.title);
 
@@ -30,12 +28,15 @@ function SearchPage() {
     { id: 2, name: "activity" },
   ];
 
+  // find tab id by group name
+  let srcGroupTabId = (
+    groupTypes.find((g) => g.name === srcGroupType) || groupTypes[0]
+  ).id;
+
   let fetchedData = useRef([]);
 
-  const [activeTab, setActiveTab] = useState(groupTypes[0].id);
-  const [displayedGroups, setDisplayedGroups] = useState(
-    fetchedData.current.filter((group) => group.groupType === "group")
-  );
+  const [activeTab, setActiveTab] = useState(srcGroupTabId);
+  const [displayedGroups, setDisplayedGroups] = useState([]);
   const [keywordList, setKeywordList] = useState(splitKeywords(mykeywords));
 
   /**
@@ -77,9 +78,12 @@ function SearchPage() {
         })
         .then((json) => {
           fetchedData.current = json;
-          setActiveTab(groupTypes[0].id);
           setDisplayedGroups(
-            fetchedData.current.filter((group) => group.groupType === "group")
+            fetchedData.current.filter(
+              (group) =>
+                group.groupType ===
+                groupTypes.find((t) => t.id == activeTab).name
+            )
           );
           // set keywords to highlight
           setKeywordList(splitKeywords(mykeywords));
