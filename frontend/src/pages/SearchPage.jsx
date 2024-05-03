@@ -203,7 +203,7 @@ function SingleSearchedGroup({ group, keywords }) {
         navigate(`/group/${group._id}`);
       }}
     >
-      <div className="flex font-bold">
+      <div className="flex flex-row font-bold">
         <div>
           <span
             className={`${statusColor} inline-block font-thin text-xs text-white p-[2px] w-14 text-center rounded-md mr-1`}
@@ -221,15 +221,38 @@ function SingleSearchedGroup({ group, keywords }) {
           {`Members: ${group.groupMembers.length}/${group.maxNumber}`}
         </div>
       </div>
-      <div className="flex justify-start space-x-1 text-xs mt-2 overflow-hidden">
-        {group.groupTags.map((tag, idx) => (
-          <span
-            key={idx}
-            className="rounded-full px-2 py-1 h-auto bg-hmblue-100 text-hmblue-800 border-hmblue-800 border-[1px]"
-          >
-            {tag.name}
-          </span>
-        ))}
+      <div className="flex flex-row justify-between space-x-1 text-xs mt-2 relative">
+        {/* member numbers */}
+        <div>
+          {group.groupTags.map((tag, idx) => (
+            <span
+              key={idx}
+              className="rounded-full inline-block px-2 py-1 h-auto bg-hmblue-100 text-hmblue-800 border-hmblue-800 border-[1px]"
+            >
+              {tag.name}
+            </span>
+          ))}
+        </div>
+        {/* Avatar */}
+        <div className="flex flex-row-reverse -space-x-3 relative pl-3 items-center">
+          <div className="w-8 -ml-8"></div>
+          {group.groupMembers
+            .slice()
+            .reverse()
+            .map((member, idx) => (
+              <div
+                key={idx}
+                className="group/member items-center text-center hover:z-50 relative"
+              >
+                <div className="w-8 rounded-full ring-2 ring-white relative bg-white overflow-hidden">
+                  <img src={member.avatar} alt={member.name} />
+                </div>
+                <div className="invisible group-hover/member:visible absolute whitespace-nowrap -bottom-4 text-xs left-1/2 transform -translate-x-1/2 text-white bg-hmblue-700 rounded-md px-1">
+                  {member.name}
+                </div>
+              </div>
+            ))}
+        </div>
       </div>
     </div>
   );

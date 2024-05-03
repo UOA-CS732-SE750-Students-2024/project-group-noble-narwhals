@@ -50,7 +50,7 @@ router.get("/search/:keywords", async (req, res) => {
 
     await Group.find()
       .populate("groupTags", "name")
-      .populate("groupMembers")
+      .populate("groupMembers", ["avatar", "name"])
       .then((groups) => {
         const filteredGroups = groups.filter((group) => {
           return (
