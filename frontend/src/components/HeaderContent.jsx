@@ -59,12 +59,8 @@ function HeaderContent({
 
   const checkLikeStatus = async () => {
     if (isLoggedIn && groupId && user._id) {
-      try {
-        const isLiked = user.likedGroups.some((group) => group._id === id);
-        setLiked(isLiked);
-      } catch (error) {
-        console.error("Error checking like status:", error);
-      }
+      const isLiked = user.likedGroups.some((group) => group._id === groupId);
+      setLiked(isLiked);
     }
   };
 
@@ -251,16 +247,16 @@ function HeaderContent({
         <div className="header-title">
           <div className="text-4xl font-bold mb-2">{groupName}</div>
           <div>
-        {groupType === 'group' ? (
-          <Link to="/" className="text-primary">
-            Group
-          </Link>
-        ) : (
-          <Link to="/" className="text-primary">
-            Activity
-          </Link>
-        )}
-      </div>
+            {groupType === "group" ? (
+              <Link to="/" className="text-primary">
+                Group
+              </Link>
+            ) : (
+              <Link to="/" className="text-primary">
+                Activity
+              </Link>
+            )}
+          </div>
           <div className="activity-detail py-6 mt-1">
             <p className="mb-2 flex items-center text-1xl">{groupTags}</p>
             <p className="mb-2 -mt-6 text-sm text-gray-500">
