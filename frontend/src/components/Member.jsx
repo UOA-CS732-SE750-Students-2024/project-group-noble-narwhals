@@ -1,6 +1,7 @@
 import React from "react";
 import Button from "./Button";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../store/AuthContext";
 import axios from "axios";
 
 function Member({
@@ -13,6 +14,7 @@ function Member({
   onMemberHandler,
 }) {
   const navigate = useNavigate();
+  const { updateAuth } = useAuth();
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
   const viewProfile = () => {
@@ -32,6 +34,7 @@ function Member({
           }
         );
         onMemberHandler(memberId, "remove");
+        updateAuth();
       } catch (error) {
         console.error("Error in removing member:", error.response.data);
         alert("Failed to remove member: " + error.response.data.message);
@@ -45,7 +48,7 @@ function Member({
   return (
     <div
       className={`flex flex-col justify-between items-center bg-gradient-to-br from-bg1 to-bg2 rounded-lg space-y-4 p-4 `}
-      style={{ width: "240px", height: "300px" }}
+      style={{ minWidth: "240px", minHeight: "300px" }}
     >
       <div className="flex-1 flex flex-col items-center justify-start space-y-2  mt-2">
         <img src={avatar} alt="avatar" className="w-32 h-32 rounded-full" />

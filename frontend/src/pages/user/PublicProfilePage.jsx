@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { IoMdMale, IoMdFemale } from "react-icons/io";
 import { useAuth } from "../../store/AuthContext";
-import UserGroupBar from "../../components/UserGroupBar";
+// import UserGroupBar from "../../components/UserGroupBar";
 import SingleSearchedGroup from "../../components/SingleSearchedGroup";
 
 const PublicProfilePage = () => {
@@ -47,6 +47,9 @@ const PublicProfilePage = () => {
       // Use logged in user data if viewing own profile
 
       setUser(loggedInUser);
+      loggedInUser.participatingGroups.sort((a, b) => {
+        return new Date(b.createDate) - new Date(a.createDate);
+      });
       setGroups(loggedInUser.participatingGroups);
       console.log(loggedInUser.participatingGroups);
       setIsLoading(false);
@@ -75,8 +78,8 @@ const PublicProfilePage = () => {
   }
 
   return (
-    <div className="flex overflow-y-auto">
-      <div className="m-4 p-4  bg-white flex flex-col flex-grow">
+    <div className="flex overflow-y-auto items-center">
+      <div className="m-4 p-4  bg-white flex flex-col flex-grow justify-center ">
         <div className="py-8">
           {/* Add new feature for tags reminder */}
           {isLoggedIn &&
@@ -103,12 +106,12 @@ const PublicProfilePage = () => {
             />
             <div className="flex flex-col justify-around gap-2">
               <div className="flex flex-row items-center gap-2">
-                <p className="text-xl font-bold m-5">{user.name}</p>
+                <p className="text-xl font-bold mx-5">{user.name}</p>
                 {user.gender === "Male" && (
-                  <IoMdMale className="fill-sky-500 text-2xl mt-5" />
+                  <IoMdMale className="fill-sky-500 text-2xl" />
                 )}
                 {user.gender === "Female" && (
-                  <IoMdFemale className="fill-pink-500 text-2xl mt-5" />
+                  <IoMdFemale className="fill-pink-500 text-2xl" />
                 )}
                 {user.isVerification ? (
                   <div className="p-1 px-2 rounded-full text-center bg-primary text-white text-xs">

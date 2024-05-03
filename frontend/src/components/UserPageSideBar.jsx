@@ -99,7 +99,7 @@ function UserPageSideBar() {
           </>
         )}
       </div>
-      <div className="w-full">
+      <div className="w-full ">
         {options.map((option) => (
           <SidebarOption
             option={option}
@@ -121,7 +121,7 @@ function SidebarOption({ option, handleClick, isActive }) {
   return (
     <Link
       to={option.to}
-      className={`p-3 pl-4 flex items-center justify-start hover:bg-secondary text-white cursor-pointer ${activeClass} transition-colors duration-100 w-full`}
+      className={`p-3 pl-9 flex items-center justify-start hover:bg-secondary text-white cursor-pointer ${activeClass} transition-colors duration-100 w-full`}
       onClick={() => handleClick(option.label)}
     >
       {option.icon}

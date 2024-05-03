@@ -18,7 +18,7 @@ export default function LayoutUserPages() {
             {" "}
             {/**May delete the "pt-10" after adding a placeholder to the nav bar */}
             <UserPageSideBar />
-            <div className="flex-grow">
+            <div className="flex-grow px-10">
               <Outlet />
             </div>
           </div>

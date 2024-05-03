@@ -9,14 +9,18 @@ const AuthContext = createContext(null);
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);  // add loading status, default is true
+  const [haveChange, setHaveChange] = useState(false); // add a state to check if user data has changed
+  const [isLoading, setIsLoading] = useState(true); // add loading status, default is true
+
+  function updateAuth() {
+    setHaveChange((prev) => !prev);
+  }
 
   useEffect(() => {
     axios
       .get(`${import.meta.env.VITE_API_BASE_URL}/auth/check-session`)
       .then((res) => {
         if (res.data.isLoggedIn) {
-          console.log(111, res.data.user)
           setUser(res.data.user);
           setIsLoggedIn(true);
           window.localStorage.setItem("isLoggedIn", true);
@@ -32,13 +36,22 @@ export const AuthProvider = ({ children }) => {
         setIsLoading(false);
         window.localStorage.setItem("isLoggedIn", false);
       });
-  }, []);
+  }, [ haveChange,isLoggedIn]);
 
-  useEffect(() => {
-  }, [isLoggedIn, user]); 
+  useEffect(() => {}, [isLoggedIn, user, haveChange]);
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, user, setUser, setIsLoggedIn, isLoading, setIsLoading }}>
+    <AuthContext.Provider
+      value={{
+        isLoggedIn,
+        user,
+        setUser,
+        setIsLoggedIn,
+        isLoading,
+        setIsLoading,
+        updateAuth,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
