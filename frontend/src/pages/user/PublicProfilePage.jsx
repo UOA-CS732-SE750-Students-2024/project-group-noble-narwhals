@@ -17,36 +17,40 @@ const PublicProfilePage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      // Fetch user data from API, if the user is not logged in or viewing another user's profile
-      try {
+    // const fetchUserData = async () => {
+    //   // Fetch user data from API, if the user is not logged in or viewing another user's profile
+    //   try {
 
-        let { data } = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/user/userData/${userId}`);
-        setUser(data);
+    //     let { data } = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/user/userData/${userId}`);
+    //     setUser(data);
 
-        if (data && data.participatingGroups && data.participatingGroups.length > 0) {
-          // sort the groups by time
-          data.participatingGroups.sort((a, b) => {
-            return new Date(b.createDate) - new Date(a.createDate);
-          });
-          setGroups(data.participatingGroups);
-        }
-      } catch (error) {
-        console.error("Failed to fetch user data:", error);
-      }
-      setIsLoading(false);
-    };
+    //     if (data && data.participatingGroups && data.participatingGroups.length > 0) {
+    //       // sort the groups by time
+    //       data.participatingGroups.sort((a, b) => {
+    //         return new Date(b.createDate) - new Date(a.createDate);
+    //       });
+    //       setGroups(data.participatingGroups);
+    //     }
+    //   } catch (error) {
+    //     console.error("Failed to fetch user data:", error);
+    //   }
+    //   setIsLoading(false);
+    // };
 
     if (isLoggedIn && userId === loggedInUser._id) {
       // Use logged in user data if viewing own profile
 
       setUser(loggedInUser);
+      loggedInUser.participatingGroups.sort((a, b) => {
+        return new Date(b.createDate) - new Date(a.createDate);
+      });
       setGroups(loggedInUser.participatingGroups);
       setIsLoading(false);
-    } else {
+    } 
+    // else {
 
-      fetchUserData();
-    }
+    //   fetchUserData();
+    // }
   }, [userId, isLoggedIn, loggedInUser]);
 
   if (isLoading) {
