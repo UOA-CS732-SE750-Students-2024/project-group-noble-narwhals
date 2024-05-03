@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import Button from "../../components/Button";
 import { useAuth } from "../../store/AuthContext";
 import { Link, useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
@@ -79,6 +78,7 @@ function NotificationPage() {
 export default NotificationPage;
 
 function SingleNotification({ notification, idx }) {
+  const {  setUser } = useAuth();
   const navigate = useNavigate();
   function notificationTypeDesc(type) {
     switch (type) {
@@ -106,10 +106,14 @@ function SingleNotification({ notification, idx }) {
   }
 
   async function notificationClickHandler(notificationId, groupId) {
+
     await fetch(`${API_BASE_URL}/api/notification/${notificationId}/read`, {
       method: "PATCH",
     }).then(() => {
       navigate(`/group/${groupId._id}`);
+      setUser((prev) => {
+        return { ...prev, unreadMessages: prev.unreadMessages - 1 };
+      });
     });
   }
 
