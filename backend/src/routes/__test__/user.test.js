@@ -8,11 +8,6 @@ import Group from "../../models/groupModel";
 import bcrypt from "bcrypt";
 
 
-/**
- * 注意：user修改tag的测试文件还没写，因为路由没有挂在api/user下
- * 我应该会在tag.test.js里面写
- */
-
 let mongod;
 
 // Create Express server. We don't need to start or stop it ourselves - we'll use the supertest package to manage this for us.

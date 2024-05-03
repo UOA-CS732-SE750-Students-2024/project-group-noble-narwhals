@@ -39,7 +39,7 @@ function ApplyInProgressPage() {
       return new Date(b.createDate) - new Date(a.createDate);
     });
   }
-  console.log("appliedGroups: ", appliedGroups);
+ 
   return (
     <div className="flex flex-col m-4 p-4">
       <div className="text-3xl mb-8">Apply in Progress</div>

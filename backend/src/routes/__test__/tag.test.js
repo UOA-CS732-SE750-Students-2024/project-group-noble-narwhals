@@ -107,7 +107,7 @@ describe("GET /", () => {
 
     test("It should respond with an array of tags", async () => {
         const response = await request(app).get("/api/tag").send().expect(200);
-        console.log(response.body);
+     
         expect(response.body.length).toBe(2);
         expect(response.body[0].name).toBe("tag1");
         expect(response.body[1].name).toBe("tag2");

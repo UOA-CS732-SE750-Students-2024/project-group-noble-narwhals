@@ -9,10 +9,10 @@ import { useAuth } from "../../store/AuthContext";
 
 function LikedGroupPage() {
   const { userId } = useParams();
-  console.log("enter likegrouppage: ");
+
   const { user, setUser, isLoading, setIsLoading, isLoggedIn} = useAuth();
   const navigate = useNavigate();
-  console.log("user from likedgroup: ", user);
+
 
   useEffect(() => {
     if (!isLoading && (!isLoggedIn || user._id !== userId)) {
@@ -26,9 +26,10 @@ function LikedGroupPage() {
         <img src="/image/Spinner.svg" alt="Loading..." />
       </div>
     );
-  }else{
-    console.log("user from likedgroup2: ", user);
   }
+  // else{
+  //   console.log("user from likedgroup2: ", user);
+  // }
 
   // if user is not found (is null)
   if (!user) {

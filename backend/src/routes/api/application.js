@@ -74,7 +74,7 @@ router.patch('/:id', getApplication, async (req, res) => {
 // update application by id in group info page
 router.patch('/applications-with-details/:id', getApplication, async (req, res) => {
     const session = await mongoose.startSession();
-    console.log('enter applications-with-details...');
+  
     try {
         session.startTransaction();  // Start the transaction
 
@@ -106,7 +106,7 @@ router.patch('/applications-with-details/:id', getApplication, async (req, res) 
            
             const group = await Group.findById(application.groupId).session(session);
             if (group) {
-                console.log('enter application group condition statement...');
+      
                
                 if (application.applicationStatus === 'accepted') {
 
@@ -132,13 +132,13 @@ router.patch('/applications-with-details/:id', getApplication, async (req, res) 
                         receiverId: applicant._id,
                         groupId: group._id
                     });
-                    console.log('newNotification when accepted:', newNotification);
+          
                     await newNotification.save({ session });
 
                 }
                 await group.save({ session });
             }else if (application.applicationStatus === 'rejected') {
-                console.log('application rejected');
+          
                 group.groupApplicants.pull(application.applicantId);
                 group.application.pull(application._id);  // also remove the application reference
 
@@ -151,7 +151,7 @@ router.patch('/applications-with-details/:id', getApplication, async (req, res) 
                     receiverId: applicant._id,
                     groupId: group._id
                 });
-                console.log('newNotification when rejected:', newNotification);
+     
                 await newNotification.save({ session });
             }
 
