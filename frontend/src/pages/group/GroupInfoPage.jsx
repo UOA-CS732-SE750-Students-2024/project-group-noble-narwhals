@@ -34,7 +34,6 @@ function GroupInfoPage() {
 
         if (data.application) {
           setApplications(data.application);
-          console.log(111, data.application)
         }
         if (data.groupMembers.length > 0) {
           setMembers(data.groupMembers);
