@@ -20,9 +20,9 @@ app.use(morgan("combined"));
 app.use(express.json());
 
 const corsOptions = {
-  origin: 'http://localhost:5173', // frontend 
+  origin: true, // frontend
   credentials: true, // Allow（cookies）
-  optionsSuccessStatus: 200 
+  optionsSuccessStatus: 200,
 };
 app.use(cors(corsOptions));
 
@@ -32,9 +32,9 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: {
-      httpOnly: true, 
-      secure: false, 
-      maxAge: 1000 * 60 * 60 * 24 * 7, 
+      httpOnly: true,
+      secure: false,
+      maxAge: 1000 * 60 * 60 * 24 * 7,
     },
   })
 );

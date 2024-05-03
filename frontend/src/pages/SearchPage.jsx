@@ -1,26 +1,25 @@
-/**
- * To navigate to this page with a default keyword:
- *
- * import { useNavigate } from "react-router-dom";
- * const navigate = useNavigate();
- * const word = "tech";
- * navigate(`/search`, { state: { keywords: word } });
- *
- */
-
 import React, { useEffect, useRef, useState } from "react";
 import LongSearchingBar from "../components/LongSearchingBar";
 import { useLocation } from "react-router-dom";
+import SingleSearchedGroup from "../components/SingleSearchedGroup";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "";
 
 /**
  * Search group page
- * @param {*} keywords if navigate form other page with a keyword
+ *
+ * To navigate to this page with a default keyword or a group:
+ *
+ * import { useNavigate } from "react-router-dom";
+ * const navigate = useNavigate();
+ * const word = "tech";
+ * navigate(`/search`, { state: { keywords: word, grouptype: type["group", "activaty"] } });
  */
 function SearchPage() {
   const location = useLocation();
-  let mykeywords = location.state ? location.state.keywords : "";
+  let mykeywords = location.state?.keywords || "";
+  let srcGroupType = location.state?.groupType || "group";
+
   // clear the state in location
   window.history.replaceState({}, document.title);
 
@@ -30,12 +29,15 @@ function SearchPage() {
     { id: 2, name: "activity" },
   ];
 
+  // find tab id by group name
+  let srcGroupTabId = (
+    groupTypes.find((g) => g.name === srcGroupType) || groupTypes[0]
+  ).id;
+
   let fetchedData = useRef([]);
 
-  const [activeTab, setActiveTab] = useState(groupTypes[0].id);
-  const [displayedGroups, setDisplayedGroups] = useState(
-    fetchedData.current.filter((group) => group.groupType === "group")
-  );
+  const [activeTab, setActiveTab] = useState(srcGroupTabId);
+  const [displayedGroups, setDisplayedGroups] = useState([]);
   const [keywordList, setKeywordList] = useState(splitKeywords(mykeywords));
 
   /**
@@ -55,7 +57,9 @@ function SearchPage() {
   function handleTabBtnClick(tabId, typeName) {
     setActiveTab(tabId);
     const filteredData = fetchedData.current.filter(
-      (group) => group.groupType === typeName
+      (group) =>
+        group.groupType === typeName &&
+        !["closed", "dismissed"].includes(group.groupStatus)
     );
     setDisplayedGroups([...filteredData]);
   }
@@ -77,9 +81,13 @@ function SearchPage() {
         })
         .then((json) => {
           fetchedData.current = json;
-          setActiveTab(groupTypes[0].id);
           setDisplayedGroups(
-            fetchedData.current.filter((group) => group.groupType === "group")
+            fetchedData.current.filter(
+              (group) =>
+                group.groupType ===
+                  groupTypes.find((t) => t.id == activeTab).name &&
+                !["closed", "dismissed"].includes(group.groupStatus)
+            )
           );
           // set keywords to highlight
           setKeywordList(splitKeywords(mykeywords));
@@ -105,7 +113,7 @@ function SearchPage() {
       </div>
       <input className="appearance-none" max="99" type="number" />
       {/* tab control */}
-      <div className="mt-5 flex space-x-5">
+      <div className="flex space-x-5">
         {groupTypes.map((type) => (
           <TabButton
             key={type.id}
@@ -119,7 +127,15 @@ function SearchPage() {
         ))}
       </div>
       {/* search result list */}
-      <div className="border-t-4 border-t-hmblue-700">
+      <div className="border-t-4 border-t-hmblue-700 min-h-96">
+        {displayedGroups.length === 0 ? (
+          <p className="mt-10 text-xl">
+            No groups found, try some other key words. You can separete keywords
+            with blank.
+          </p>
+        ) : (
+          ""
+        )}
         {displayedGroups.map((group, idx) => (
           <SingleSearchedGroup key={idx} group={group} keywords={keywordList} />
         ))}
@@ -153,64 +169,5 @@ function TabButton({
     >
       {children}
     </button>
-  );
-}
-
-/**
- * Single item of search result
- */
-function SingleSearchedGroup({ group, keywords }) {
-  const pickStatusColor = () => {
-    switch (group.groupStatus) {
-      case "available":
-        return "bg-green-400";
-      case "full":
-        return "bg-red-400";
-      case "closed":
-        return "bg-gray-400";
-    }
-  };
-  const statusColor = pickStatusColor();
-
-  function highlightKeywords(text, kwords) {
-    const regstr = kwords.join("|");
-    const regex = new RegExp(`(${regstr})`, "gi");
-    return text.replace(
-      regex,
-      '<span style="background-color: yellow">$1</span>'
-    );
-  }
-
-  return (
-    <div className="flex flex-col border-2 border-hmblue-100 m-4 rounded-lg px-4 py-2">
-      <div className="flex font-bold">
-        <div>
-          <span
-            className={`${statusColor} inline-block font-thin text-xs text-white p-[2px] w-14 text-center rounded-md mr-1`}
-          >
-            {group.groupStatus}
-          </span>
-        </div>
-        <div
-          className="flex-grow"
-          dangerouslySetInnerHTML={{
-            __html: highlightKeywords(group.groupName, keywords),
-          }}
-        ></div>
-        <div className="font-thin text-gray-400 text-sm">
-          {`Members: ${group.numberOfGroupMember}/${group.maxNumber}`}
-        </div>
-      </div>
-      <div className="flex justify-start space-x-1 text-xs mt-2 overflow-hidden">
-        {group.groupTags.map((tag, idx) => (
-          <span
-            key={idx}
-            className="rounded-full px-2 py-1 h-auto bg-hmblue-100 text-hmblue-800 border-hmblue-800 border-[1px]"
-          >
-            {tag.name}
-          </span>
-        ))}
-      </div>
-    </div>
   );
 }

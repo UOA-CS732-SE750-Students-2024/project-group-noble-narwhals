@@ -77,12 +77,12 @@ function AccountSettingsPage() {
   };
 
   const handlePasswordChange = (event) => {
+    if (!isPasswordChanged) {
+      // clear the password field first if it is not changed before
+      setPassword(''); 
+      setIsPasswordChanged(true);
+    }
     setPassword(event.target.value);
-    setIsPasswordChanged(true);
-    // User has modified the password field
-    // this is a flag to check if the user has changed the password field to prevent user submitting mistakenly
-    // but now I have added a restriction to the password length, so this flag is not necessary
-    // it remains because it hard to find all the places where it is used
   };
 
 
@@ -171,10 +171,11 @@ function AccountSettingsPage() {
       updatedUserData.gender = gender;
     }
 
-    if (isPasswordChanged && password.length < 8) {
-      alert('Password must be at least 8 characters long.');
-      return;
-    }else{
+    if (isPasswordChanged) {
+      if (password.length < 8) {
+        alert('Password must be at least 8 characters long.');
+        return;
+      }
       updatedUserData.password = password;
     }
   
@@ -280,7 +281,6 @@ function AccountSettingsPage() {
       )}
       <div>
         <div>
-          {" "}
           {/* Avatar*/}
           <p className="font-bold text-xl mb-3">Avatar</p>
           <div className="flex flex-row">

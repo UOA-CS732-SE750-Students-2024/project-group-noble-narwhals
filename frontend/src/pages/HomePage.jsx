@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import backgroundImage from "/image/homePage_search_bg.jpg";
+import backgroundImage from "../../public/image/homePage_search_bg.jpg";
 import LongSearchingBar from "../components/LongSearchingBar";
 import Gallery from "../components/Gallery";
 import axios from "axios";
@@ -122,7 +122,7 @@ function HomePage() {
     <>
       <div id="main_content" className="">
         <div
-          className="bg-cover bg-center flex flex-col items-center justify-center"
+          className="bg-cover bg-center flex flex-col items-center justify-center "
           style={{
             backgroundImage: `url(${backgroundImage})`,
             // BackgroundSize: "cover",
@@ -133,13 +133,13 @@ function HomePage() {
         >
           {/* Blurred overlay div */}
           <div className="w-full h-full bg-white/40 backdrop-blur-sm flex flex-col items-center justify-center">
-            <h1 className="text-sky-800 my-4">
+            <h1 className="text-sky-800 my-4 px-2">
               <b className="text-4xl">Need Group/ Activities?</b>
             </h1>
-            <p className="text-lg font-black text-sky-700 mb-4">
+            <p className="text-lg font-black text-sky-700 mb-4 px-2">
               Type in the group name, course name, find your group!
             </p>
-            <div className="w-1/2">
+            <div className="w-11/12 sm:w-1/2">
               <LongSearchingBar
                 searchBtnClick={handleSearchBthClick}
                 value={word}

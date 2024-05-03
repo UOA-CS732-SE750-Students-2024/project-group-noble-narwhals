@@ -4,7 +4,6 @@
  * @param {String} API_BASE_URL - Strapi API base URL
  * @returns {Array} - Array of image links for the group members
  */
-import axios from "axios";
 function getGroupImageLink(group) {
   if (!group || !group.groupMembers) {
     console.error("Invalid group data");

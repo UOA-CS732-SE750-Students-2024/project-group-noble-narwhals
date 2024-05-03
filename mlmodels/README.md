@@ -36,7 +36,7 @@ Note: If you are using MacOS M series chip, you may need to install the comments
 ## Run HTTP Server
 Change directory to scripts.
 ```sh
-cd script
+cd scripts
 ````
 
 Run the server

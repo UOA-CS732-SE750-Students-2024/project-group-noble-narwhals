@@ -17,16 +17,15 @@ function Navbar() {
   let darkMode = location.pathname.startsWith("/search");
 
   const logoutHandler = () => {
+    setUser(null);
+    setIsLoggedIn(false);
+    navigate("/");
+    window.localStorage.setItem("isLoggedIn", false);
     axios
       .get(`${import.meta.env.VITE_API_BASE_URL}/auth/logout`, {
         withCredentials: true,
       })
-      .then(() => {
-        setIsLoggedIn(false);
-        window.localStorage.setItem("isLoggedIn", false);
-        setUser(null);
-        navigate("/");
-      });
+      .then(() => {});
   };
 
   const [showMenu, setShowMenu] = useState(false);
@@ -43,14 +42,13 @@ function Navbar() {
 
   useEffect(() => {
     const handleScroll = () => {
-      const checkPath = location.pathname === "/" ;
-      if(location.pathname === "/search"){
+      const checkPath = location.pathname === "/";
+      if (location.pathname === "/search") {
         setShowSearch(false);
       } else {
         const visible = window.scrollY < 320;
         setShowSearch(!(visible && checkPath));
       }
-      
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -58,8 +56,6 @@ function Navbar() {
 
     return () => window.removeEventListener("scroll", handleScroll);
   }, [location]);
-
-
 
   return (
     <>
@@ -69,26 +65,37 @@ function Navbar() {
           darkMode ? "text-white bg-primary " : "bg-white text-primary"
         } `}
       >
-        <div className="mx-auto w-full h-navHeight px-12">
+        <div className="mx-auto w-full h-navHeight px-5 md:px-12">
           <div
             id="nav_content"
-            className="flex flex-row justify-between items-center h-full w-full"
+            className="flex flex-row justify-between items-center h-full w-full gap-2"
           >
-            <Link to="/" className="flex flex-row gap-2 items-center">
+            <Link
+              to="/"
+              className="flex flex-row gap-2 items-center shrink-0 grow-0"
+            >
               <img
                 src="/image/logo.png"
                 alt="logo"
-                className="h-11 rounded-lg"
+                className="h-11 rounded-lg w-full"
               />
               {darkMode ? (
-                <img src="/image/brand_blue.png" alt="logo" className="h-11" />
+                <img
+                  src="/image/brand_blue.png"
+                  alt="logo"
+                  className="h-8 md:h-11 hidden sm:block"
+                />
               ) : (
-                <img src="/image/brand_white.png" alt="logo" className="h-11" />
+                <img
+                  src="/image/brand_white.png"
+                  alt="logo"
+                  className="h-8 md:h-11 hidden sm:block  "
+                />
               )}
             </Link>
 
             {!isLoggedIn && (
-              <div className="flex flex-row gap-7 items-center">
+              <div className="flex flex-row gap-2 sm:gap-7 items-center">
                 {showSearch && (
                   <div
                     id="nav_search_bar"
@@ -101,10 +108,10 @@ function Navbar() {
                       ref={inputRef}
                       type="text"
                       placeholder="Search"
-                      className={`w-72 h-8 outline-none transition-all duration-300 `}
+                      className={`w-full lg:w-72 h-8 outline-none transition-all duration-300 `}
                     />
                     <div
-                      className={` w-7 h-7 rounded-full hover:bg-gray-200 flex items-center justify-center ${
+                      className={`w-7 h-7 rounded-full hover:bg-gray-200 flex items-center justify-center ${
                         darkMode && "text-primary"
                       } z-10`}
                       onClick={searchHandler}
@@ -116,7 +123,7 @@ function Navbar() {
                 <Link to="/login">
                   <Button
                     className={`${
-                      darkMode && "bg-white hover:text-white border-white"
+                      darkMode && "bg-white hover:text-white border-white "
                     }`}
                   >
                     Log in
@@ -136,7 +143,7 @@ function Navbar() {
             )}
 
             {isLoggedIn && (
-              <div className="flex flex-row gap-7 items-center">
+              <div className="flex flex-row gap-3 lg:gap-7 items-center">
                 {showSearch && (
                   <div
                     id="nav_search_bar"
@@ -149,7 +156,7 @@ function Navbar() {
                       ref={inputRef}
                       type="text"
                       placeholder="Search"
-                      className={`w-72 h-8 outline-none transition-all duration-300 `}
+                      className={`w-full lg:  h-8 outline-none transition-all duration-300 `}
                     />
                     <div
                       className={` w-7 h-7 rounded-full hover:bg-gray-200 flex items-center justify-center ${
@@ -172,7 +179,7 @@ function Navbar() {
                     className={`text-xl flex flex-row items-center justify-center gap-1 `}
                   >
                     <IoAdd />
-                    <span>Create Group</span>
+                    <span className="hidden lg:block">Create Group</span>
                   </Link>
                 </div>
                 <div
@@ -182,24 +189,29 @@ function Navbar() {
                 >
                   <Link
                     to={`/user/notification/${user._id}`}
-                    className={`text-xl flex flex-row items-center justify-center gap-1 `}
+                    className={`text-xl flex flex-row items-center justify-center gap-1 relative `}
                   >
                     <IoMdNotificationsOutline />
-                    <span>Notifications</span>
+                    <span className="hidden lg:block">Notifications</span>
+                    {user.unreadMessages ? (
+                      <span className=" rounded-full w-5 h-5 text-white bg-red-500 flex items-center justify-center text-xs">
+                        {user.unreadMessages}
+                      </span>
+                    ) : null}
                   </Link>
                 </div>
                 <div
                   onClick={switchMenu}
-                  className={`h-9 relative flex flex-row items-center gap-2 cursor-pointer hover:bg-gray-200 pr-3 rounded-full ${
+                  className={`h-9 relative flex flex-row shrink-0 items-center gap-2 cursor-pointer hover:bg-gray-200 pr-2  rounded-full ${
                     darkMode ? "hover:text-primary" : ""
                   }`}
                 >
                   <img
                     src={user.avatar}
                     alt="Avator"
-                    className="h-10 rounded-full "
+                    className="h-10 w-10 rounded-full "
                   />
-                  {user.name}
+                  <span className="hidden lg:block">{user.name}</span>
                   {showMenu && (
                     <div
                       className={`bg-white absolute top-11 -right-6 w-48 rounded-xl flex flex-col items-center p-1 pb-3 gap-3 shadow-basic ${

@@ -17,7 +17,7 @@ const GalleryCard = ({
   description,
 }) => {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-  const { isLoggedIn, user } = useAuth();
+  const { isLoggedIn, user, updateAuth } = useAuth();
   const [hasApplied, setHasApplied] = useState(false);
   const [applicationStatus, setApplicationStatus] = useState("");
   const [showModal, setShowModal] = useState(false);
@@ -51,10 +51,8 @@ const GalleryCard = ({
   const checkLikeStatus = async () => {
     if (isLoggedIn && id && user._id) {
       try {
-        const response = await axios.get(
-          `${API_BASE_URL}/api/user/${user._id}/likes/${id}`
-        );
-        setLiked(response.data.liked);
+        const isLiked = user.likedGroups.some((group) => group._id === id);
+        setLiked(isLiked);
       } catch (error) {
         console.error("Error checking like status:", error);
       }
@@ -75,6 +73,7 @@ const GalleryCard = ({
       await axios.post(`${API_BASE_URL}/api/user/${endpoint}`, {
         userId: user._id,
       });
+      updateAuth();
     } catch (error) {
       console.error("Failed to toggle like:", error);
       setLiked(!newLikedStatus);
@@ -113,6 +112,7 @@ const GalleryCard = ({
           setApplicationStatus("");
           alert("Your application has been cancelled.");
           setShowModal(false);
+          updateAuth();
         } catch (error) {
           alert(
             "Failed to cancel the application: " +
@@ -141,6 +141,7 @@ const GalleryCard = ({
       setApplicationStatus("pending");
       setShowModal(false);
       alert("Your application to join the group has been submitted!");
+      updateAuth();
     } catch (error) {
       alert(
         "Failed to apply to the group: " +
@@ -151,8 +152,8 @@ const GalleryCard = ({
   const hostAvatar = imageLink[0];
   const groupImage = imageLink;
   return (
-    <div className="bg-white p-4 rounded-lg shadow-basic hover:bg-slate-100">
-      <div className="flex justify-between">
+    <div className="bg-white p-4 rounded-lg shadow-basic hover:bg-slate-100 min-w-40">
+      <div className="flex justify-between min-w-36">
         <div className="flex flex-row justify-between">
           <img
             key={1}
@@ -160,12 +161,12 @@ const GalleryCard = ({
             src={hostAvatar}
             alt={`Host Avatar`}
           />
-          <div className="flex flex-col justify-center ml-3">
+          <div className="flex flex-col justify-center ml-3 w-full max-w-24">
             <Link
               to={`/group/${id}`}
               className="text-base font-bold text-sky-800 hover:underline"
             >
-              {title}
+              <h1 className="truncate">{title}</h1>
             </Link>
             <div className="text-xs text-gray-400">{dayNum} days left</div>
           </div>
@@ -188,8 +189,8 @@ const GalleryCard = ({
           </button>
         </div>
       </div>
-      <div className="text-base text-sky-700 font-thin m-2">
-        <p>
+      <div className="text-base text-sky-700 font-thin m-2 h-24 min-w-24">
+        <p className="max-w-full overflow-wrap break-words">
           {description.length > 150 ? (
             <>
               {description.substring(0, 150)}
@@ -231,7 +232,7 @@ const GalleryCard = ({
                 Application Message
               </h3>
               <textarea
-                className="mt-2 px-7 py-3 w-full text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+                className="mt-2 p-2 w-full text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
                 rows="3"
                 placeholder="Enter your message"
                 value={applicationMessage}
