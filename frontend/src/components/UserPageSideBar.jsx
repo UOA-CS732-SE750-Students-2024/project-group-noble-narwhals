@@ -13,13 +13,13 @@ function UserPageSideBar() {
   const { isLoggedIn, user: loggedInUser } = useAuth();
   const { userId } = useParams();
   const location = useLocation();
-  const [selectedOption, setSelectedOption] = useState("");
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isShowSideBar, setIsShowSideBar] = useState(false);
 
-  let  unReadNotiNum = 0;
-  if(loggedInUser !== null) {
-    unReadNotiNum = loggedInUser.unreadMessages || 0
+  let unReadNotiNum = 0;
+  if (loggedInUser !== null) {
+    unReadNotiNum = loggedInUser.unreadMessages || 0;
   }
 
   useEffect(() => {
@@ -86,43 +86,77 @@ function UserPageSideBar() {
   }
 
   return (
-    <div className="w-sideBarWidth min-w-sideBarWidth overflow-y-auto bg-primary flex flex-col items-center ">
-      <div className="flex flex-col items-center justify-center p-8">
-        {user && (
-          <>
-            <img
-              className="w-24 h-24 rounded-full mb-2"
-              src={user.avatar}
-              alt={`${user.name}'s Avatar`}
+    <>
+      {/* show sidebar btn */}
+      <div
+        className={`text-white font-bold rounded-r-md flex justify-end bg-hmblue-700 fixed w-12 mt-1 py-1 left-0 top-16 items-center md:hidden cursor-pointer ${
+          isShowSideBar ? "hidden" : ""
+        }`}
+        onClick={() => {
+          setIsShowSideBar(true);
+        }}
+      >
+        <span className="flex w-4 h-4 border-y-2 mr-2 relative items-center">
+          <span className="w-full border-t-2"></span>
+        </span>
+      </div>
+      {/* mask */}
+      {isShowSideBar ? (
+        <div className="w-full h-full fixed bg-gray-900/50 z-[999]"></div>
+      ) : (
+        ""
+      )}
+      {/* sidebar */}
+      <div
+        className={`w-4/5 md:w-sideBarWidth min-w-sideBarWidth overflow-y-auto bg-primary flex flex-col items-center z-[1000] min-h-[calc(100vh-theme(spacing.navHeight))] absolute transition-all md:static ${
+          isShowSideBar ? "" : "-translate-x-full md:translate-x-0"
+        }`}
+      >
+        {/* close sidebar btn */}
+        <div
+          className="absolute text-white text-4xl right-0 cursor-pointer py-4 px-6 md:hidden"
+          onClick={() => {
+            setIsShowSideBar(false);
+          }}
+        >
+          ×
+        </div>
+        <div className="flex flex-col items-center justify-center p-8">
+          {user && (
+            <>
+              <img
+                className="w-24 h-24 rounded-full mb-2"
+                src={user.avatar}
+                alt={`${user.name}'s Avatar`}
+              />
+              <p className="text-xl text-white font-bold">{user.name}</p>
+            </>
+          )}
+        </div>
+        <div className="w-full ">
+          {options.map((option) => (
+            <SidebarOption
+              option={option}
+              key={option.label}
+              isActive={location.pathname === option.to}
+              hideSelf={() => {
+                setIsShowSideBar(false);
+              }}
             />
-            <p className="text-xl text-white font-bold">{user.name}</p>
-          </>
-        )}
+          ))}
+        </div>
       </div>
-      <div className="w-full ">
-        {options.map((option) => (
-          <SidebarOption
-            option={option}
-            key={option.label}
-            // label={option.label}
-            // icon={option.icon}
-            // to={option.to}
-            isActive={location.pathname === option.to}
-            handleClick={setSelectedOption}
-          />
-        ))}
-      </div>
-    </div>
+    </>
   );
 }
 
-function SidebarOption({ option, handleClick, isActive }) {
+function SidebarOption({ option, isActive, hideSelf }) {
   const activeClass = isActive ? "bg-secondary" : "";
   return (
     <Link
       to={option.to}
       className={`p-3 pl-9 flex items-center justify-start hover:bg-secondary text-white cursor-pointer ${activeClass} transition-colors duration-100 w-full`}
-      onClick={() => handleClick(option.label)}
+      onClick={hideSelf}
     >
       {option.icon}
       {option.label}
