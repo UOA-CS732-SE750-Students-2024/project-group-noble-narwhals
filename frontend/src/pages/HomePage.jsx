@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import backgroundImage from "/image/homePage_search_bg.jpg";
+import backgroundImage from "../../public/image/homePage_search_bg.jpg";
 import LongSearchingBar from "../components/LongSearchingBar";
 import Gallery from "../components/Gallery";
 import axios from "axios";
@@ -122,7 +122,7 @@ function HomePage() {
     <>
       <div id="main_content" className="">
         <div
-          className="bg-cover bg-center flex flex-col items-center justify-center"
+          className="bg-cover bg-center hidden md:flex flex-col items-center justify-center "
           style={{
             backgroundImage: `url(${backgroundImage})`,
             // BackgroundSize: "cover",
