@@ -17,16 +17,15 @@ function Navbar() {
   let darkMode = location.pathname.startsWith("/search");
 
   const logoutHandler = () => {
+    setUser(null);
+    setIsLoggedIn(false);
+    navigate("/");
+    window.localStorage.setItem("isLoggedIn", false);
     axios
       .get(`${import.meta.env.VITE_API_BASE_URL}/auth/logout`, {
         withCredentials: true,
       })
-      .then(() => {
-        setIsLoggedIn(false);
-        window.localStorage.setItem("isLoggedIn", false);
-        setUser(null);
-        navigate("/");
-      });
+      .then(() => {});
   };
 
   const [showMenu, setShowMenu] = useState(false);
@@ -43,14 +42,13 @@ function Navbar() {
 
   useEffect(() => {
     const handleScroll = () => {
-      const checkPath = location.pathname === "/" ;
-      if(location.pathname === "/search"){
+      const checkPath = location.pathname === "/";
+      if (location.pathname === "/search") {
         setShowSearch(false);
       } else {
         const visible = window.scrollY < 320;
         setShowSearch(!(visible && checkPath));
       }
-      
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -58,8 +56,6 @@ function Navbar() {
 
     return () => window.removeEventListener("scroll", handleScroll);
   }, [location]);
-
-
 
   return (
     <>
@@ -182,10 +178,13 @@ function Navbar() {
                 >
                   <Link
                     to={`/user/notification/${user._id}`}
-                    className={`text-xl flex flex-row items-center justify-center gap-1 `}
+                    className={`text-xl flex flex-row items-center justify-center gap-1 relative `}
                   >
                     <IoMdNotificationsOutline />
                     <span>Notifications</span>
+                    <span className=" rounded-full w-5 h-5 text-white bg-gray-500 flex items-center justify-center text-xs">
+                      {user.unreadMessages}
+                    </span>
                   </Link>
                 </div>
                 <div
