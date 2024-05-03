@@ -1,26 +1,24 @@
-/**
- * To navigate to this page with a default keyword:
- *
- * import { useNavigate } from "react-router-dom";
- * const navigate = useNavigate();
- * const word = "tech";
- * navigate(`/search`, { state: { keywords: word } });
- *
- */
-
 import React, { useEffect, useRef, useState } from "react";
 import LongSearchingBar from "../components/LongSearchingBar";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "";
 
 /**
  * Search group page
- * @param {*} keywords if navigate form other page with a keyword
+ *
+ * To navigate to this page with a default keyword or a group:
+ *
+ * import { useNavigate } from "react-router-dom";
+ * const navigate = useNavigate();
+ * const word = "tech";
+ * navigate(`/search`, { state: { keywords: word, grouptype: type["group", "activaty"] } });
  */
 function SearchPage() {
   const location = useLocation();
-  let mykeywords = location.state ? location.state.keywords : "";
+  let mykeywords = location.state?.keywords || "";
+  let srcGroupType = location.state?.groupType || "group";
+
   // clear the state in location
   window.history.replaceState({}, document.title);
 
@@ -30,12 +28,15 @@ function SearchPage() {
     { id: 2, name: "activity" },
   ];
 
+  // find tab id by group name
+  let srcGroupTabId = (
+    groupTypes.find((g) => g.name === srcGroupType) || groupTypes[0]
+  ).id;
+
   let fetchedData = useRef([]);
 
-  const [activeTab, setActiveTab] = useState(groupTypes[0].id);
-  const [displayedGroups, setDisplayedGroups] = useState(
-    fetchedData.current.filter((group) => group.groupType === "group")
-  );
+  const [activeTab, setActiveTab] = useState(srcGroupTabId);
+  const [displayedGroups, setDisplayedGroups] = useState([]);
   const [keywordList, setKeywordList] = useState(splitKeywords(mykeywords));
 
   /**
@@ -55,7 +56,9 @@ function SearchPage() {
   function handleTabBtnClick(tabId, typeName) {
     setActiveTab(tabId);
     const filteredData = fetchedData.current.filter(
-      (group) => group.groupType === typeName
+      (group) =>
+        group.groupType === typeName &&
+        !["closed", "dismissed"].includes(group.groupStatus)
     );
     setDisplayedGroups([...filteredData]);
   }
@@ -77,9 +80,13 @@ function SearchPage() {
         })
         .then((json) => {
           fetchedData.current = json;
-          setActiveTab(groupTypes[0].id);
           setDisplayedGroups(
-            fetchedData.current.filter((group) => group.groupType === "group")
+            fetchedData.current.filter(
+              (group) =>
+                group.groupType ===
+                  groupTypes.find((t) => t.id == activeTab).name &&
+                !["closed", "dismissed"].includes(group.groupStatus)
+            )
           );
           // set keywords to highlight
           setKeywordList(splitKeywords(mykeywords));
@@ -119,7 +126,15 @@ function SearchPage() {
         ))}
       </div>
       {/* search result list */}
-      <div className="border-t-4 border-t-hmblue-700">
+      <div className="border-t-4 border-t-hmblue-700 min-h-96">
+        {displayedGroups.length === 0 ? (
+          <p className="mt-10 text-xl">
+            No groups found, try some other key words. You can separete keywords
+            with blank.
+          </p>
+        ) : (
+          ""
+        )}
         {displayedGroups.map((group, idx) => (
           <SingleSearchedGroup key={idx} group={group} keywords={keywordList} />
         ))}
@@ -160,6 +175,7 @@ function TabButton({
  * Single item of search result
  */
 function SingleSearchedGroup({ group, keywords }) {
+  const navigate = useNavigate();
   const pickStatusColor = () => {
     switch (group.groupStatus) {
       case "available":
@@ -167,6 +183,8 @@ function SingleSearchedGroup({ group, keywords }) {
       case "full":
         return "bg-red-400";
       case "closed":
+        return "bg-gray-400";
+      case "dismissed":
         return "bg-gray-400";
     }
   };
@@ -182,8 +200,13 @@ function SingleSearchedGroup({ group, keywords }) {
   }
 
   return (
-    <div className="flex flex-col border-2 border-hmblue-100 m-4 rounded-lg px-4 py-2">
-      <div className="flex font-bold">
+    <div
+      className="group flex flex-col border-2 border-hmblue-100 m-4 rounded-lg px-4 py-2 cursor-pointer"
+      onClick={() => {
+        navigate(`/group/${group._id}`);
+      }}
+    >
+      <div className="flex flex-row font-bold">
         <div>
           <span
             className={`${statusColor} inline-block font-thin text-xs text-white p-[2px] w-14 text-center rounded-md mr-1`}
@@ -192,24 +215,47 @@ function SingleSearchedGroup({ group, keywords }) {
           </span>
         </div>
         <div
-          className="flex-grow"
+          className="flex-grow group-hover:underline"
           dangerouslySetInnerHTML={{
             __html: highlightKeywords(group.groupName, keywords),
           }}
         ></div>
         <div className="font-thin text-gray-400 text-sm">
-          {`Members: ${group.numberOfGroupMember}/${group.maxNumber}`}
+          {`Members: ${group.groupMembers.length}/${group.maxNumber}`}
         </div>
       </div>
-      <div className="flex justify-start space-x-1 text-xs mt-2 overflow-hidden">
-        {group.groupTags.map((tag, idx) => (
-          <span
-            key={idx}
-            className="rounded-full px-2 py-1 h-auto bg-hmblue-100 text-hmblue-800 border-hmblue-800 border-[1px]"
-          >
-            {tag.name}
-          </span>
-        ))}
+      <div className="flex flex-row justify-between space-x-1 text-xs mt-2 relative">
+        {/* member numbers */}
+        <div>
+          {group.groupTags.map((tag, idx) => (
+            <span
+              key={idx}
+              className="rounded-full inline-block px-2 py-1 h-auto bg-hmblue-100 text-hmblue-800 border-hmblue-800 border-[1px]"
+            >
+              {tag.name}
+            </span>
+          ))}
+        </div>
+        {/* Avatar */}
+        <div className="flex flex-row-reverse -space-x-3 relative pl-3 items-center">
+          <div className="w-8 -ml-8"></div>
+          {group.groupMembers
+            .slice()
+            .reverse()
+            .map((member, idx) => (
+              <div
+                key={idx}
+                className="group/member items-center text-center hover:z-50 relative"
+              >
+                <div className="w-8 rounded-full ring-2 ring-white relative bg-white overflow-hidden">
+                  <img src={member.avatar} alt={member.name} />
+                </div>
+                <div className="invisible group-hover/member:visible absolute whitespace-nowrap -bottom-4 text-xs left-1/2 transform -translate-x-1/2 text-white bg-hmblue-700 rounded-md px-1">
+                  {member.name}
+                </div>
+              </div>
+            ))}
+        </div>
       </div>
     </div>
   );

@@ -16,17 +16,19 @@ function UserPageSideBar() {
   const [selectedOption, setSelectedOption] = useState("");
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const unReadNotiNum = loggedInUser.unreadMessages || 0;
 
   useEffect(() => {
     if (!isLoggedIn || loggedInUser?._id !== userId) {
       // Fetch user data from API if not logged in or viewing another user's profile
-      axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/user/userData/${userId}`)
-        .then(response => {
+      axios
+        .get(`${import.meta.env.VITE_API_BASE_URL}/api/user/userData/${userId}`)
+        .then((response) => {
           setUser(response.data);
           setIsLoading(false);
         })
-        .catch(error => {
-          console.error('Error fetching user data:', error);
+        .catch((error) => {
+          console.error("Error fetching user data:", error);
           setIsLoading(false);
         });
     } else {
@@ -41,7 +43,7 @@ function UserPageSideBar() {
       label: "Public Profile",
       icon: <CgProfile className="mr-2 w-6 h-6" />,
       to: `/user/profile/${userId}`,
-    }
+    },
   ];
 
   if (isLoggedIn && userId === loggedInUser?._id) {
@@ -66,6 +68,7 @@ function UserPageSideBar() {
         label: "Notification",
         icon: <IoIosNotifications className="mr-2 w-6 h-6" />,
         to: `/user/notification/${userId}`,
+        unread: unReadNotiNum,
       }
     );
   }
@@ -95,10 +98,11 @@ function UserPageSideBar() {
       <div className="w-full">
         {options.map((option) => (
           <SidebarOption
+            option={option}
             key={option.label}
-            label={option.label}
-            icon={option.icon}
-            to={option.to}
+            // label={option.label}
+            // icon={option.icon}
+            // to={option.to}
             isActive={location.pathname === option.to}
             handleClick={setSelectedOption}
           />
@@ -108,13 +112,28 @@ function UserPageSideBar() {
   );
 }
 
-function SidebarOption({ icon, label, to, handleClick, isActive }) {
+function SidebarOption({ option, handleClick, isActive }) {
   const activeClass = isActive ? "bg-secondary" : "";
   return (
-      <Link to={to} className={`p-3 pl-4 flex items-center justify-start hover:bg-secondary text-white cursor-pointer ${activeClass} transition-colors duration-100 w-full`}  onClick={() => handleClick(label)}>
-        {icon}
-        {label}
-      </Link>
+    <Link
+      to={option.to}
+      className={`p-3 pl-4 flex items-center justify-start hover:bg-secondary text-white cursor-pointer ${activeClass} transition-colors duration-100 w-full`}
+      onClick={() => handleClick(option.label)}
+    >
+      {option.icon}
+      {option.label}
+      {option.label === "Notification" ? (
+        option.unread == 0 ? (
+          ""
+        ) : (
+          <span className="w-5 h-5 inline-block text-sm rounded-full bg-red-700 text-center ml-2">
+            {option.unread > 99 ? "99+" : option.unread}
+          </span>
+        )
+      ) : (
+        ""
+      )}
+    </Link>
   );
 }
 
