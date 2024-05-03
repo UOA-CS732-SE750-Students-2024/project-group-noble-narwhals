@@ -16,6 +16,7 @@ export const AuthProvider = ({ children }) => {
       .get(`${import.meta.env.VITE_API_BASE_URL}/auth/check-session`)
       .then((res) => {
         if (res.data.isLoggedIn) {
+          console.log(111, res.data.user)
           setUser(res.data.user);
           setIsLoggedIn(true);
           window.localStorage.setItem("isLoggedIn", true);

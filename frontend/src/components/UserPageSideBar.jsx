@@ -16,7 +16,11 @@ function UserPageSideBar() {
   const [selectedOption, setSelectedOption] = useState("");
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const unReadNotiNum = loggedInUser.unreadMessages || 0;
+
+  let  unReadNotiNum = 0;
+  if(loggedInUser !== null) {
+    unReadNotiNum = loggedInUser.unreadMessages || 0
+  }
 
   useEffect(() => {
     if (!isLoggedIn || loggedInUser?._id !== userId) {
