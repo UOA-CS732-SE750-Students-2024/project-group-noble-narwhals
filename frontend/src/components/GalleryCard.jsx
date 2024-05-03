@@ -51,10 +51,8 @@ const GalleryCard = ({
   const checkLikeStatus = async () => {
     if (isLoggedIn && id && user._id) {
       try {
-        const response = await axios.get(
-          `${API_BASE_URL}/api/user/${user._id}/likes/${id}`
-        );
-        setLiked(response.data.liked);
+        const isLiked = user.likedGroups.some((group) => group._id === id);
+        setLiked(isLiked);
       } catch (error) {
         console.error("Error checking like status:", error);
       }
@@ -151,8 +149,8 @@ const GalleryCard = ({
   const hostAvatar = imageLink[0];
   const groupImage = imageLink;
   return (
-    <div className="bg-white p-4 rounded-lg shadow-basic hover:bg-slate-100">
-      <div className="flex justify-between">
+    <div className="bg-white p-4 rounded-lg shadow-basic hover:bg-slate-100 min-w-40">
+      <div className="flex justify-between min-w-36">
         <div className="flex flex-row justify-between">
           <img
             key={1}
@@ -160,12 +158,12 @@ const GalleryCard = ({
             src={hostAvatar}
             alt={`Host Avatar`}
           />
-          <div className="flex flex-col justify-center ml-3">
+          <div className="flex flex-col justify-center ml-3 w-full max-w-24">
             <Link
               to={`/group/${id}`}
               className="text-base font-bold text-sky-800 hover:underline"
             >
-              {title}
+              <h1 className="truncate">{title}</h1>
             </Link>
             <div className="text-xs text-gray-400">{dayNum} days left</div>
           </div>
@@ -188,8 +186,8 @@ const GalleryCard = ({
           </button>
         </div>
       </div>
-      <div className="text-base text-sky-700 font-thin m-2">
-        <p>
+      <div className="text-base text-sky-700 font-thin m-2 h-24 min-w-24">
+        <p className="max-w-full overflow-wrap break-words">
           {description.length > 150 ? (
             <>
               {description.substring(0, 150)}
