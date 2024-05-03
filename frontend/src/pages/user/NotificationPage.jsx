@@ -109,7 +109,7 @@ function SingleNotification({ notification, idx }) {
     await fetch(`${API_BASE_URL}/api/notification/${notificationId}/read`, {
       method: "PATCH",
     }).then(() => {
-      navigate(`/group/${groupId}`);
+      navigate(`/group/${groupId._id}`);
     });
   }
 
