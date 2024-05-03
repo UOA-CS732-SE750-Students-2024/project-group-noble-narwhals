@@ -27,7 +27,6 @@ function HeaderContent({
   const { isLoggedIn, user } = useAuth();
   const [liked, setLiked] = useState(false);
   const navigate = useNavigate();
-  
 
   const isGroupMember =
     user && groupMembers.some((member) => member._id === user._id);
@@ -60,11 +59,8 @@ function HeaderContent({
   const checkLikeStatus = async () => {
     if (isLoggedIn && groupId && user._id) {
       try {
-        const response = await axios.get(
-          `${API_BASE_URL}/api/user/${user._id}/likes/${groupId}`
-        );
-
-        setLiked(response.data.liked);
+        const isLiked = user.likedGroups.some((group) => group._id === id);
+        setLiked(isLiked);
       } catch (error) {
         console.error("Error checking like status:", error);
       }

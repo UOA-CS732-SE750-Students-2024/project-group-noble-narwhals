@@ -18,7 +18,7 @@ function tagSimulator(tags, tagList, setTagRecommendation) {
   const data = {
     tag: tags,
     taglist: tagList,
-    topn: 20,
+    topn: 5,
   };
 
   const fetchData = async () => {
