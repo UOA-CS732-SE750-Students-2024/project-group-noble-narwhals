@@ -34,7 +34,7 @@ router.get('/userData/:id', getUserData(User, "User"), (req, res) => {
 
 
 router.post('/', async (req, res) => {
-    console.log(req.body); 
+   
     try {
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
@@ -185,10 +185,6 @@ router.post('/unlike/:groupId', async (req, res) => {
 router.patch('/update/:id', getUser, async (req, res) => {
     // Get the user object from the response
     const user = res.user;
-    // if the user is not the owner of the account, return 403
-    if (req.user._id.toString() !== user._id.toString()) {
-        return res.status(403).json({ message: "Unauthorized to update this user." });
-    }
 
     // Loop over the fields in the request body
     for (const [key, value] of Object.entries(req.body)) {
@@ -214,9 +210,9 @@ router.patch('/update/:id', getUser, async (req, res) => {
 
 // delete user
 router.delete('/delete/:id', getUser, async (req, res) => {
-    console.log("ready to delete user");
+
     const userId = req.params.id;
-    
+
     if (req.user._id.toString() !== userId) {
         return res.status(403).json({ message: "Unauthorized to delete this user." });
     }

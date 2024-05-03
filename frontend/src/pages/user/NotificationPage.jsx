@@ -7,7 +7,6 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "";
 
 function NotificationPage() {
   const { userId } = useParams();
-  console.log("userId from notification: ", userId);
   const navigate = useNavigate();
   const { user, setUser, isLoading, setIsLoading, isLoggedIn } = useAuth();
   const [notifications, setNotifications] = useState([]);
@@ -37,7 +36,6 @@ function NotificationPage() {
 
   useEffect(() => {
     if (!isLoading && (!isLoggedIn || user._id !== userId)) {
-      console.log("user._id is not the owner of this page: ", user._id);
       // if the user is not logged in, or logged in but not the user ID to be viewed
       // then he/she should be redirected to the home page
       navigate("/");
@@ -58,8 +56,6 @@ function NotificationPage() {
         <img src="/image/Spinner.svg" alt="Loading..." />
       </div>
     );
-  } else {
-    console.log("user from accountsetting: ", user);
   }
 
   return (
@@ -67,6 +63,7 @@ function NotificationPage() {
       <div className="text-3xl mb-8">Notification</div>
       {notifications.length > 0 ? "" : "No notification found."}
       <div>
+        {notifications.length === 0 ? <p>No notifications found.</p> : null}
         {notifications.map((notification, idx) =>
           notification.senderId ? ( // check if senderId is not null
             <SingleNotification
@@ -88,31 +85,25 @@ function SingleNotification({ notification, idx }) {
     switch (type) {
       case "join_request_accepted":
         return "approved your application to:";
-      case "group_closed":
-        return "closed a group:";
       case "join_request_rejected":
         return "rejected your application to:";
       case "group_started":
         return "";
       case "new_applicant":
-        return "applied to join your group.";
+        return `applied to join your group: ${notification.groupId.groupName}`;
       case "member_quit":
         return "quit the group:";
-      case "group_updated":
+      case "group_closed":
         return "closed the group:";
       case "group_dismissed":
         return "dismissed the group:";
       case "delete_member":
         return "removed you from:";
+      case "group_updated":
+        return "updated the group:";
       default:
         return "Said:";
     }
-  }
-
-  async function setRead(notificationId) {
-    await fetch(`${API_BASE_URL}/api/notification/${notificationId}/read`, {
-      method: "PATCH",
-    }).then();
   }
 
   async function notificationClickHandler(notificationId, groupId) {

@@ -152,9 +152,9 @@ router.patch("/update/:id", isVerifiedUser, getGroup, async (req, res) => {
   try {
     const updatedGroup = await res.group.save();
     // create a new notification for each of the group member
-    const notificationContent = `Group ${res.group.groupName} has been closed.`;
+    const notificationContent = `Group ${res.group.groupName} has been updated.`;
     const notificationTime = new Date();
-    const notificationType = "group_closed";
+    const notificationType = "group_updated";
     const notificationPromises = res.group.groupMembers.map(async (id) => {
       const newNotification = new Notification({
         notificationContent,
@@ -163,6 +163,7 @@ router.patch("/update/:id", isVerifiedUser, getGroup, async (req, res) => {
         notificationType,
         senderId: req.user._id,
         receiverId: id,
+        groupId: res.group._id,
       });
       return newNotification.save();
     });
@@ -212,8 +213,8 @@ router.patch("/remove-member/:id", getGroup, async (req, res) => {
       notificationType: "delete_member",
       senderId: req.user._id,
       receiverId: memberId,
+      groupId: group._id,
     });
-    console.log("Notification created ", newNotification);
 
     await group.save();
     await member.save();
@@ -254,7 +255,6 @@ router.post("/join/:id", getGroup, async (req, res) => {
 
 // quit group by id
 router.post("/quit/:groupId", async (req, res) => {
-  console.log("Quit group route");
   const { groupId } = req.params;
   const userId = req.user._id; // User ID from authentication/session
   const user = await User.findById(userId);
@@ -281,6 +281,7 @@ router.post("/quit/:groupId", async (req, res) => {
       notificationType: "member_quit",
       senderId: userId,
       receiverId: group.ownerId,
+      groupId: groupId,
     });
 
     await group.save();
@@ -302,13 +303,11 @@ router.post("/join/:id/group", getGroup, async (req, res) => {
 
   // Check if the user is already a member of the group
   if (res.group.groupMembers.includes(userId)) {
-    console.log("User already in the group.");
     return res.status(400).json({ message: "User already in the group" });
   }
 
   // Check if the group is already full
   if (res.group.groupMembers.length >= res.group.maxNumber) {
-    console.log("Group is full before adding a new member.");
     return res.status(400).json({ message: "Group is already full" });
   }
 
@@ -325,12 +324,13 @@ router.post("/join/:id/group", getGroup, async (req, res) => {
 
     //create a new notification
     const newNotification = new Notification({
-      notificationContent: `${user.name} send you a message to join ${res.group.groupName}: ${newApplication.message}`,
+      notificationContent: `${newApplication.message}`,
       isRead: false,
       notificationTime: new Date(),
       notificationType: "new_applicant",
       senderId: userId,
       receiverId: res.group.ownerId,
+      groupId: req.params.id,
     });
 
     // Add the user to group applicants and the application list
@@ -343,11 +343,9 @@ router.post("/join/:id/group", getGroup, async (req, res) => {
     // Check if adding this member has filled the group
     if (res.group.groupMembers.length >= res.group.maxNumber) {
       res.group.groupStatus = "full";
-      console.log(`Group status updated to full.`);
     }
 
     await res.group.save();
-    console.log(`Group saved with ${res.group.groupMembers.length} members.`);
 
     await user.save(); // Save the user with the updated applied group list
     await newNotification.save(); // Save the notification
@@ -534,6 +532,7 @@ router.patch("/dismiss/:groupId", async (req, res) => {
           notificationType,
           senderId: userId,
           receiverId: id,
+          groupId: groupId,
         });
         return newNotification.save();
       });

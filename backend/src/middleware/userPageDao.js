@@ -57,9 +57,9 @@ function getUserData(Model, entityName) {
           }]
         });
 
-      console.log("Looking for user ID:", req.params.id);
+     
       if (!entity) {
-        console.log(`User not found with ID ${req.params.id}`);
+       
         return res.status(404).json({ message: `${entityName} not found` });
       } 
       // else {
