@@ -25,7 +25,7 @@ function HeaderContent({
   const [applicationStatus, setApplicationStatus] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [applicationMessage, setApplicationMessage] = useState("");
-  const { isLoggedIn, user } = useAuth();
+  const { isLoggedIn, user, updateAuth } = useAuth();
   const [liked, setLiked] = useState(false);
   const navigate = useNavigate();
 
@@ -82,6 +82,7 @@ function HeaderContent({
       await axios.post(`${API_BASE_URL}/api/user/${endpoint}`, {
         userId: user._id,
       });
+      updateAuth();
     } catch (error) {
       console.error("Failed to toggle like:", error);
       setLiked(!newLikedStatus);
@@ -121,6 +122,7 @@ function HeaderContent({
           setApplicationStatus("");
           onApplicationRemove(user._id);
           setShowModal(false);
+          updateAuth();
         } catch (error) {
           alert(
             "Failed to cancel the application: " +
@@ -157,6 +159,7 @@ function HeaderContent({
         message: applicationMessage,
       };
       onAddApplication(newApp);
+      updateAuth();
     } catch (error) {
       alert(
         "Failed to apply to the group: " +
@@ -184,6 +187,7 @@ function HeaderContent({
         { userId: user._id }
       );
       onMemberHandler(user._id, "remove");
+      updateAuth();
     } catch (error) {
       alert(
         "Failed to leave the group: " +
