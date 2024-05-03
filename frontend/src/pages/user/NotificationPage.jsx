@@ -69,7 +69,11 @@ function NotificationPage() {
       <div>
         {notifications.map((notification, idx) =>
           notification.senderId ? ( // check if senderId is not null
-            <SingleNotification key={idx} notification={notification} />
+            <SingleNotification
+              key={idx}
+              notification={notification}
+              idx={idx}
+            />
           ) : null
         )}
       </div>
@@ -79,6 +83,7 @@ function NotificationPage() {
 export default NotificationPage;
 
 function SingleNotification({ notification, idx }) {
+  const navigate = useNavigate();
   function notificationTypeDesc(type) {
     switch (type) {
       case "join_request_accepted":
@@ -97,7 +102,6 @@ function SingleNotification({ notification, idx }) {
         return "closed the group:";
       case "group_dismissed":
         return "dismissed the group:";
-      case "group_dismissed":
       case "delete_member":
         return "removed you from:";
       default:
@@ -110,11 +114,20 @@ function SingleNotification({ notification, idx }) {
       method: "PATCH",
     }).then();
   }
+
+  async function notificationClickHandler(notificationId, groupId) {
+    await fetch(`${API_BASE_URL}/api/notification/${notificationId}/read`, {
+      method: "PATCH",
+    }).then(() => {
+      navigate(`/group/${groupId}`);
+    });
+  }
+
   return (
     <div
-      className={`flex justify-between py-2${
-        idx === 0 ? "" : " border-t-2 border-t-hmblue-700"
-      }`}
+      className={`flex w-[90%] justify-between py-2${
+        idx === 0 ? " border-t-2 border-t-hmblue-700" : ""
+      } border-b-2 border-b-hmblue-700`}
     >
       {/* avatar */}
       <div className="flex-shrink-0 w-10 h-10 rounded-full mt-1 overflow-hidden border border-hmblue-500">
@@ -122,24 +135,36 @@ function SingleNotification({ notification, idx }) {
           <img src={notification.senderId.avatar} />
         </Link>
       </div>
+      {/* content */}
       <div
-        className={`flex-grow ml-3${
-          notification.isRead === "true" ? " text-gray-400" : ""
+        className={`group flex flex-row flex-grow ml-3 cursor-pointer${
+          notification.isRead == true ? " text-gray-400" : ""
         }`}
+        onClick={() => {
+          notificationClickHandler(notification._id, notification.groupId);
+        }}
       >
-        {/* notification title */}
-        <div className="font-bold text-lg ">
-          {notification.senderId.name}{" "}
-          {notificationTypeDesc(notification.notificationType)}
+        <div className="flex-grow">
+          {/* notification title */}
+          <div className="font-bold text-lg group-hover:underline">
+            {notification.senderId.name}{" "}
+            {notificationTypeDesc(notification.notificationType)}
+          </div>
+          {/* notification detail */}
+          <div className="group-hover:underline">
+            {notification.notificationContent}
+          </div>
+          <div className="text-xs text-gray-400 group-hover:underline">
+            {new Date(notification.notificationTime).toLocaleString("en-NZ", {
+              timeZone: "UTC",
+            })}
+          </div>
         </div>
-        {/* notification detail */}
-        <div className="mt-1">{notification.notificationContent}</div>
-        <div className="mt-1 text-xs text-gray-400">
-          {notification.notificationTime}
+        <div className="flex items-center">
+          <span className="text-hmblue-700 invisible group-hover:visible">
+            &gt;&gt;&gt;
+          </span>
         </div>
-      </div>
-      <div className="mt-1">
-        <Button>Inspect</Button>
       </div>
     </div>
   );
