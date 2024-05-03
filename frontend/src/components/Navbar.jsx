@@ -211,7 +211,7 @@ function Navbar() {
                     alt="Avator"
                     className="h-10 rounded-full "
                   />
-                  <span >{user.name}</span>
+                  <span>{user.name}</span>
                   {showMenu && (
                     <div
                       className={`bg-white absolute top-11 -right-6 w-48 rounded-xl flex flex-col items-center p-1 pb-3 gap-3 shadow-basic ${
