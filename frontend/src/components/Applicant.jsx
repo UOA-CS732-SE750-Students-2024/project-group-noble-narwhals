@@ -11,6 +11,7 @@ function Applicant({
   applicationId,
   userId,
   onApplicationHandled,
+  onMemberHandler,
 }) {
   const [hover, setHover] = useState(false);
   const isLongMessage = message.length > 50;
@@ -24,8 +25,8 @@ function Applicant({
           applicationStatus: "accepted",
         }
       );
-      alert("Application accepted successfully!");
-      onApplicationHandled(applicationId, "accepted");
+      onApplicationHandled(applicationId);
+      onMemberHandler(applicationId, 'add');
     } catch (error) {
       alert(
         "Failed to accept application: " +
@@ -42,8 +43,7 @@ function Applicant({
           applicationStatus: "rejected",
         }
       );
-      alert("Application rejected successfully!");
-      onApplicationHandled(applicationId, "rejected");
+      onApplicationHandled(applicationId);
     } catch (error) {
       console.log("Error caught:", error);
       alert(

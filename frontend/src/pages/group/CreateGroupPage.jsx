@@ -215,7 +215,7 @@ function CreatGroupPage() {
   return (
     <div className="flex justify-center items-center h-createImageHeight">
       <div
-        className=" bg-cover h-screen absolute inset-0 -z-10 "
+        className="bg-cover h-screen absolute inset-0 -z-10 "
         style={{
           backgroundImage: "url('../../../image/creategroup_bg.jpg')",
           filter: "blur(1px)",
@@ -228,7 +228,7 @@ function CreatGroupPage() {
           {groupId ? "Update " :"Create "}A New Group/Activity
           </h1>
         </div>
-        <form action="" className=" w-4/5">
+        <form action="" className="w:5/6  lg:w-4/5">
           <div className=" flex pt-12 pb-8 w-4/5 mx-auto items-center">
             <label className=" text-xl text-primary font-title w-1/4 ">
               Title

@@ -280,7 +280,6 @@ function AccountSettingsPage() {
       )}
       <div>
         <div>
-          {" "}
           {/* Avatar*/}
           <p className="font-bold text-xl mb-3">Avatar</p>
           <div className="flex flex-row">

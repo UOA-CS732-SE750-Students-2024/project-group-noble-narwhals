@@ -1,7 +1,7 @@
 import React from "react";
 
 function Footer() {
-  const footerImagePath = "/footerImage.png";
+  const footerImagePath = "/image/footerImage.png";
 
   return (
     <div className="bg-primary text-white h-64 ">
