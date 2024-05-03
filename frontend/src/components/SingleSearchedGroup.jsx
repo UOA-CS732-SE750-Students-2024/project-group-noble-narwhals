@@ -35,7 +35,7 @@ function SingleSearchedGroup({ group, keywords = "" }) {
 
   return (
     <div
-      className="group flex flex-col border-2 border-hmblue-100 m-4 rounded-lg px-4 py-2 cursor-pointer"
+      className="group flex flex-col border-2 border-hmblue-100 hover:border-hmblue-300 hover:shadow-md m-4 rounded-lg px-4 py-2 cursor-pointer"
       onClick={() => {
         navigate(`/group/${group._id}`);
       }}
@@ -58,13 +58,13 @@ function SingleSearchedGroup({ group, keywords = "" }) {
           {`Members: ${group.groupMembers.length}/${group.maxNumber}`}
         </div>
       </div>
-      <div className="flex flex-row justify-between space-x-1 text-xs mt-2 relative">
+      <div className="flex flex-row justify-between text-xs mt-2 relative">
         {/* member numbers */}
-        <div>
+        <div className="space-x-1">
           {group.groupTags.map((tag, idx) => (
             <span
               key={idx}
-              className="rounded-full inline-block px-2 py-1 h-auto bg-hmblue-100 text-hmblue-800 border-hmblue-800 border-[1px]"
+              className="rounded-full inline-block px-2 py-[2px] bg-hmblue-100 text-hmblue-800 border-hmblue-800 border-[1px]"
             >
               {tag.name}
             </span>
