@@ -53,6 +53,7 @@ function GroupInfoPage() {
           activityDetails,
           ownerId,
           isCurrentUserHost,
+          groupType: data.groupType,
         });
       } catch (error) {
         console.error("Error fetching group details", error);
@@ -122,6 +123,7 @@ function GroupInfoPage() {
         onAddApplication={handleAddApplication}
         onApplicationRemove={handleCurrentDeleteApplicant}
         onMemberHandler={handleMemberUpdate}
+        groupType={groupDetails.groupType}
       />
       <Description description={groupDetails.groupDescription} />
       <MemberList

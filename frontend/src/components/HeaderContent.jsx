@@ -18,6 +18,7 @@ function HeaderContent({
   onAddApplication,
   onApplicationRemove,
   onMemberHandler,
+  groupType,
 }) {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const [hasApplied, setHasApplied] = useState(false);
@@ -253,9 +254,17 @@ function HeaderContent({
       <div className="header-content flex justify-between items-start mb-4">
         <div className="header-title">
           <div className="text-4xl font-bold mb-2">{groupName}</div>
+          <div>
+        {groupType === 'group' ? (
+          <Link to="/" className="text-primary">
+            Group
+          </Link>
+        ) : (
           <Link to="/" className="text-primary">
             Activity
           </Link>
+        )}
+      </div>
           <div className="activity-detail py-6 mt-1">
             <p className="mb-2 flex items-center text-1xl">{groupTags}</p>
             <p className="mb-2 -mt-6 text-sm text-gray-500">
