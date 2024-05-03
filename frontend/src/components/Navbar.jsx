@@ -83,13 +83,13 @@ function Navbar() {
                 <img
                   src="/image/brand_blue.png"
                   alt="logo"
-                  className="h-8 md:h-11"
+                  className="h-8 md:h-11 hidden sm:block"
                 />
               ) : (
                 <img
                   src="/image/brand_white.png"
                   alt="logo"
-                  className="h-8 md:h-11  "
+                  className="h-8 md:h-11 hidden sm:block  "
                 />
               )}
             </Link>
@@ -156,7 +156,7 @@ function Navbar() {
                       ref={inputRef}
                       type="text"
                       placeholder="Search"
-                      className={`w-full lg:w-60  h-8 outline-none transition-all duration-300 `}
+                      className={`w-full lg:  h-8 outline-none transition-all duration-300 `}
                     />
                     <div
                       className={` w-7 h-7 rounded-full hover:bg-gray-200 flex items-center justify-center ${
@@ -202,16 +202,16 @@ function Navbar() {
                 </div>
                 <div
                   onClick={switchMenu}
-                  className={`h-9 relative flex flex-row items-center gap-2 cursor-pointer hover:bg-gray-200 pr-3 rounded-full ${
+                  className={`h-9 relative flex flex-row shrink-0 items-center gap-2 cursor-pointer hover:bg-gray-200 pr-2  rounded-full ${
                     darkMode ? "hover:text-primary" : ""
                   }`}
                 >
                   <img
                     src={user.avatar}
                     alt="Avator"
-                    className="h-10 rounded-full "
+                    className="h-10 w-10 rounded-full "
                   />
-                  <span>{user.name}</span>
+                  <span className="hidden lg:block">{user.name}</span>
                   {showMenu && (
                     <div
                       className={`bg-white absolute top-11 -right-6 w-48 rounded-xl flex flex-col items-center p-1 pb-3 gap-3 shadow-basic ${
