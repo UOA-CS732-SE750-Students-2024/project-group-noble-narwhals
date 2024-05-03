@@ -66,8 +66,8 @@ const PublicProfilePage = () => {
   }
 
   return (
-    <div className="flex overflow-y-auto">
-      <div className="m-4 p-4  bg-white flex flex-col flex-grow">
+    <div className="flex overflow-y-auto items-center">
+      <div className="m-4 p-4  bg-white flex flex-col flex-grow justify-center ">
         <div className="py-8">
           {/* Add new feature for tags reminder */}
         {isLoggedIn && userId === loggedInUser._id && (!user.profileTags || user.profileTags.length === 0) && (
