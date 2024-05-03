@@ -56,7 +56,9 @@ function SearchPage() {
   function handleTabBtnClick(tabId, typeName) {
     setActiveTab(tabId);
     const filteredData = fetchedData.current.filter(
-      (group) => group.groupType === typeName
+      (group) =>
+        group.groupType === typeName &&
+        !["closed", "dismissed"].includes(group.groupStatus)
     );
     setDisplayedGroups([...filteredData]);
   }
@@ -82,7 +84,8 @@ function SearchPage() {
             fetchedData.current.filter(
               (group) =>
                 group.groupType ===
-                groupTypes.find((t) => t.id == activeTab).name
+                  groupTypes.find((t) => t.id == activeTab).name &&
+                !["closed", "dismissed"].includes(group.groupStatus)
             )
           );
           // set keywords to highlight
