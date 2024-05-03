@@ -83,13 +83,13 @@ function Navbar() {
                 <img
                   src="/image/brand_blue.png"
                   alt="logo"
-                  className="h-11  w-full hidden md:block"
+                  className="h-8 md:h-11"
                 />
               ) : (
                 <img
                   src="/image/brand_white.png"
                   alt="logo"
-                  className="h-11 w-full hidden md:block"
+                  className="h-8 md:h-11  "
                 />
               )}
             </Link>
@@ -143,7 +143,7 @@ function Navbar() {
             )}
 
             {isLoggedIn && (
-              <div className="flex flex-row gap-7 items-center">
+              <div className="flex flex-row gap-3 lg:gap-7 items-center">
                 {showSearch && (
                   <div
                     id="nav_search_bar"
