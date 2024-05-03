@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Button from "./Button";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { useAuth } from "../store/AuthContext";
 
 function Applicant({
   username,
@@ -14,6 +15,7 @@ function Applicant({
   onMemberHandler,
 }) {
   const [hover, setHover] = useState(false);
+  const { updateAuth } = useAuth();
   const isLongMessage = message.length > 50;
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
@@ -27,6 +29,7 @@ function Applicant({
       );
       onApplicationHandled(applicationId);
       onMemberHandler(applicationId, 'add');
+      updateAuth();
     } catch (error) {
       alert(
         "Failed to accept application: " +
@@ -44,6 +47,7 @@ function Applicant({
         }
       );
       onApplicationHandled(applicationId);
+      updateAuth();
     } catch (error) {
       console.log("Error caught:", error);
       alert(

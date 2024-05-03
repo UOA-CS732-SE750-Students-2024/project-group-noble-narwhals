@@ -1,6 +1,7 @@
 import React from "react";
 import Button from "./Button";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../store/AuthContext";
 import axios from "axios";
 
 function Member({
@@ -13,6 +14,7 @@ function Member({
   onMemberHandler,
 }) {
   const navigate = useNavigate();
+  const { updateAuth } = useAuth();
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
   const viewProfile = () => {
@@ -32,6 +34,7 @@ function Member({
           }
         );
         onMemberHandler(memberId, "remove");
+        updateAuth();
       } catch (error) {
         console.error("Error in removing member:", error.response.data);
         alert("Failed to remove member: " + error.response.data.message);
