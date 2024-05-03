@@ -95,7 +95,7 @@ function Navbar() {
             </Link>
 
             {!isLoggedIn && (
-              <div className="flex flex-row gap-7 items-center">
+              <div className="flex flex-row gap-2 sm:gap-7 items-center">
                 {showSearch && (
                   <div
                     id="nav_search_bar"
@@ -123,7 +123,7 @@ function Navbar() {
                 <Link to="/login">
                   <Button
                     className={`${
-                      darkMode && "bg-white hover:text-white border-white"
+                      darkMode && "bg-white hover:text-white border-white "
                     }`}
                   >
                     Log in
