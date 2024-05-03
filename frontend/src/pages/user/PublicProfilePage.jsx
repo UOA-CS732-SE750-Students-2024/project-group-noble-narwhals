@@ -83,12 +83,12 @@ const PublicProfilePage = () => {
             />
             <div className="flex flex-col justify-around gap-2">
               <div className="flex flex-row items-center gap-2">
-                <p className="text-xl font-bold m-5">{user.name}</p>
+                <p className="text-xl font-bold mx-5">{user.name}</p>
                 {user.gender === "Male" && (
-                  <IoMdMale className="fill-sky-500 text-2xl mt-5" />
+                  <IoMdMale className="fill-sky-500 text-2xl" />
                 )}
                 {user.gender === "Female" && (
-                  <IoMdFemale className="fill-pink-500 text-2xl mt-5" />
+                  <IoMdFemale className="fill-pink-500 text-2xl" />
                 )}
                 {user.isVerification ? (
                   <div className="p-1 px-2 rounded-full text-center bg-primary text-white text-xs">Verified</div>
@@ -98,7 +98,7 @@ const PublicProfilePage = () => {
               </div>
 
               <div className="ml-5 flex items-center ">Email: {user.email}</div>
-              <div className="flex ml-5 mb-5 flex-wrap">
+              <div className="flex ml-5 my-5 flex-wrap">
                 {user.profileTags && user.profileTags.map((tag) => (
                   <ProfileTags key={tag._id} tagName={tag.name} />
                 ))}
