@@ -11,7 +11,7 @@ const notificationSchema = new Schema({
     notificationType: {
         type: String,
         enum: ['join_request_accepted', 'group_closed', 'join_request_rejected', 'group_started',
-            'group_updated', 'group_dismissed', "delete_member", "new_applicant", "member_quit"],  
+            'group_updated', 'group_dismissed', "group_updated", "delete_member", "new_applicant", "member_quit"],  
         default: 'group_started'  
     },  
     senderId: {

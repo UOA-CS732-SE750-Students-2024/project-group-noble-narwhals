@@ -7,11 +7,10 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "";
 
 function NotificationPage() {
   const { userId } = useParams();
-  console.log("userId from notification: ", userId);
   const navigate = useNavigate();
   const { user, setUser, isLoading, setIsLoading, isLoggedIn } = useAuth();
   const [notifications, setNotifications] = useState([]);
-  
+
   /**
    * get all notifications
    */
@@ -36,7 +35,6 @@ function NotificationPage() {
 
   useEffect(() => {
     if (!isLoading && (!isLoggedIn || user._id !== userId)) {
-      console.log("user._id is not the owner of this page: ", user._id);
       // if the user is not logged in, or logged in but not the user ID to be viewed
       // then he/she should be redirected to the home page
       navigate('/');
@@ -50,14 +48,13 @@ function NotificationPage() {
         <img src="/image/Spinner.svg" alt="Loading..." />
       </div>
     );
-  } else {
-    console.log("user from accountsetting: ", user);
-  }
-
+  } 
+  
   return (
-    <div className="w-4/5 mx-4 p-4">
+    <div className="w-4/5 mt-2 mx-4 p-4">
       <div className="text-3xl pb-10">Notification</div>
       <div>
+        {notifications.length === 0 ? <p>No notifications found.</p> : null}
         {notifications.map((notification, idx) =>
           notification.senderId ? ( // check if senderId is not null
             <SingleNotification key={idx} notification={notification} />
@@ -81,16 +78,18 @@ function SingleNotification({ notification, idx }) {
       case "group_started":
         return "";
       case "new_applicant":
-        return "applied to join your group.";
+        return `applied to join your group: ${notification.groupId.groupName}`;
       case "member_quit":
         return "quit the group:";
-      case "group_updated":
+      case "group_closed":
         return "closed the group:";
       case "group_dismissed":
         return "dismissed the group:";
       case "group_dismissed":
       case "delete_member":
         return "removed you from:";
+        case "group_updated":
+          return "updated the group:";
       default:
         return "Said:";
     }
@@ -102,6 +101,13 @@ function SingleNotification({ notification, idx }) {
       { method: "PATCH" }
     ).then();
   }
+
+  async function handleInspect() {
+    await fetch(`${API_BASE_URL}/api/notification/${notification._id}/read`, {
+      method: "PATCH",
+    });
+  }
+
   return (
     <div
       className={`flex justify-between py-2${idx === 0 ? "" : " border-t-2 border-t-hmblue-700"
@@ -114,7 +120,7 @@ function SingleNotification({ notification, idx }) {
         </Link>
       </div>
       <div
-        className={`flex-grow ml-3${notification.isRead === "true" ? " text-gray-400" : ""
+        className={`flex-grow ml-3${notification.isRead === true ? " text-gray-400" : ""
           }`}
       >
         {/* notification title */}
@@ -127,7 +133,9 @@ function SingleNotification({ notification, idx }) {
         <div className="mt-1 text-xs text-gray-400">{notification.notificationTime}</div>
       </div>
       <div className="mt-1">
-        <Button>Inspect</Button>
+        <Link to={`/group/${notification.groupId._id}`}>
+          <Button onClick={handleInspect}>Inspect</Button>
+        </Link>
       </div>
     </div>
   );
