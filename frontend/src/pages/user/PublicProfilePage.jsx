@@ -41,9 +41,13 @@ const PublicProfilePage = () => {
       // Use logged in user data if viewing own profile
 
       setUser(loggedInUser);
+      loggedInUser.participatingGroups.sort((a, b) => {
+        return new Date(b.createDate) - new Date(a.createDate);
+      });
       setGroups(loggedInUser.participatingGroups);
       setIsLoading(false);
-    } else {
+    } 
+    else {
 
       fetchUserData();
     }
