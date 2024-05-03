@@ -89,7 +89,7 @@ function SingleNotification({ notification, idx }) {
       case "group_started":
         return "";
       case "new_applicant":
-        return `applied to join your group: ${notification.groupId.groupName}`;
+        return `applied to join your group: ${notification == null ? notification.groupId.groupName : ""}`;
       case "member_quit":
         return "quit the group:";
       case "group_closed":
