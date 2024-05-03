@@ -122,7 +122,7 @@ function HomePage() {
     <>
       <div id="main_content" className="">
         <div
-          className="bg-cover bg-center flex flex-col items-center justify-center"
+          className="bg-cover bg-center hidden md:flex flex-col items-center justify-center "
           style={{
             backgroundImage: `url(${backgroundImage})`,
             // BackgroundSize: "cover",

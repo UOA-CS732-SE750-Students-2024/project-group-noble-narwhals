@@ -186,8 +186,8 @@ const GalleryCard = ({
           </button>
         </div>
       </div>
-      <div className="text-base text-sky-700 font-thin m-2">
-        <p className="truncate">
+      <div className="text-base text-sky-700 font-thin m-2 h-24 min-w-24">
+        <p className="max-w-full overflow-wrap break-words">
           {description.length > 150 ? (
             <>
               {description.substring(0, 150)}
