@@ -194,7 +194,7 @@ function Navbar() {
                     <IoMdNotificationsOutline />
                     <span className="hidden lg:block">Notifications</span>
                     {user.unreadMessages ? (
-                      <span className=" rounded-full w-5 h-5 text-white bg-gray-500 flex items-center justify-center text-xs">
+                      <span className=" rounded-full w-5 h-5 text-white bg-red-500 flex items-center justify-center text-xs">
                         {user.unreadMessages}
                       </span>
                     ) : null}
