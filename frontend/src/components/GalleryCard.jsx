@@ -51,10 +51,8 @@ const GalleryCard = ({
   const checkLikeStatus = async () => {
     if (isLoggedIn && id && user._id) {
       try {
-        const response = await axios.get(
-          `${API_BASE_URL}/api/user/${user._id}/likes/${id}`
-        );
-        setLiked(response.data.liked);
+        const isLiked = user.likedGroups.some((group) => group._id === id);
+        setLiked(isLiked);
       } catch (error) {
         console.error("Error checking like status:", error);
       }

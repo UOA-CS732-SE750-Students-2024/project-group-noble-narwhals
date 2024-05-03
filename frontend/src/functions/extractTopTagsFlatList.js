@@ -27,12 +27,15 @@
  */
 function extractTopTagsFlatList(tagData) {
   let flatList = [];
-
   tagData.forEach((data) => {
     const allTagsWithScore = Object.entries(data.similarity)
       .map(([key, value]) => ({ name: key, score: value }))
       .sort((a, b) => b.score - a.score)
       .filter((_, index) => index < 3); // Get the top three including the main tag
+    // if data.tag is null, return empty array and exit
+    if (!data.tag) {
+      return [];
+    }
 
     // Push the main tag and the top two similar tags into flatList
     if (allTagsWithScore[0].name === data.tag) {
