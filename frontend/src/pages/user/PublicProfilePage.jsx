@@ -20,11 +20,15 @@ const PublicProfilePage = () => {
     const fetchUserData = async () => {
       // Fetch user data from API, if the user is not logged in or viewing another user's profile
       try {
-        console.log("userId: ", userId)
-        const { data } = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/user/userData/${userId}`);
+
+        let { data } = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/user/userData/${userId}`);
         setUser(data);
-        console.log("data from user route: ", data);
+
         if (data && data.participatingGroups && data.participatingGroups.length > 0) {
+          // sort the groups by time
+          data.participatingGroups.sort((a, b) => {
+            return new Date(b.createDate) - new Date(a.createDate);
+          });
           setGroups(data.participatingGroups);
         }
       } catch (error) {
@@ -35,13 +39,12 @@ const PublicProfilePage = () => {
 
     if (isLoggedIn && userId === loggedInUser._id) {
       // Use logged in user data if viewing own profile
-      console.log("isLoggedIn? ", isLoggedIn);
-      console.log("isLoggedIn is true? ", userId === loggedInUser._id);
+
       setUser(loggedInUser);
       setGroups(loggedInUser.participatingGroups);
       setIsLoading(false);
     } else {
-      console.log("isLoggedIn is false ");
+
       fetchUserData();
     }
   }, [userId, isLoggedIn, loggedInUser]);

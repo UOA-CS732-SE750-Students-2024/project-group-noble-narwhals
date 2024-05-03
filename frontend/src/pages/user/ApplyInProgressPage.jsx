@@ -32,8 +32,14 @@ function ApplyInProgressPage() {
   }
 
 
-  const appliedGroups = user.appliedGroups;
-  console.log("appliedGroups: ", appliedGroups);
+  let appliedGroups = user.appliedGroups;
+  // sort the groups by time
+  if (appliedGroups && appliedGroups.length > 0) {
+    appliedGroups.sort((a, b) => {
+      return new Date(b.createDate) - new Date(a.createDate);
+    });
+  }
+ 
   return (
     <div className="flex flex-col m-4 p-4">
       <div className="text-3xl mb-8">Apply in Progress</div>

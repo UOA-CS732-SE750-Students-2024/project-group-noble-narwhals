@@ -25,7 +25,9 @@ router.get("/", async (req, res) => {
 // get all groups for seach page
 router.get("/search", async (req, res) => {
   try {
-    const groups = await Group.find().populate("groupTags", "name");
+    const groups = await Group.find()
+      .populate("groupTags", "name")
+      .populate("groupMembers");
     return res.json(groups);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -48,6 +50,7 @@ router.get("/search/:keywords", async (req, res) => {
 
     await Group.find()
       .populate("groupTags", "name")
+      .populate("groupMembers", ["avatar", "name"])
       .then((groups) => {
         const filteredGroups = groups.filter((group) => {
           return (
@@ -149,9 +152,9 @@ router.patch("/update/:id", isVerifiedUser, getGroup, async (req, res) => {
   try {
     const updatedGroup = await res.group.save();
     // create a new notification for each of the group member
-    const notificationContent = `Group ${res.group.groupName} has been closed.`;
+    const notificationContent = `Group ${res.group.groupName} has been updated.`;
     const notificationTime = new Date();
-    const notificationType = "group_closed";
+    const notificationType = "group_updated";
     const notificationPromises = res.group.groupMembers.map(async (id) => {
       const newNotification = new Notification({
         notificationContent,
@@ -160,6 +163,7 @@ router.patch("/update/:id", isVerifiedUser, getGroup, async (req, res) => {
         notificationType,
         senderId: req.user._id,
         receiverId: id,
+        groupId: res.group._id,
       });
       return newNotification.save();
     });
@@ -209,6 +213,7 @@ router.patch("/remove-member/:id", getGroup, async (req, res) => {
       notificationType: "delete_member",
       senderId: req.user._id,
       receiverId: memberId,
+      groupId: group._id,
     });
 
     await group.save();
@@ -276,6 +281,7 @@ router.post("/quit/:groupId", async (req, res) => {
       notificationType: "member_quit",
       senderId: userId,
       receiverId: group.ownerId,
+      groupId: groupId,
     });
 
     await group.save();
@@ -318,12 +324,13 @@ router.post("/join/:id/group", getGroup, async (req, res) => {
 
     //create a new notification
     const newNotification = new Notification({
-      notificationContent: `${user.name} send you a message to join ${res.group.groupName}: ${newApplication.message}`,
+      notificationContent: `${newApplication.message}`,
       isRead: false,
       notificationTime: new Date(),
       notificationType: "new_applicant",
       senderId: userId,
       receiverId: res.group.ownerId,
+      groupId: req.params.id,
     });
 
     // Add the user to group applicants and the application list
@@ -339,6 +346,7 @@ router.post("/join/:id/group", getGroup, async (req, res) => {
     }
 
     await res.group.save();
+
     await user.save(); // Save the user with the updated applied group list
     await newNotification.save(); // Save the notification
 
@@ -524,6 +532,7 @@ router.patch("/dismiss/:groupId", async (req, res) => {
           notificationType,
           senderId: userId,
           receiverId: id,
+          groupId: groupId,
         });
         return newNotification.save();
       });

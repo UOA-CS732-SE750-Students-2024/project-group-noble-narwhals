@@ -49,9 +49,10 @@ function AccountSettingsPage() {
         <img src="/image/Spinner.svg" alt="Loading..." />
       </div>
     );
-  } else {
-    console.log("user from accountsetting: ", user);
-  }
+  } 
+  // else {
+  //   console.log("user from accountsetting: ", user);
+  // }
 
   // if user is not found (is null)
   if (!user) {
@@ -61,6 +62,7 @@ function AccountSettingsPage() {
   /* if the user's account type is "google", then the password field should be hidden,
    because google account doesn't need password */
   const isGoogleAccount = user.accountType === "google";
+
 
   const handleEditClick = () => {
     setIsEditing(!isEditing); // toggle isEditing state
@@ -96,8 +98,10 @@ function AccountSettingsPage() {
       const data = await response.json();
 
       setAvatar(data.avatar);
+   
       setUser(prevUser => ({ ...prevUser, avatar: data.avatar }));
 
+  
     } catch (error) {
       console.error('Failed to change avatar:', error);
     }
@@ -141,6 +145,7 @@ function AccountSettingsPage() {
 
       const newTag = await response.json();
       setTags(prevTags => [...prevTags, newTag]);
+
       setNewTag('');
     } catch (error) {
       console.error('Failed to add tag:', error);
@@ -160,7 +165,7 @@ function AccountSettingsPage() {
       name: username,
       profileTags: tags,
     };
-    console.log("gender is changed to ", gender)
+
 
     if (gender !== 'Not specified') {
       updatedUserData.gender = gender;
@@ -169,7 +174,10 @@ function AccountSettingsPage() {
     if (isPasswordChanged && password.length < 8) {
       alert('Password must be at least 8 characters long.');
       return;
+    }else{
+      updatedUserData.password = password;
     }
+  
 
     setIsEditing(false); // Disable editing mode after submitting the form
 
@@ -224,7 +232,7 @@ function AccountSettingsPage() {
 
   const deleteAccount = async () => {
     // Confirm the user's intention to delete the account
-    console.log('Delete account clicked.account ID: ', userId);
+
     if (window.confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
       try {
         const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/user/delete/${userId}`, {
@@ -240,6 +248,7 @@ function AccountSettingsPage() {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
+
         // Redirect to the login page or home page
         alert('Account deleted successfully. Redirecting to the login page.');
         navigate('/login');
@@ -248,11 +257,12 @@ function AccountSettingsPage() {
         console.error('Failed to delete account:', error);
       }
     } else {
-      console.log('Account deletion canceled.');
+      
     }
   };
 
   const handleVerifyAccount = async () => {
+
     window.location.href = `${import.meta.env.VITE_API_BASE_URL}/auth/google`;
   };
 

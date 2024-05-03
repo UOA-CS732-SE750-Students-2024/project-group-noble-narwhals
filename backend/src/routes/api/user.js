@@ -44,9 +44,11 @@ router.get("/userData/:id", getUserData(User, "User"), (req, res) => {
   res.json(res.user);
 });
 
-router.post("/", async (req, res) => {
-  try {
-    const hashedPassword = await bcrypt.hash(req.body.password, 10);
+
+router.post('/', async (req, res) => {
+   
+    try {
+        const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
     // Creating a new user instance without the avatar
     const user = new User({
@@ -190,15 +192,9 @@ router.post("/unlike/:groupId", async (req, res) => {
 });
 
 // update user
-router.patch("/update/:id", getUser, async (req, res) => {
-  // Get the user object from the response
-  const user = res.user;
-  // if the user is not the owner of the account, return 403
-  if (req.user._id.toString() !== user._id.toString()) {
-    return res
-      .status(403)
-      .json({ message: "Unauthorized to update this user." });
-  }
+router.patch('/update/:id', getUser, async (req, res) => {
+    // Get the user object from the response
+    const user = res.user;
 
   // Loop over the fields in the request body
   for (const [key, value] of Object.entries(req.body)) {
@@ -223,14 +219,13 @@ router.patch("/update/:id", getUser, async (req, res) => {
 });
 
 // delete user
-router.delete("/delete/:id", getUser, async (req, res) => {
-  const userId = req.params.id;
+router.delete('/delete/:id', getUser, async (req, res) => {
 
-  if (req.user._id.toString() !== userId) {
-    return res
-      .status(403)
-      .json({ message: "Unauthorized to delete this user." });
-  }
+    const userId = req.params.id;
+
+    if (req.user._id.toString() !== userId) {
+        return res.status(403).json({ message: "Unauthorized to delete this user." });
+    }
 
   try {
     // Step 1: Retrieve all group IDs that the user has liked

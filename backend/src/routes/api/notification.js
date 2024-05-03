@@ -9,7 +9,8 @@ router.get("/user/:userId", async (req, res) => {
     const userId = req.params.userId;
     const notifications = await Notification.find({ receiverId: userId })
       .populate("senderId", ["name", "avatar"]) // fill senderId, select to display username
-      .populate("receiverId", "name"); // fill receiverId, select to display username
+      .populate("receiverId", "name") // fill receiverId, select to display username
+      .populate("groupId", "groupName"); // fill groupId, select to display group name 
     res.json(notifications);
   } catch (err) {
     res.status(500).json({ message: err.message });
