@@ -169,18 +169,7 @@ export default function passportSetup(passport) {
       .then((user) => {
         // we directly return the user object, no need to convert to JSON
         // because we are using Mongoose document, and only Mongoose document can be saved to session
-
-        //get unread messages number
-        Notification.find({
-          receiverId: user._id,
-          isRead: false,
-        }).then((notifications) => {
-          const newUser = {
-            ...user.toObject(),
-            unreadMessages: notifications.length,
-          };
-          return done(null, newUser);
-        });
+        return done(null, user);
       })
       .catch((err) => {
         return done(err);

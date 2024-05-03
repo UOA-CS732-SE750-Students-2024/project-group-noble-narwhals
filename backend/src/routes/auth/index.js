@@ -3,6 +3,7 @@ import passport from "passport";
 import isLoggedIn from "../../middleware/authMiddleware.js";
 import bcrypt from "bcrypt";
 import User from "../../models/userModel.js";
+import Notification from "../../models/notificationModel.js";
 import { avatarStyles } from "../api/user.js";
 const router = express.Router();
 
@@ -99,8 +100,15 @@ router.get(
   }
 );
 
-router.get("/check-session", isLoggedIn, (req, res) => {
-  res.json({ isLoggedIn: true, user: req.user });
+router.get("/check-session", isLoggedIn, async (req, res) => {
+    //get unread messages number
+    const messages = await Notification.find({
+      receiverId: req.user._id,
+      isRead: false,
+    })
+    const newUser = { ...req.user._doc , unreadMessages: messages.length}
+
+  res.json({ isLoggedIn: true, user: newUser });
 });
 
 router.get("/logout", isLoggedIn, (req, res) => {
