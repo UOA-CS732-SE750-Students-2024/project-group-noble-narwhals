@@ -78,8 +78,8 @@ const PublicProfilePage = () => {
               src={user.avatar}
               alt="User Avatar"
             />
-            <div>
-              <div className="flex flex-row">
+            <div className="flex flex-col justify-around gap-2">
+              <div className="flex flex-row items-center gap-2">
                 <p className="text-xl font-bold m-5">{user.name}</p>
                 {user.gender === "Male" && (
                   <IoMdMale className="fill-sky-500 text-2xl mt-5" />
@@ -88,20 +88,20 @@ const PublicProfilePage = () => {
                   <IoMdFemale className="fill-pink-500 text-2xl mt-5" />
                 )}
                 {user.isVerification ? (
-                  <div className="mt-6 ml-2 h-fit w-16 rounded-full text-center bg-primary text-white text-xs">Verified</div>
+                  <div className="p-1 px-2 rounded-full text-center bg-primary text-white text-xs">Verified</div>
                 ) : (
-                  <div className="mt-6 ml-2 h-fit w-16 rounded-full text-center bg-gray-400 text-white text-xs">Unverified</div>
+                  <div className="p-1 px-2  rounded-full text-center bg-gray-400 text-white text-xs">Unverified</div>
                 )}
               </div>
 
-              <div className="ml-5 mr-5 mb-5 ">Email: {user.email}</div>
+              <div className="ml-5 flex items-center ">Email: {user.email}</div>
               <div className="flex ml-5 mb-5 flex-wrap">
                 {user.profileTags && user.profileTags.map((tag) => (
                   <ProfileTags key={tag._id} tagName={tag.name} />
                 ))}
               </div>
               {isLoggedIn && userId === loggedInUser._id && !user.isVerification && (
-                <div className="ml-3 border-2 rounded-full p-2 border-amber-300 bg-amber-200 text-xs text-gray-400">
+                <div className="ml-3 border-2 rounded-full py-1 bg-amber-200 text-xs px-3 text-gray-600">
                   Your account is not verified. Unverified accounts may not create a group in HeyMate.
                  Please go to Settings.</div>
               )}

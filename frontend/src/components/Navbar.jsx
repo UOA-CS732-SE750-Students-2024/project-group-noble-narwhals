@@ -97,10 +97,10 @@ function Navbar() {
                       ref={inputRef}
                       type="text"
                       placeholder="Search"
-                      className={`w-72 h-8 outline-none transition-all duration-300 `}
+                      className={`w-40 lg:w-72  h-8 outline-none transition-all duration-300 `}
                     />
                     <div
-                      className={` w-7 h-7 rounded-full hover:bg-gray-200 flex items-center justify-center ${
+                      className={`w-7 h-7 rounded-full hover:bg-gray-200 flex items-center justify-center ${
                         darkMode && "text-primary"
                       } z-10`}
                       onClick={searchHandler}
@@ -145,7 +145,7 @@ function Navbar() {
                       ref={inputRef}
                       type="text"
                       placeholder="Search"
-                      className={`w-72 h-8 outline-none transition-all duration-300 `}
+                      className={`w-40 lg:w-72  h-8 outline-none transition-all duration-300 `}
                     />
                     <div
                       className={` w-7 h-7 rounded-full hover:bg-gray-200 flex items-center justify-center ${
