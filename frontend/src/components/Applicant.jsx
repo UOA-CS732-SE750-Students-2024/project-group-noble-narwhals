@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import Button from "./Button";
 import axios from "axios";
@@ -13,14 +12,12 @@ function Applicant({
   userId,
   onApplicationHandled,
 }) {
-
   const [hover, setHover] = useState(false);
   const isLongMessage = message.length > 50;
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
   const handleAccept = async () => {
     try {
-
       const response = await axios.patch(
         `${apiBaseUrl}/api/application/applications-with-details/${applicationId}`,
         {
@@ -32,14 +29,13 @@ function Applicant({
     } catch (error) {
       alert(
         "Failed to accept application: " +
-        (error.response?.data?.message || error.message)
+          (error.response?.data?.message || error.message)
       );
     }
   };
 
   const handleReject = async () => {
     try {
-
       const response = await axios.patch(
         `${apiBaseUrl}/api/application/applications-with-details/${applicationId}`,
         {
@@ -49,12 +45,11 @@ function Applicant({
       alert("Application rejected successfully!");
       onApplicationHandled(applicationId, "rejected");
     } catch (error) {
-      console.log('Error caught:', error);
+      console.log("Error caught:", error);
       alert(
         "Failed to reject application: " +
-        (error.response?.data?.message || error.message)
+          (error.response?.data?.message || error.message)
       );
-
     }
   };
 
@@ -98,6 +93,7 @@ function Applicant({
         }`}
       >
         <div className="text-sm text-gray-600">{message}</div>
+
       </div>
     </div>
     {isHost && (
