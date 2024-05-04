@@ -7,7 +7,7 @@ import Notification from "../../models/notificationModel.js";
 import { body, validationResult } from "express-validator";
 import { getGroup } from "../../middleware/entityMiddleware.js";
 import { addGroupTag, checkTagExist } from "../../middleware/tagDAO.js";
-import isLoggedIn, { isVerifiedUser } from "../../middleware/authMiddleware.js";
+import { isVerifiedUser } from "../../middleware/authMiddleware.js";
 const router = express.Router();
 
 // get all groups
@@ -186,7 +186,6 @@ router.patch("/close/:id", getGroup, async (req, res) => {
     res.status(400).json({ message: err.message });
   }
 });
-
 
 // delete group by id
 router.delete("/delete/:id", getGroup, async (req, res) => {

@@ -45,8 +45,7 @@ const promts = [
   },
   {
     role: "user",
-    content:
-      "hi, we are looking for someone interesting in fashion.",
+    content: "hi, we are looking for someone interesting in fashion.",
   },
   {
     role: "assistant",
