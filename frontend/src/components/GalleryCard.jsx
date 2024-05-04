@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { MdFavorite } from "react-icons/md";
 import { MdFavoriteBorder } from "react-icons/md";
 import AvatarGroup from "./AvatarGroup";
@@ -23,6 +23,33 @@ const GalleryCard = ({
   const [showModal, setShowModal] = useState(false);
   const [liked, setLiked] = useState(isFavorite);
   const [applicationMessage, setApplicationMessage] = useState("");
+  const [textLength, setTextLength] = useState(90);
+  const cardRef = useRef(null);
+
+  useEffect(() => {
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (let entry of entries) {
+        const crWidth = entry.contentRect.width;
+        if (crWidth < 210) {
+          setTextLength(65);
+        } else if (crWidth < 260) {
+          setTextLength(100);
+        } else {
+          setTextLength(120);
+        }
+      }
+    });
+
+    if (cardRef.current) {
+      resizeObserver.observe(cardRef.current);
+    }
+
+    return () => {
+      if (cardRef.current) {
+        resizeObserver.unobserve(cardRef.current);
+      }
+    };
+  }, []);
   useEffect(() => {
     setLiked(isFavorite);
   }, [isFavorite]);
@@ -189,11 +216,14 @@ const GalleryCard = ({
           </button>
         </div>
       </div>
-      <div className="text-base text-sky-700 font-thin m-2 h-24 min-w-24">
-        <p className="max-w-full overflow-wrap break-words">
+      <div
+        className="text-base text-sky-700 font-thin m-2 h-24 min-w-24 "
+        ref={cardRef}
+      >
+        <p className="max-w-full overflow-wrap break-words min-h-24">
           {description.length > 150 ? (
             <>
-              {description.substring(0, 150)}
+              {description.substring(0, textLength)}
               <Link to={`/group/${id}`} className="ml-2">
                 ...
               </Link>
