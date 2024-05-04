@@ -291,8 +291,8 @@ function HeaderContent({
                 <>
                   {!isPastDeadline && (
                     <Button
-                    className="px-4 py-1.5 sm:px-3 sm:py-1 md:px-4 md:py-1.5 lg:px-6 lg:py-2"
-                    style_type="border"
+                      className="px-4 py-1.5 sm:px-3 sm:py-1 md:px-4 md:py-1.5 lg:px-6 lg:py-2"
+                      style_type="border"
                       onClick={handleDismissGroup}
                     >
                       Dismiss Group
@@ -300,8 +300,8 @@ function HeaderContent({
                   )}
                   {isPastDeadline && (
                     <Button
-                    className="px-4 py-1.5 sm:px-3 sm:py-1 md:px-4 md:py-1.5 lg:px-6 lg:py-2"
-                    style_type="border"
+                      className="px-4 py-1.5 sm:px-3 sm:py-1 md:px-4 md:py-1.5 lg:px-6 lg:py-2"
+                      style_type="border"
                       onClick={handleCloseGroup}
                     >
                       Close Group
@@ -328,8 +328,8 @@ function HeaderContent({
                 <div className="flex flex-col items-center py-3 px-16">
                   {isGroupMember && (
                     <Button
-                    className="px-4 py-1.5 sm:px-3 sm:py-1 md:px-4 md:py-1.5 lg:px-6 lg:py-2"
-                    style_type="border"
+                      className="px-4 py-1.5 sm:px-3 sm:py-1 md:px-4 md:py-1.5 lg:px-6 lg:py-2"
+                      style_type="border"
                       onClick={handleQuitGroup}
                     >
                       Quit Group
@@ -339,23 +339,23 @@ function HeaderContent({
                 </div>
               ) : groupStatus === "available" ? (
                 <>
-                  {hasApplied ? (
+                  {!isGroupMember && (hasApplied ? (
                     <Button
-                    className="px-4 py-1.5 sm:px-3 sm:py-1 md:px-4 md:py-1.5 lg:px-6 lg:py-2"
-                    style_type="border"
+                      className="px-4 py-1.5 sm:px-3 sm:py-1 md:px-4 md:py-1.5 lg:px-6 lg:py-2"
+                      style_type="border"
                       onClick={handleCancelApplication}
                     >
                       Cancel
                     </Button>
                   ) : (
                     <Button
-                    className="px-4 py-1.5 sm:px-3 sm:py-1 md:px-4 md:py-1.5 lg:px-6 lg:py-2"
-                    style_type="fill"
+                      className="px-4 py-1.5 sm:px-3 sm:py-1 md:px-4 md:py-1.5 lg:px-6 lg:py-2"
+                      style_type="fill"
                       onClick={handleJoinButtonClick}
                     >
                       Join
                     </Button>
-                  )}
+                  ))}
                   <Button
                     className="px-4 py-1.5 sm:px-3 sm:py-1 md:px-4 md:py-1.5 lg:px-6 lg:py-2 flex items-center"
                     style_type="border"
@@ -370,8 +370,8 @@ function HeaderContent({
                   </Button>
                   {isGroupMember && (
                     <Button
-                    className="px-4 py-1.5 sm:px-3 sm:py-1 md:px-4 md:py-1.5 lg:px-6 lg:py-2"
-                    style_type="border"
+                      className="px-4 py-1.5 sm:px-3 sm:py-1 md:px-4 md:py-1.5 lg:px-6 lg:py-2"
+                      style_type="border"
                       onClick={handleQuitGroup}
                     >
                       Quit Group
@@ -385,6 +385,7 @@ function HeaderContent({
               )}
             </>
           )}
+
         </div>
       </div>
       {showModal && (
