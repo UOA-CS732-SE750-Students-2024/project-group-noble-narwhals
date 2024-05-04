@@ -35,7 +35,7 @@ function SingleSearchedGroup({ group, keywords = "" }) {
   }
 
   return (
-    <div className="p-0.5 bg-gradient-to-r from-primary to-gray-200 rounded-lg my-4 hover:shadow-md ">
+    <div className="p-0.5 bg-gradient-to-r from-secondary to-gray-200 rounded-lg my-4 hover:shadow-md ">
       <div
         className="bg-white group flex flex-col md:flex-row justify-between rounded-md px-4 py-2 cursor-pointer"
         onClick={() => {
