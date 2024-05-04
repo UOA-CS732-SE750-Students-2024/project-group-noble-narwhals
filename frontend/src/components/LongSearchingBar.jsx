@@ -4,11 +4,12 @@ import { IoMdSearch } from "react-icons/io";
 const LongSearchingBar = ({ searchBtnClick, value }) => {
   return (
     <div className="flex justify-between items-center bg-white border-2 border-sky-900 h-12 rounded-3xl">
-      <div className="flex flex-row items-center justify-start gap-3">
+      <div className="flex flex-row items-center justify-start gap-2 w-full">
         <IoMdSearch className="ml-3 size-8 text-sky-900 ml-0.5" />
         <input
+          placeholder="Search"
           id="Search"
-          className="w-3/4 h-10 outline-none"
+          className="w-full h-10 outline-none"
           defaultValue={value}
         />
       </div>
