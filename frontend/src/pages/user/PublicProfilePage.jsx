@@ -14,6 +14,7 @@ const PublicProfilePage = () => {
   const [user, setUser] = useState(null); // add user state
   const [isLoading, setIsLoading] = useState(true);
   const [groups, setGroups] = useState([]);
+  const [isShowTagPrompt, setIsShowTagPrompt] = useState(true);
 
   const navigate = useNavigate();
 
@@ -33,12 +34,17 @@ const PublicProfilePage = () => {
         ) {
           // sort the groups by groupStatus and createDate
           data.participatingGroups.sort((a, b) => {
-
-            if (a.groupStatus === 'available' && b.groupStatus !== 'available') {
-              return -1; 
+            if (
+              a.groupStatus === "available" &&
+              b.groupStatus !== "available"
+            ) {
+              return -1;
             }
-            if (b.groupStatus === 'available' && a.groupStatus !== 'available') {
-              return 1; 
+            if (
+              b.groupStatus === "available" &&
+              a.groupStatus !== "available"
+            ) {
+              return 1;
             }
             return new Date(b.createDate) - new Date(a.createDate);
           });
@@ -55,14 +61,13 @@ const PublicProfilePage = () => {
 
       setUser(loggedInUser);
       loggedInUser.participatingGroups.sort((a, b) => {
- 
-        if (a.groupStatus === 'available' && b.groupStatus !== 'available') {
-          return -1; 
+        if (a.groupStatus === "available" && b.groupStatus !== "available") {
+          return -1;
         }
-        if (b.groupStatus === 'available' && a.groupStatus !== 'available') {
-          return 1; 
+        if (b.groupStatus === "available" && a.groupStatus !== "available") {
+          return 1;
         }
-        
+
         return new Date(b.createDate) - new Date(a.createDate);
       });
 
@@ -100,7 +105,19 @@ const PublicProfilePage = () => {
           {isLoggedIn &&
             userId === loggedInUser._id &&
             (!user.profileTags || user.profileTags.length === 0) && (
-              <div className="fixed w-[280px] right-10 bottom-10 p-4 bg-blue-100 rounded-lg shadow-lg">
+              <div
+                className={`fixed w-[280px] right-10 bottom-10 p-4 bg-blue-100 rounded-lg shadow-lg z-10 ${
+                  isShowTagPrompt ? "" : "hidden"
+                }`}
+              >
+                <span
+                  className="absolute top-0 right-2 text-xl cursor-pointer block"
+                  onClick={() => {
+                    setIsShowTagPrompt(false);
+                  }}
+                >
+                  ×
+                </span>
                 <p className="">
                   It seems you haven't added any tags in your profile! Tag
                   yourself can make people find you easily!
@@ -163,7 +180,7 @@ const PublicProfilePage = () => {
           {isLoggedIn ? (
             groups && groups.length > 0 ? (
               groups.map((group) => (
-                // <UserGroupBar key={group._id} group={group} />
+                //<UserGroupBar key={group._id} group={group} /> */}
                 <SingleSearchedGroup key={group._id} group={group} />
               ))
             ) : (
