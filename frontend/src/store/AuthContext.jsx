@@ -36,7 +36,7 @@ export const AuthProvider = ({ children }) => {
         setIsLoading(false);
         window.localStorage.setItem("isLoggedIn", false);
       });
-  }, [ haveChange,isLoggedIn]);
+  }, [haveChange, isLoggedIn]);
 
   useEffect(() => {}, [isLoggedIn, user, haveChange]);
 

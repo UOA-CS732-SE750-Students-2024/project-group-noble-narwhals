@@ -148,7 +148,11 @@ function SingleNotification({ notification, idx }) {
       >
         <div className="flex-grow">
           {/* notification title */}
-          <div className={`font-bold text-lg group-hover:underline ${notification.isRead == true ? " font-normal" : ""}`}>
+          <div
+            className={`font-bold text-lg group-hover:underline ${
+              notification.isRead == true ? " font-normal" : ""
+            }`}
+          >
             {notification.senderId.name}{" "}
             {notificationTypeDesc(notification.notificationType)}
           </div>

@@ -9,6 +9,7 @@ import tagSimulator from "../functions/tagSimulator";
 import extractTopTagsFlatList from "../functions/extractTopTagsFlatList";
 import handleGroupData from "../functions/hanldeGroupData";
 import { useNavigate } from "react-router-dom";
+
 function HomePage() {
   const { isLoggedIn, user } = useAuth();
   const [groupData, setGroupData] = useState([]);
@@ -26,11 +27,10 @@ function HomePage() {
   };
 
   const handleKeyDown = (event) => {
-    if (event.key === 'Enter') {
+    if (event.key === "Enter") {
       handleSearchBthClick();
     }
   };
-
 
   useEffect(() => {
     const getGroups = async () => {
