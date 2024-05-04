@@ -208,9 +208,9 @@ function CreatGroupPage() {
   }, []);
 
   return (
-    <div className="flex justify-center items-center h-createImageHeight">
+    <div className="flex justify-center items-center min-h-createImageHeight py-2">
       <div
-        className="bg-cover h-screen absolute inset-0 -z-10 "
+        className="bg-cover h-createImageHeight2 absolute inset-0 -z-10 "
         style={{
           backgroundImage: "url('../../../image/creategroup_bg.jpg')",
           filter: "blur(1px)",

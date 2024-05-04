@@ -26,8 +26,11 @@ export default {
         mainContent: "1280px",
         navHeight: '60px',
         createImageHeight: 'calc(100vh - 60px)',
+        createImageHeight2: 'calc(100vh + 256px)',
+
         sideBarWidth: "230px",
         searchContentHeight: 'calc(100vh - 60px - 256px - 224px - 128px - 16px)',
+        
 
       },
       boxShadow: {
