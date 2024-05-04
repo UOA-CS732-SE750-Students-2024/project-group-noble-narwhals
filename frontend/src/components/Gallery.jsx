@@ -22,7 +22,7 @@ const Gallery = ({ name, data }) => {
     if (displayName === "search") {
       return navigate(`/search`);
     } else {
-      navigate(`/search`, { state: { grouptype: displayName } });
+      navigate(`/search`, { state: { groupType: displayName } });
     }
   };
   return (
