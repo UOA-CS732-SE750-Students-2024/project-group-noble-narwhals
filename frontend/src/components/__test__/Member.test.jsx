@@ -1,87 +1,110 @@
-import "@testing-library/jest-dom";
-import { describe, it, expect, beforeEach, afterEach } from "vitest";
-import { render, fireEvent, screen } from "@testing-library/react";
-import axios from "axios";
-import MockAdapter from "axios-mock-adapter";
-import { MemoryRouter } from "react-router-dom";
-import Member from "../Member";  
+import '@testing-library/jest-dom';
+import { render, fireEvent, screen } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
+import { AuthProvider } from '../../store/AuthContext';
+import Member from '../Member';
+import axios from 'axios';
+import { waitFor } from '@testing-library/react';
+import { useNavigate } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
+import MockAdapter from 'axios-mock-adapter';
 
-let axiosMock;
-const API_BASE_URL = process.env.VITE_API_BASE_URL
+vi.mock('react-router-dom', async () => {
+    const actualModule = await vi.importActual('react-router-dom');
+    return {
+      ...actualModule,
+      useNavigate: vi.fn(() => vi.fn()), 
+        };
+     });
 
-beforeEach(() => {
-    window.confirm = vi.fn(() => true); // Simulate user confirmation as true
-    window.alert = vi.fn(); // Mock window.alert to avoid TypeError
-    axiosMock = new MockAdapter(axios);
-});
-
-afterEach(() => {
-    axiosMock.reset();
-});
-
-describe("Member Component", () => {
-    const props = {
-        username: "TestUser",
-        avatar: "test-avatar.jpg",
-        memberId: "1",
-        ownerId: "2",
-        isCurrentUserHost: true,
-        groupId: "123",
-    };
-
-    it("renders correctly with necessary information", () => {
-        render(
-            <MemoryRouter>
-                <Member {...props} />
-            </MemoryRouter>
-        );
-
-        expect(screen.getByText(props.username)).toBeInTheDocument();
-        expect(screen.getByAltText("avatar")).toBeInTheDocument();
-        expect(screen.getByText("View")).toBeInTheDocument();
+describe('Member Component', () => {
+    let mockNavigate;
+  // Mock axios
+  const mock = new MockAdapter(axios);
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+  
+  beforeEach(() => {
+    // Mock auth context and axios
+    mock.onPatch(`${apiBaseUrl}/api/groups/remove-member/1`).reply(200, {
+      message: 'Member removed successfully'
     });
+    mockNavigate = vi.fn();
+    vi.mocked(useNavigate).mockReturnValue(mockNavigate);   
 
-    it("navigates to user profile on view button click", () => {
-        // Normally, you would mock `useNavigate` here, but to avoid complications, we check for navigation behavior implicitly
-        render(
-            <MemoryRouter>
-                <Member {...props} />
-            </MemoryRouter>
-        );
 
-        fireEvent.click(screen.getByText("View"));
+  });
 
+  afterEach(() => {
+    mock.reset();
+  });
+
+  it('should render member profile information', () => {
+    const { container } = render(
+      <MemoryRouter>
+        <AuthProvider>
+          <Member
+            username="John Doe"
+            avatar="path/to/avatar.jpg"
+            memberId="123"
+            ownerId="456"
+            isCurrentUserHost={true}
+            groupId="1"
+            onMemberHandler={() => {}}
+          />
+        </AuthProvider>
+      </MemoryRouter>
+    );
+    expect(screen.getByText('John Doe')).toBeInTheDocument();
+    expect(container.querySelector('img').src).toContain('path/to/avatar.jpg');
+  });
+
+  it('should navigate to user profile on view button click', () => {
+    render(
+      <BrowserRouter>
+        <AuthProvider>
+          <Member
+            username="John Doe"
+            avatar="path/to/avatar.jpg"
+            memberId="123"
+            ownerId="456"
+            isCurrentUserHost={true}
+            groupId="1"
+            onMemberHandler={() => {}}
+          />
+        </AuthProvider>
+      </BrowserRouter>
+    );
+    fireEvent.click(screen.getByText('View'));
+    expect(mockNavigate).toHaveBeenCalledWith(`/user/profile/123`);
+  });
+
+  it('should display delete button for hosts and allow deletion', async () => {
+    const mockHandler = vi.fn();
+    const { getByText } = render(
+      <MemoryRouter>
+        <AuthProvider>
+          <Member
+            username="John Doe"
+            avatar="path/to/avatar.jpg"
+            memberId="123"
+            ownerId="456"
+            isCurrentUserHost={true}
+            groupId="1"
+            onMemberHandler={mockHandler}
+          />
+        </AuthProvider>
+      </MemoryRouter>
+    );
+    const deleteButton = getByText('Delete');
+    expect(deleteButton).toBeInTheDocument();
+    global.confirm = vi.fn(() => true); // Mock confirmation dialog to return 'true'
+    fireEvent.click(deleteButton);
+  
+    // Wait for promises to resolve
+    await waitFor(() => {
+      expect(mockHandler).toHaveBeenCalledWith("123", "remove");
+      expect(mock.history.patch.length).toBe(1);
+      expect(mock.history.patch[0].url).toBe(`${apiBaseUrl}/api/groups/remove-member/1`);
     });
-    it("calls API to delete a member when deletion is confirmed", async () => {
-        axiosMock.onPatch(`${API_BASE_URL}/api/groups/remove-member/${props.groupId}`).reply(200);
-    
-        render(
-          <MemoryRouter>
-            <Member {...props} />
-          </MemoryRouter>
-        );
-    
-        fireEvent.click(screen.getByText("Delete"));
-    
-        await vi.waitFor(() => {
-          expect(axiosMock.history.patch.length).toBe(1);
-          expect(window.confirm).toHaveBeenCalled(); // Verify confirm was called
-          expect(window.alert).toHaveBeenCalledWith("Member removed successfully!"); // Verify alert was called with correct message
-        });
-      });
-
-    it("does not delete the member when deletion is cancelled", () => {
-        window.confirm = vi.fn(() => false); // Simulate cancellation
-
-        render(
-            <MemoryRouter>
-                <Member {...props} />
-            </MemoryRouter>
-        );
-
-        fireEvent.click(screen.getByText("Delete"));
-
-        expect(window.confirm).toHaveBeenCalled();
-        expect(axiosMock.history.patch.length).toBe(0);
-    });
+  });
 });

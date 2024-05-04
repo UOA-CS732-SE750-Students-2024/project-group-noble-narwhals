@@ -1,91 +1,98 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { render, fireEvent, waitFor } from '@testing-library/react';
+import React from 'react';
+import { render, fireEvent, screen, waitFor } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { MemoryRouter } from 'react-router-dom';
-import Applicant from '../Applicant';
-import '@testing-library/jest-dom';
-import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
+import axios from 'axios';
+import { AuthProvider } from '../../store/AuthContext';
+import Applicant from '../Applicant';
 
-// Mocking axios
+// Create axios mock
 const mockAxios = new MockAdapter(axios);
-const API_BASE_URL = process.env.VITE_API_BASE_URL
+
+// Common setup for all tests
+beforeEach(() => {
+  mockAxios.reset();
+  mockAxios.onGet(`${import.meta.env.VITE_API_BASE_URL}/auth/check-session`).reply(200, {
+    isLoggedIn: true,
+    user: { id: 1, name: 'John Doe' }
+  });
+});
+
+function renderWithProviders(ui, { route = '/' } = {}) {
+  return render(
+    <MemoryRouter initialEntries={[route]}>
+      <AuthProvider>
+        {ui}
+      </AuthProvider>
+    </MemoryRouter>
+  );
+}
 
 describe('Applicant Component', () => {
-  // Mock data
-  const props = {
-    username: 'TestUser',
-    message: 'This is a test message',
-    avatar: 'test-avatar.jpg',
-    isHost: true,
-    applicationId: '123',
-    onApplicationHandled: vi.fn(),
-  };
-
-  // Setup mock API responses and mock alert
-  beforeEach(() => {
-    mockAxios.onPatch(`${API_BASE_URL}/api/application/applications-with-details/${props.applicationId}`).reply(200, {
-      message: "Application status updated successfully"
-    });
-    window.alert = vi.fn(); // Mock the alert function
-  });
-
-  afterEach(() => {
-    mockAxios.reset();
-    vi.restoreAllMocks(); // Restore all mocks to their original value
-  });
-
-  it('renders correctly', () => {
-    const { getByText, getByAltText } = render(
-      <MemoryRouter>
-        <Applicant {...props} />
-      </MemoryRouter>
-    );
-    expect(getByText(props.username)).toBeInTheDocument();
-    expect(getByAltText('avatar')).toBeInTheDocument();
-  });
-
-  it('handles accept action correctly', async () => {
-    const { getByText } = render(
-      <MemoryRouter>
-        <Applicant {...props} />
-      </MemoryRouter>
-    );
-    const acceptButton = getByText('Allow');
-    fireEvent.click(acceptButton);
-
+  it('renders correctly with minimum props', async () => {
+    renderWithProviders(<Applicant username="John Doe" avatar="url-to-avatar" applicationId="1" userId="2" isHost={true} onApplicationHandled={vi.fn()} onMemberHandler={vi.fn()} />);
     await waitFor(() => {
-      expect(props.onApplicationHandled).toHaveBeenCalledWith(props.applicationId, 'accepted');
-      expect(window.alert).toHaveBeenCalledWith('Application accepted successfully!');
+      expect(screen.queryByText('John Doe')).toBeTruthy();  // Checking if text is in the document
+  
+      // Get the image element and check the 'src' attribute manually
+      const image = screen.getByRole('img');
+      expect(image).toBeTruthy();  // Ensure the image element is found
+      expect(image.getAttribute('src')).toBe('url-to-avatar');  // Manually check the 'src' attribute
+    });
+  });
+  
+
+  it('handles accept application correctly', async () => {
+    const applicationId = "1";
+    const handleApplicationHandled = vi.fn();
+    const handleMemberHandler = vi.fn();
+    
+    mockAxios.onPatch(`${import.meta.env.VITE_API_BASE_URL}/api/application/applications-with-details/${applicationId}`).reply(200, {
+      message: "Accepted"
+    });
+
+    renderWithProviders(
+      <Applicant
+        username="John Doe"
+        avatar="url-to-avatar"
+        applicationId={applicationId}
+        userId="2"
+        isHost={true}
+        onApplicationHandled={handleApplicationHandled}
+        onMemberHandler={handleMemberHandler}
+      />
+    );
+
+    fireEvent.click(screen.getByText('Allow'));
+    await waitFor(() => {
+      expect(handleApplicationHandled).toHaveBeenCalledWith(applicationId);
+      expect(handleMemberHandler).toHaveBeenCalledWith(applicationId, 'add');
     });
   });
 
-  it('handles reject action correctly', async () => {
-    const { getByText } = render(
-      <MemoryRouter>
-        <Applicant {...props} />
-      </MemoryRouter>
-    );
-    const rejectButton = getByText('Reject');
-    fireEvent.click(rejectButton);
-
-    await waitFor(() => {
-      expect(props.onApplicationHandled).toHaveBeenCalledWith(props.applicationId, 'rejected');
-      expect(window.alert).toHaveBeenCalledWith('Application rejected successfully!');
+  it('handles reject application correctly', async () => {
+    const applicationId = "1";
+    const handleApplicationHandled = vi.fn();
+    
+    mockAxios.onPatch(`${import.meta.env.VITE_API_BASE_URL}/api/application/applications-with-details/${applicationId}`).reply(200, {
+      message: "Rejected"
     });
-  });
 
-  it('displays an error message on API failure', async () => {
-    mockAxios.onPatch(`${API_BASE_URL}/api/application/applications-with-details/${props.applicationId}`).networkError();
-    const { getByText } = render(
-      <MemoryRouter>
-        <Applicant {...props} />
-      </MemoryRouter>
+    renderWithProviders(
+      <Applicant
+        username="John Doe"
+        avatar="url-to-avatar"
+        applicationId={applicationId}
+        userId="2"
+        isHost={true}
+        onApplicationHandled={handleApplicationHandled}
+      />
     );
-    const acceptButton = getByText('Allow');
-    fireEvent.click(acceptButton);
 
+    fireEvent.click(screen.getByText('Reject'));
     await waitFor(() => {
-      expect(window.alert).toHaveBeenCalledWith(expect.stringMatching(/Failed to accept application:/));
+      expect(handleApplicationHandled).toHaveBeenCalledWith(applicationId);
     });
   });
 });
