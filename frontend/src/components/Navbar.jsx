@@ -40,6 +40,12 @@ function Navbar() {
     navigate(`/search`, { state: { keywords: word } });
   };
 
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      searchHandler(event);
+    }
+  };
+
   useEffect(() => {
     const handleScroll = () => {
       const checkPath = location.pathname === "/";
@@ -108,6 +114,7 @@ function Navbar() {
                       ref={inputRef}
                       type="text"
                       placeholder="Search"
+                      onKeyDown={handleKeyDown}
                       className={`w-full lg:w-72 h-8 outline-none transition-all duration-300 `}
                     />
                     <div
@@ -157,6 +164,7 @@ function Navbar() {
                       type="text"
                       placeholder="Search"
                       className={`w-full lg:  h-8 outline-none transition-all duration-300 `}
+                      onKeyDown={handleKeyDown}
                     />
                     <div
                       className={` w-7 h-7 rounded-full hover:bg-gray-200 flex items-center justify-center ${
