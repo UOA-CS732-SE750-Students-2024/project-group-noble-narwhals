@@ -13,7 +13,7 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "";
  * import { useNavigate } from "react-router-dom";
  * const navigate = useNavigate();
  * const word = "tech";
- * navigate(`/search`, { state: { keywords: word, grouptype: type["group", "activaty"] } });
+ * navigate(`/search`, { state: { keywords: word, groupType: type["group", "activaty"] } });
  */
 function SearchPage() {
   const location = useLocation();
