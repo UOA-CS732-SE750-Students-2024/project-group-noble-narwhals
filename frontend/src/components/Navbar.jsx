@@ -179,7 +179,9 @@ function Navbar() {
                     className={`text-xl flex flex-row items-center justify-center gap-1 `}
                   >
                     <IoAdd />
-                    <span className="hidden lg:block">Create Group</span>
+                    <span className="hidden lg:block text-nowrap">
+                      Create Group
+                    </span>
                   </Link>
                 </div>
                 <div

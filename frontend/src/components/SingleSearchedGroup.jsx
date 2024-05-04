@@ -24,6 +24,7 @@ function SingleSearchedGroup({ group, keywords = "" }) {
     if (kwords != "") {
       const regstr = kwords.join("|");
       const regex = new RegExp(`(${regstr})`, "gi");
+
       return text.replace(
         regex,
         '<span style="background-color: yellow">$1</span>'
@@ -52,7 +53,7 @@ function SingleSearchedGroup({ group, keywords = "" }) {
           </span>
           {/* group name */}
           <span
-            className="group-hover:underline inline"
+            className="group-hover:underline inline text-lg"
             dangerouslySetInnerHTML={{
               __html: highlightKeywords(group.groupName, keywords),
             }}
@@ -70,10 +71,14 @@ function SingleSearchedGroup({ group, keywords = "" }) {
             </span>
           ))}
         </div>
+        {/* content */}
+        <div className="text-gray-500 font-thin text-ellipsis overflow-hidden max-h-24 group-hover:underline">
+          {group.groupDescription}
+        </div>
       </div>
       <div className="flex flex-grow flex-row flex-wrap md:flex-col items-stretch justify-between text-xs mt-1 relative">
         {/* member numbers */}
-        <div className="flex md:block items-center font-thin text-gray-400 text-sm text-right">
+        <div className="flex md:block items-center font-thin text-gray-400 text-sm text-right md:text-nowrap">
           {`Members: ${group.groupMembers.length}/${group.maxNumber}`}
         </div>
 
