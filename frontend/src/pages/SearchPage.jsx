@@ -105,7 +105,7 @@ function SearchPage() {
 
   return (
     <>
-      <div className="sticky top-navHeight border-b-4 border-b-hmblue-700 bg-white pt-1 z-10">
+      <div className="sticky top-navHeight border-b-4 border-b-hmblue-700 bg-white pt-1 z-[51]">
         {/* search box */}
         <div className="w-4/5 mx-auto my-4 md:my-16">
           <LongSearchingBar
