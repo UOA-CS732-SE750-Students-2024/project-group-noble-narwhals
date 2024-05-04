@@ -379,7 +379,7 @@ function HeaderContent({
                   )}
                 </>
               ) : (
-                <div className="py-3 px-16" style_type="border">
+                <div className="py-2 px-4 bg-gray-200 rounded-full" style_type="border">
                   This group is {groupStatus}
                 </div>
               )}
