@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import backgroundImage from "../../public/image/homePage_search_bg.jpg";
+import backgroundImage from "/image/homePage_search_bg.jpg";
 import LongSearchingBar from "../components/LongSearchingBar";
 import Gallery from "../components/Gallery";
 import axios from "axios";
