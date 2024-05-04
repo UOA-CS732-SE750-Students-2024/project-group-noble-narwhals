@@ -1,11 +1,10 @@
 import React from "react";
-import UserGroupBar from "../../components/UserGroupBar";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../store/AuthContext";
-// import { useUser } from '../../contexts/UserContext';
+import SingleSearchedGroup from "../../components/SingleSearchedGroup";
 
 function LikedGroupPage() {
   const { userId } = useParams();
@@ -50,12 +49,20 @@ function LikedGroupPage() {
     <div className="flex flex-col m-4 p-4">
       <div className="text-3xl mb-8">Liked Groups</div>
       {/* Groups table */}
-      {likedGroups && likedGroups.length > 0 ? likedGroups.map((group) => (
-        <UserGroupBar key={group._id} group={group} />
-      )): (
-        <p>No groups found.</p>
-      )
-      }
+      <div className="">
+          {isLoggedIn ? (
+            likedGroups && likedGroups.length > 0 ? (
+              likedGroups.map((group) => (
+                // <UserGroupBar key={group._id} group={group} />
+                <SingleSearchedGroup key={group._id} group={group} />
+              ))
+            ) : (
+              <p>No groups found.</p>
+            )
+          ) : (
+            <div className="text-lg text-gray-400 ">Please log in first.</div>
+          )}
+        </div>
     </div>
   );
 }

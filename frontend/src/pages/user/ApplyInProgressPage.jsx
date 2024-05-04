@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useAuth } from "../../store/AuthContext";
 import { useNavigate  } from "react-router-dom";
-import UserGroupBar from "../../components/UserGroupBar";
+import SingleSearchedGroup from "../../components/SingleSearchedGroup";
 
 function ApplyInProgressPage() {
   const { userId } = useParams();
@@ -44,12 +44,20 @@ function ApplyInProgressPage() {
     <div className="flex flex-col m-4 p-4">
       <div className="text-3xl mb-8">Apply in Progress</div>
       {/* Groups table */}
-      {appliedGroups && appliedGroups.length > 0 ? appliedGroups.map((group) => (
-        <UserGroupBar key={group._id} group={group} />
-      )): (
-        <p>No groups found.</p>
-      )
-      }
+      <div className="">
+          {isLoggedIn ? (
+            appliedGroups && appliedGroups.length > 0 ? (
+              appliedGroups.map((group) => (
+                // <UserGroupBar key={group._id} group={group} />
+                <SingleSearchedGroup key={group._id} group={group} />
+              ))
+            ) : (
+              <p>No groups found.</p>
+            )
+          ) : (
+            <div className="text-lg text-gray-400 ">Please log in first.</div>
+          )}
+        </div>
     </div>
   );
 }
