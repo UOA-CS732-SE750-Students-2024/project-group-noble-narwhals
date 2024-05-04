@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../../store/AuthContext";
 import { Link, useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { MdArrowForwardIos } from "react-icons/md";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "";
 
 function NotificationPage() {
@@ -131,7 +132,7 @@ function SingleNotification({ notification, idx }) {
       } border-b-2 border-b-hmblue-700`}
     >
       {/* avatar */}
-      <div className="flex-shrink-0 w-10 h-10 rounded-full mt-1 overflow-hidden border border-hmblue-500">
+      <div className="flex-shrink-0 w-10 h-10 rounded-full mt-1 overflow-hidden border ">
         <Link to={`/user/profile/${notification.senderId._id}`}>
           <img src={notification.senderId.avatar} />
         </Link>
@@ -147,7 +148,7 @@ function SingleNotification({ notification, idx }) {
       >
         <div className="flex-grow">
           {/* notification title */}
-          <div className="font-bold text-lg group-hover:underline">
+          <div className={`font-bold text-lg group-hover:underline ${notification.isRead == true ? " font-normal" : ""}`}>
             {notification.senderId.name}{" "}
             {notificationTypeDesc(notification.notificationType)}
           </div>
@@ -163,7 +164,7 @@ function SingleNotification({ notification, idx }) {
         </div>
         <div className="flex items-center">
           <span className="mr-4 text-hmblue-700 invisible group-hover:visible">
-            &gt;&gt;&gt;
+            <MdArrowForwardIos />
           </span>
         </div>
       </div>
