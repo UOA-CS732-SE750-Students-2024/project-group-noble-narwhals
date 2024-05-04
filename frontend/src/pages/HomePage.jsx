@@ -56,18 +56,18 @@ function HomePage() {
     (item) => item.groupType === "group" && item.groupStatus === "available"
   );
   // Get the latest 3 data in groupDataGroup by dayNum
-  const latest3GroupDataGroups = [...groupDataGroup]
+  const latest6GroupDataGroups = [...groupDataGroup]
     .sort((a, b) => a.dayNum - b.dayNum)
-    .slice(0, 3);
+    .slice(0, 6);
 
   // Get the data in groupData which type is activity and status is available
   const groupDataActivity = groupData.filter(
     (item) => item.groupType === "activity" && item.groupStatus === "available"
   );
-  // Get the top 3 data in groupDataActivity by dayNum
-  const latest3GroupDataActivities = [...groupDataActivity]
+  // Get the top 6 data in groupDataActivity by dayNum
+  const latest6GroupDataActivities = [...groupDataActivity]
     .sort((a, b) => a.dayNum - b.dayNum)
-    .slice(0, 3);
+    .slice(0, 6);
 
   // Calculate the popularity of each group based on the number of likes, number of members, and days until the deadline
   const popularGroupData = groupData
@@ -83,9 +83,9 @@ function HomePage() {
       };
     });
   // Get the top three groups with the highest popularity
-  const top3PopularGroupData = popularGroupData
+  const top6PopularGroupData = popularGroupData
     .sort((a, b) => b.popular - a.popular)
-    .slice(0, 3);
+    .slice(0, 6);
 
   useEffect(() => {
     // Assume the user is logged in and needs to get tag recommendations
@@ -98,7 +98,7 @@ function HomePage() {
   const flatTagList = extractTopTagsFlatList(tagRecommendation);
 
   // Find popularGroupData containing flatTagList, select the top three groups with the highest popularity
-  const top3RecommendationGroupData = popularGroupData
+  const top6RecommendationGroupData = popularGroupData
     .map((group) => {
       // Calculate a weight for each group based on how many tags it contains that are in flatTagList
       const weight = group.groupTags.reduce((acc, tag) => {
@@ -117,7 +117,7 @@ function HomePage() {
     })
     // After mapping, sort the groups by their new popular score and take the top three
     .sort((a, b) => b.popular - a.popular)
-    .slice(0, 3);
+    .slice(0, 6);
   return (
     <>
       <div id="main_content" className="">
@@ -149,10 +149,10 @@ function HomePage() {
         </div>
         <Gallery
           name="Recommendation"
-          data={isLoggedIn ? top3RecommendationGroupData : top3PopularGroupData}
+          data={isLoggedIn ? top6RecommendationGroupData : top6PopularGroupData}
         />
-        <Gallery name="Groups" data={latest3GroupDataGroups} />
-        <Gallery name="Activities" data={latest3GroupDataActivities} />
+        <Gallery name="Groups" data={latest6GroupDataGroups} />
+        <Gallery name="Activities" data={latest6GroupDataActivities} />
       </div>
     </>
   );

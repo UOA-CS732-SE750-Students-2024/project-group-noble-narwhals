@@ -19,7 +19,7 @@ beforeAll(async () => {
 
     // Mocking user authentication and setting up user context
     app.use((req, res, next) => {
-        req.user = { _id: new mongoose.Types.ObjectId("662cf090b964cd3c520e09fe") };
+        req.user = { _id: new mongoose.Types.ObjectId("662cddc03b8bc2113d8bc20a") };
         next();
     });
 

@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { randomColor } from "../pages/group/CreateGroupPage";
 
 /**
  * Single item of search result
@@ -34,7 +35,7 @@ function SingleSearchedGroup({ group, keywords = "" }) {
 
   return (
     <div
-      className="group flex flex-col md:flex-row justify-between border-2 border-hmblue-100 hover:border-hmblue-300 hover:shadow-md m-4 rounded-lg px-4 py-2 cursor-pointer"
+      className="group flex flex-col md:flex-row justify-between border-2 border-hmblue-100 hover:border-hmblue-300 hover:shadow-md my-4 rounded-lg px-4 py-2 cursor-pointer"
       onClick={() => {
         navigate(`/group/${group._id}`);
       }}
@@ -58,11 +59,12 @@ function SingleSearchedGroup({ group, keywords = "" }) {
           ></span>
         </div>
         {/* tags */}
-        <div className="space-x-1">
+        <div className="flex flex-wrap space-x-1/2 text-xs gap-1">
           {group.groupTags.map((tag, idx) => (
             <span
               key={idx}
-              className="rounded-full inline-block px-2 py-[2px] bg-hmblue-100 text-hmblue-800 border-hmblue-800 border-[1px]"
+              className="rounded-full inline-block px-2 py-[2px] text-white font-light "
+              style={{ backgroundColor: randomColor() }}
             >
               {tag.name}
             </span>

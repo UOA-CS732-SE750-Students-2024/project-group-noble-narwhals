@@ -102,48 +102,50 @@ function UserPageSideBar() {
       </div>
       {/* mask */}
       {isShowSideBar ? (
-        <div className="w-full h-full fixed bg-gray-900/50 z-[999]"></div>
+        <div className="w-full h-full fixed bg-gray-900/50 z-[99]"></div>
       ) : (
         ""
       )}
       {/* sidebar */}
-      <div
-        className={`w-4/5 md:w-sideBarWidth min-w-sideBarWidth overflow-y-auto bg-primary flex flex-col items-center z-[1000] min-h-[calc(100vh-theme(spacing.navHeight))] absolute transition-all md:static ${
-          isShowSideBar ? "" : "-translate-x-full md:translate-x-0"
-        }`}
-      >
-        {/* close sidebar btn */}
+      <div>
         <div
-          className="absolute text-white text-4xl right-0 cursor-pointer py-4 px-6 md:hidden"
-          onClick={() => {
-            setIsShowSideBar(false);
-          }}
+          className={`w-4/5 md:w-sideBarWidth min-w-sideBarWidth overflow-y-auto bg-primary flex flex-col items-center z-[100] min-h-[calc(100vh-theme(spacing.navHeight))] fixed transition-all md:sticky top-navHeight ${
+            isShowSideBar ? "" : "-translate-x-full md:translate-x-0"
+          }`}
         >
-          ×
-        </div>
-        <div className="flex flex-col items-center justify-center p-8">
-          {user && (
-            <>
-              <img
-                className="w-24 h-24 rounded-full mb-2"
-                src={user.avatar}
-                alt={`${user.name}'s Avatar`}
+          {/* close sidebar btn */}
+          <div
+            className="absolute text-white text-4xl right-0 cursor-pointer py-4 px-6 md:hidden"
+            onClick={() => {
+              setIsShowSideBar(false);
+            }}
+          >
+            ×
+          </div>
+          <div className="flex flex-col items-center justify-center p-8">
+            {user && (
+              <>
+                <img
+                  className="w-24 h-24 rounded-full mb-2"
+                  src={user.avatar}
+                  alt={`${user.name}'s Avatar`}
+                />
+                <p className="text-xl text-white font-bold">{user.name}</p>
+              </>
+            )}
+          </div>
+          <div className="w-full ">
+            {options.map((option) => (
+              <SidebarOption
+                option={option}
+                key={option.label}
+                isActive={location.pathname === option.to}
+                hideSelf={() => {
+                  setIsShowSideBar(false);
+                }}
               />
-              <p className="text-xl text-white font-bold">{user.name}</p>
-            </>
-          )}
-        </div>
-        <div className="w-full ">
-          {options.map((option) => (
-            <SidebarOption
-              option={option}
-              key={option.label}
-              isActive={location.pathname === option.to}
-              hideSelf={() => {
-                setIsShowSideBar(false);
-              }}
-            />
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </>

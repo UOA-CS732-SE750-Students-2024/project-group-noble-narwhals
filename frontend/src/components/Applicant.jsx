@@ -60,7 +60,7 @@ function Applicant({
   return (
     <div
     className="flex flex-col items-center justify-between py-6 px-4 bg-gradient-to-br from-bg1 to-bg2 rounded-lg overflow-hidden mb-14 transition-all duration-500 ease-in-out relative"
-    style={{ width: "240px", height: "300px" }}
+    style={{ minWidth: "240px", minHeight: "300px" }}
     onMouseEnter={() => setHover(true)}
     onMouseLeave={() => setHover(false)}
   >

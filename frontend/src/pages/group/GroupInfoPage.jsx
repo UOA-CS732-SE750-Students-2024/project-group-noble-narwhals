@@ -193,9 +193,9 @@ function ApplicantList({
         </h3>
       </div>
       <div className="flex gap-2 overflow-x-auto">
-        {applications.map((application) => (
+        {applications.map((application,index) => (
           <Applicant
-            key={application._id}
+            key={index}
             username={application.applicantId.name}
             message={application.message}
             avatar={application.applicantId.avatar}
