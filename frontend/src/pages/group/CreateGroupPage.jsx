@@ -45,12 +45,7 @@ function CreatGroupPage() {
     setInputDescription(e.target.value);
   };
   // Random color generation function
-  const randomColor = () => {
-    const h = Math.floor(Math.random() * 360);
-    const s = 30 + Math.floor(Math.random() * 10);
-    const l = 40 + Math.floor(Math.random() * 10);
-    return `hsl(${h}, ${s}%, ${l}%)`;
-  };
+ 
   //Handle tag event
   const addTag = async (e) => {
     e.preventDefault();
@@ -396,3 +391,10 @@ function CreatGroupPage() {
 }
 
 export default CreatGroupPage;
+
+export const randomColor = () => {
+  const h = Math.floor(Math.random() * 360);
+  const s = 30 + Math.floor(Math.random() * 10);
+  const l = 40 + Math.floor(Math.random() * 10);
+  return `hsl(${h}, ${s}%, ${l}%)`;
+};
