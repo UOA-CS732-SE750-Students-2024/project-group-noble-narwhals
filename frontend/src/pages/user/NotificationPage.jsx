@@ -60,7 +60,7 @@ function NotificationPage() {
 
   return (
     <div className="flex flex-col m-4 p-4">
-      <div className="text-3xl mb-8">Notification</div>
+      <div className="text-3xl font-bold mb-8">Notification</div>
       <div>
         {notifications.length === 0 ? <p>No notifications found.</p> : null}
         {notifications.map((notification, idx) =>

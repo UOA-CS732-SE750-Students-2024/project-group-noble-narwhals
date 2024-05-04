@@ -134,9 +134,9 @@ const PublicProfilePage = () => {
               src={user.avatar}
               alt="User Avatar"
             />
-            <div className="flex flex-col justify-around gap-2">
-              <div className="flex flex-row items-center gap-2">
-                <p className="text-xl font-bold mx-5">{user.name}</p>
+            <div className="flex flex-col justify-around gap-6">
+              <div className="flex flex-row items-center  gap-2">
+                <p className="text-3xl font-bold mx-5">{user.name}</p>
                 {user.gender === "Male" && (
                   <IoMdMale className="fill-sky-500 text-2xl" />
                 )}

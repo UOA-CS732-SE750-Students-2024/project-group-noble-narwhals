@@ -46,7 +46,7 @@ function ApplyInProgressPage() {
 
   return (
     <div className="flex flex-col m-4 p-4">
-      <div className="text-3xl mb-8">Apply in Progress</div>
+      <div className="text-3xl font-bold mb-8">Apply in Progress</div>
       {/* Groups table */}
       <div className="">
         {isLoggedIn ? (

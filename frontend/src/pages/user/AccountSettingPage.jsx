@@ -283,7 +283,7 @@ function AccountSettingsPage() {
 
   return (
     <div className="w-4/5 m-4 p-4">
-      <div className="text-3xl mb-5">Account Settings</div>
+      <div className="text-3xl font-bold mb-5">Account Settings</div>
       {user.isVerification ? (
         <p className="text-gray-400 mb-2">Your account has been verified</p>
       ) : (
