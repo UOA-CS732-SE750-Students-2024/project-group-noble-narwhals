@@ -104,30 +104,32 @@ function SearchPage() {
 
   return (
     <>
-      {/* search box */}
-      <div className="w-4/5 mx-auto my-16">
-        <LongSearchingBar
-          searchBtnClick={handleSearchBthClick}
-          value={mykeywords}
-        />
-      </div>
-      <input className="appearance-none" max="99" type="number" />
-      {/* tab control */}
-      <div className="flex space-x-5">
-        {groupTypes.map((type) => (
-          <TabButton
-            key={type.id}
-            tabId={type.id}
-            typeName={type.name}
-            activeTab={activeTab}
-            handleTabBtnClick={handleTabBtnClick}
-          >
-            {type.name}
-          </TabButton>
-        ))}
+      <div className="sticky top-navHeight border-b-4 border-b-hmblue-700 bg-white pt-1 z-10">
+        {/* search box */}
+        <div className="w-4/5 mx-auto my-4 md:my-16">
+          <LongSearchingBar
+            searchBtnClick={handleSearchBthClick}
+            value={mykeywords}
+          />
+        </div>
+        {/* <input className="appearance-none" max="99" type="number" /> */}
+        {/* tab control */}
+        <div className="flex space-x-5">
+          {groupTypes.map((type) => (
+            <TabButton
+              key={type.id}
+              tabId={type.id}
+              typeName={type.name}
+              activeTab={activeTab}
+              handleTabBtnClick={handleTabBtnClick}
+            >
+              {type.name}
+            </TabButton>
+          ))}
+        </div>
       </div>
       {/* search result list */}
-      <div className="border-t-4 border-t-hmblue-700 min-h-96">
+      <div className="min-h-96">
         {displayedGroups.length === 0 ? (
           <p className="mt-10 text-xl">
             No groups found, try some other key words. You can separete keywords

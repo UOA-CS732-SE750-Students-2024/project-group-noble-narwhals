@@ -35,11 +35,10 @@ function SingleSearchedGroup({ group, keywords = "" }) {
 
   return (
     <div
-      className="group flex flex-col md:flex-row justify-between border-2 border-hmblue-100 hover:border-hmblue-300 hover:shadow-md m-4 rounded-lg px-4 py-2 cursor-pointer"
+      className="group flex flex-col md:flex-row justify-between border-2 border-hmblue-100 hover:border-hmblue-300 hover:shadow-md my-4 rounded-lg px-4 py-2 cursor-pointer"
       onClick={() => {
         navigate(`/group/${group._id}`);
       }}
-     
     >
       <div className="flex flex-col space-y-2 font-bold">
         <div className="">
@@ -60,7 +59,7 @@ function SingleSearchedGroup({ group, keywords = "" }) {
           ></span>
         </div>
         {/* tags */}
-        <div className="space-x-1">
+        <div className="flex flex-wrap space-x-1/2 text-xs gap-1">
           {group.groupTags.map((tag, idx) => (
             <span
               key={idx}
