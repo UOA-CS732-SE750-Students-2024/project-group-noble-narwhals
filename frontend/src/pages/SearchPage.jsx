@@ -100,6 +100,7 @@ function SearchPage() {
   useEffect(() => {
     // default search when page loaded
     handleSearchBthClick();
+    window.scrollTo({ top: 0 });
   }, []);
 
   return (
