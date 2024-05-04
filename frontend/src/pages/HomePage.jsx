@@ -18,11 +18,20 @@ function HomePage() {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const navigate = useNavigate();
   let word = "";
+
   const handleSearchBthClick = () => {
     word = encodeURIComponent(document.getElementById("Search").value);
     navigate(`/search`, { state: { keywords: word } });
     word = "";
   };
+
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      handleSearchBthClick();
+    }
+  };
+
+
   useEffect(() => {
     const getGroups = async () => {
       try {
@@ -143,6 +152,7 @@ function HomePage() {
               <LongSearchingBar
                 searchBtnClick={handleSearchBthClick}
                 value={word}
+                searchKeyDown={handleKeyDown}
               />
             </div>
           </div>

@@ -1,7 +1,7 @@
 import React from "react";
 import { IoMdSearch } from "react-icons/io";
 
-const LongSearchingBar = ({ searchBtnClick, value }) => {
+const LongSearchingBar = ({ searchBtnClick, value, searchKeyDown }) => {
   return (
     <div className="flex justify-between items-center bg-white border-2 border-sky-900 h-12 rounded-3xl">
       <div className="flex flex-row items-center justify-start gap-2 w-full">
@@ -11,6 +11,7 @@ const LongSearchingBar = ({ searchBtnClick, value }) => {
           id="Search"
           className="w-full h-10 outline-none"
           defaultValue={value}
+          onKeyDown={searchKeyDown}
         />
       </div>
       <button

@@ -97,6 +97,12 @@ function SearchPage() {
     }
   }
 
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      handleSearchBthClick();
+    }
+  };
+
   useEffect(() => {
     // default search when page loaded
     handleSearchBthClick();
@@ -111,6 +117,7 @@ function SearchPage() {
           <LongSearchingBar
             searchBtnClick={handleSearchBthClick}
             value={mykeywords}
+            searchKeyDown={handleKeyDown}
           />
         </div>
         {/* <input className="appearance-none" max="99" type="number" /> */}
