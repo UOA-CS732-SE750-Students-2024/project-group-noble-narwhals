@@ -27,7 +27,6 @@
  */
 function extractTopTagsFlatList(tagData) {
   let flatList = [];
-
   tagData.forEach((data) => {
     const allTagsWithScore = Object.entries(data.similarity)
       .map(([key, value]) => ({ name: key, score: value }))

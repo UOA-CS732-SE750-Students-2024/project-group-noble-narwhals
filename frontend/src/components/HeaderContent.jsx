@@ -29,6 +29,7 @@ function HeaderContent({
   const [liked, setLiked] = useState(false);
   const navigate = useNavigate();
 
+
   const isGroupMember =
     user && groupMembers.some((member) => member._id === user._id);
   const deadline = deadlineDate ? new Date(deadlineDate) : new Date(); // Fallback to current date if undefined
@@ -61,6 +62,7 @@ function HeaderContent({
     if (isLoggedIn && groupId && user._id) {
       const isLiked = user.likedGroups.some((group) => group._id === groupId);
       setLiked(isLiked);
+
     }
   };
 
@@ -79,6 +81,7 @@ function HeaderContent({
         userId: user._id,
       });
       updateAuth();
+
     } catch (error) {
       console.error("Failed to toggle like:", error);
       setLiked(!newLikedStatus);
@@ -111,6 +114,7 @@ function HeaderContent({
         try {
           const response = await axios.post(
             `${API_BASE_URL}/api/groups/cancel-application/${groupId}`,
+
             { userId: user._id }
           );
 
@@ -138,6 +142,7 @@ function HeaderContent({
     try {
       const response = await axios.post(
         `${API_BASE_URL}/api/groups/join/${groupId}/group`,
+
         {
           userId: user._id,
           message: applicationMessage,
@@ -184,6 +189,7 @@ function HeaderContent({
       );
       onMemberHandler(user._id, "remove");
       updateAuth();
+
     } catch (error) {
       alert(
         "Failed to leave the group: " +
@@ -202,6 +208,7 @@ function HeaderContent({
       try {
         const response = await axios.patch(
           `${API_BASE_URL}/api/groups/dismiss/${groupId}`,
+
           {
             groupStatus: "dismissed",
           }
@@ -286,7 +293,6 @@ function HeaderContent({
               >
                 Edit
               </Button>
-
               {groupStatus !== "closed" && groupStatus !== "dismissed" && (
                 <>
                   {!isPastDeadline && (
@@ -312,7 +318,7 @@ function HeaderContent({
               {(groupStatus === "closed" ||
                 groupStatus === "dismissed" ||
                 groupStatus === "full") && (
-                  <div className="py-3 px-16" style_type="border">
+                  <div className="py-2 px-4 bg-gray-200 rounded-full" style_type="border">
                     {groupStatus === "closed"
                       ? "This group is closed"
                       : groupStatus === "dismissed"
@@ -320,6 +326,7 @@ function HeaderContent({
                         : "This group is full"}
                   </div>
                 )}
+
             </>
           )}
           {!isHost && (
@@ -335,13 +342,14 @@ function HeaderContent({
                       Quit Group
                     </Button>
                   )}
-                  <div>This group is full</div>
+                  <div className="py-2 px-4 mt-2 bg-gray-200 rounded-full">This group is full</div>
                 </div>
               ) : groupStatus === "available" ? (
                 <>
                   {!isGroupMember && (hasApplied ? (
                     <Button
                       className="px-4 py-1.5 sm:px-3 sm:py-1 md:px-4 md:py-1.5 lg:px-6 lg:py-2"
+
                       style_type="border"
                       onClick={handleCancelApplication}
                     >
@@ -379,13 +387,12 @@ function HeaderContent({
                   )}
                 </>
               ) : (
-                <div className="py-3 px-16" style_type="border">
+                <div className="py-2 px-4 bg-gray-200 rounded-full" style_type="border">
                   This group is {groupStatus}
                 </div>
               )}
             </>
           )}
-
         </div>
       </div>
       {showModal && (

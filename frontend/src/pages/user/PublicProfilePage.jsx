@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from "react";
 import Button from "../../components/Button";
-import { useParams } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { IoMdMale, IoMdFemale } from "react-icons/io";
 import { useAuth } from "../../store/AuthContext";
-// import UserGroupBar from "../../components/UserGroupBar";
 import SingleSearchedGroup from "../../components/SingleSearchedGroup";
 
 const PublicProfilePage = () => {
@@ -136,9 +134,9 @@ const PublicProfilePage = () => {
               src={user.avatar}
               alt="User Avatar"
             />
-            <div className="flex flex-col justify-around gap-2">
-              <div className="flex flex-row items-center gap-2">
-                <p className="text-xl font-bold mx-5">{user.name}</p>
+            <div className="flex flex-col justify-around gap-6">
+              <div className="flex flex-row items-center  gap-2">
+                <p className="text-3xl font-bold mx-5">{user.name}</p>
                 {user.gender === "Male" && (
                   <IoMdMale className="fill-sky-500 text-2xl" />
                 )}

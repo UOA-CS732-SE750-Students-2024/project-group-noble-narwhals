@@ -216,11 +216,13 @@ const GalleryCard = ({
           </button>
         </div>
       </div>
+
       <div
         className="text-base text-sky-700 font-thin m-2 h-24 min-w-24 "
         ref={cardRef}
       >
         <p className="max-w-full overflow-wrap break-words min-h-24">
+
           {description.length > 150 ? (
             <>
               {description.substring(0, textLength)}
@@ -236,7 +238,7 @@ const GalleryCard = ({
       <div className="flex justify-between items-center">
         <AvatarGroup imageSources={groupImage} num={num} numLimit={numLimit} />
         <button
-          className={`flex justify-center items-center text-sky-800 font-bold border-solid border-2 border-sky-800 rounded-xl w-min h-6 ${
+          className={`flex justify-center items-center text-sky-800  border-solid border-2 border-sky-800 rounded-xl w-min h-6 ${
             isLoggedIn ? "hover:scale-110" : "opacity-50 cursor-not-allowed"
           }`}
           onClick={() => {

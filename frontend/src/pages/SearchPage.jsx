@@ -97,19 +97,27 @@ function SearchPage() {
     }
   }
 
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      handleSearchBthClick();
+    }
+  };
+
   useEffect(() => {
     // default search when page loaded
     handleSearchBthClick();
+    window.scrollTo({ top: 0 });
   }, []);
 
   return (
     <>
-      <div className="sticky top-navHeight border-b-4 border-b-hmblue-700 bg-white pt-1 z-10">
+      <div className="sticky top-navHeight border-b-4 border-b-hmblue-700 bg-white pt-1 z-[21] ">
         {/* search box */}
         <div className="w-4/5 mx-auto my-4 md:my-16">
           <LongSearchingBar
             searchBtnClick={handleSearchBthClick}
             value={mykeywords}
+            searchKeyDown={handleKeyDown}
           />
         </div>
         {/* <input className="appearance-none" max="99" type="number" /> */}
@@ -129,9 +137,9 @@ function SearchPage() {
         </div>
       </div>
       {/* search result list */}
-      <div className="min-h-96">
+      <div className="min-h-searchContentHeight mb-32">
         {displayedGroups.length === 0 ? (
-          <p className="mt-10 text-xl">
+          <p className="pt-10 text-xl my-4">
             No groups found, try some other key words. You can separete keywords
             with blank.
           </p>
