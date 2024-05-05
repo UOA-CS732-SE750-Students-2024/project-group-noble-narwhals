@@ -38,7 +38,14 @@ function LikedGroupPage() {
   let likedGroups = user.likedGroups;
   // sort the groups by time
   if (likedGroups && likedGroups.length > 0) {
-    likedGroups.sort((a, b) => {
+    user.likedGroups.sort((a, b) => {
+      if (a.groupStatus === "available" && b.groupStatus !== "available") {
+        return -1;
+      }
+      if (b.groupStatus === "available" && a.groupStatus !== "available") {
+        return 1;
+      }
+
       return new Date(b.createDate) - new Date(a.createDate);
     });
   }
