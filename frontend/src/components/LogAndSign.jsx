@@ -108,7 +108,7 @@ function LogAndSign({ loginType, switchHandler }) {
         </div>
         <div className="flex flex-col items-center gap-3">
           <div className="font-bungee text-xl ">OR</div>
-          <div className="mb-9">
+          <div className="mb-9 flex flex-col items-center">
             <Button
               className="flex flex-row bg-white items-center gap-4 p-4 h-11 mb-2 rounded-full w-64 "
               onClick={googleAuth}
