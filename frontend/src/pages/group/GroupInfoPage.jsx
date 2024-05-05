@@ -19,6 +19,7 @@ function GroupInfoPage() {
   const { user } = useAuth();
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     const fetchGroupDetails = async () => {
       try {
         const response = await axios.get(
