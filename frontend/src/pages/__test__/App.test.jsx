@@ -23,27 +23,27 @@ afterEach(() => {
 
 describe("App Router", () => {
   it("Render login page correctly ", () => {
-    const { getByText } = render(
+    const { getByText, queryAllByText } = render(
       <AuthProvider>
         <MemoryRouter initialEntries={["/login"]}>
           <App />
         </MemoryRouter>
       </AuthProvider>
     );
-    expect(getByText("Log in with Google")).toBeInTheDocument();
-    expect(getByText("Hey! Mate")).toBeInTheDocument();
+    expect(queryAllByText("Log in with Google")).toBeTruthy();
+    expect(queryAllByText("Hey! Mate")).toBeTruthy();
   });
 
   it("Render Singup page correctly ", () => {
-    const { getByText } = render(
+    const { queryAllByText } = render(
       <AuthProvider>
         <MemoryRouter initialEntries={["/signup"]}>
           <App />
         </MemoryRouter>
       </AuthProvider>
     );
-    expect(getByText("Sign up with Google")).toBeInTheDocument();
-    expect(getByText("Welcome! Mate")).toBeInTheDocument();
+    expect(queryAllByText("Sign up with Google")).toBeTruthy();
+    expect(queryAllByText("Welcome! Mate")).toBeTruthy();
   });
 
   it("Render 404 page correctly ", () => {

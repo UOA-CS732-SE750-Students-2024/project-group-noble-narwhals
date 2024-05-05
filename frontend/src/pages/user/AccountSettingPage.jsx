@@ -1,5 +1,4 @@
 import React from "react";
-import "../../index.css";
 import Button from "../../components/Button";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
@@ -77,12 +76,12 @@ function AccountSettingsPage() {
   };
 
   const handlePasswordChange = (event) => {
+    if (!isPasswordChanged) {
+      // clear the password field first if it is not changed before
+      setPassword("");
+      setIsPasswordChanged(true);
+    }
     setPassword(event.target.value);
-    setIsPasswordChanged(true);
-    // User has modified the password field
-    // this is a flag to check if the user has changed the password field to prevent user submitting mistakenly
-    // but now I have added a restriction to the password length, so this flag is not necessary
-    // it remains because it hard to find all the places where it is used
   };
 
   const handleChangeAvatar = async () => {
@@ -178,10 +177,13 @@ function AccountSettingsPage() {
     if (gender !== "Not specified") {
       updatedUserData.gender = gender;
     }
+    if (isPasswordChanged) {
+      if (password.length < 8) {
+        alert("Password must be at least 8 characters long.");
+        return;
+      }
+      updatedUserData.password = password;
 
-    if (isPasswordChanged && password.length < 8) {
-      alert("Password must be at least 8 characters long.");
-      return;
     }
 
     setIsEditing(false); // Disable editing mode after submitting the form
@@ -269,7 +271,6 @@ function AccountSettingsPage() {
         console.error("Failed to delete account:", error);
       }
     } else {
-      console.log("Account deletion canceled.");
     }
   };
 
@@ -279,7 +280,7 @@ function AccountSettingsPage() {
 
   return (
     <div className="w-4/5 m-4 p-4">
-      <div className="text-3xl mb-5">Account Settings</div>
+      <div className="text-3xl font-bold mb-5">Account Settings</div>
       {user.isVerification ? (
         <p className="text-gray-400 mb-2">Your account has been verified</p>
       ) : (
@@ -295,7 +296,6 @@ function AccountSettingsPage() {
       )}
       <div>
         <div>
-          {" "}
           {/* Avatar*/}
           <p className="font-bold text-xl mb-3">Avatar</p>
           <div className="flex flex-row">

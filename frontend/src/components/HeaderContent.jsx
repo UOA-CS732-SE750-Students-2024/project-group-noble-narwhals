@@ -15,16 +15,20 @@ function HeaderContent({
   deadlineDate,
   groupStatus,
   groupMembers,
+  onAddApplication,
+  onApplicationRemove,
+  onMemberHandler,
+  groupType,
 }) {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const [hasApplied, setHasApplied] = useState(false);
   const [applicationStatus, setApplicationStatus] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [applicationMessage, setApplicationMessage] = useState("");
-  const { isLoggedIn, user } = useAuth();
+  const { isLoggedIn, user, updateAuth } = useAuth();
   const [liked, setLiked] = useState(false);
   const navigate = useNavigate();
-  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+
 
   const isGroupMember =
     user && groupMembers.some((member) => member._id === user._id);
@@ -41,7 +45,7 @@ function HeaderContent({
   const fetchApplicationStatus = async () => {
     try {
       const response = await axios.get(
-        `${apiBaseUrl}/api/groups/${groupId}/has-applied`,
+        `${API_BASE_URL}/api/groups/${groupId}/has-applied`,
         {
           params: { userId: user._id },
         }
@@ -56,12 +60,9 @@ function HeaderContent({
 
   const checkLikeStatus = async () => {
     if (isLoggedIn && groupId && user._id) {
-      try {
-        const isLiked = user.likedGroups.some((group) => group._id === id);
-        setLiked(isLiked);
-      } catch (error) {
-        console.error("Error checking like status:", error);
-      }
+      const isLiked = user.likedGroups.some((group) => group._id === groupId);
+      setLiked(isLiked);
+
     }
   };
 
@@ -76,9 +77,11 @@ function HeaderContent({
 
     const endpoint = newLikedStatus ? `like/${groupId}` : `unlike/${groupId}`;
     try {
-      await axios.post(`${apiBaseUrl}/api/user/${endpoint}`, {
+      await axios.post(`${API_BASE_URL}/api/user/${endpoint}`, {
         userId: user._id,
       });
+      updateAuth();
+
     } catch (error) {
       console.error("Failed to toggle like:", error);
       setLiked(!newLikedStatus);
@@ -110,18 +113,20 @@ function HeaderContent({
       if (window.confirm("Are you sure you want to cancel your application?")) {
         try {
           const response = await axios.post(
-            `${apiBaseUrl}/api/groups/cancel-application/${groupId}`,
+            `${API_BASE_URL}/api/groups/cancel-application/${groupId}`,
+
             { userId: user._id }
           );
 
           setHasApplied(false);
           setApplicationStatus("");
-          alert("Your application has been cancelled.");
+          onApplicationRemove(user._id);
           setShowModal(false);
+          updateAuth();
         } catch (error) {
           alert(
             "Failed to cancel the application: " +
-              (error.response?.data?.message || error.message)
+            (error.response?.data?.message || error.message)
           );
         }
       }
@@ -136,7 +141,8 @@ function HeaderContent({
 
     try {
       const response = await axios.post(
-        `${apiBaseUrl}/api/groups/join/${groupId}/group`,
+        `${API_BASE_URL}/api/groups/join/${groupId}/group`,
+
         {
           userId: user._id,
           message: applicationMessage,
@@ -146,11 +152,19 @@ function HeaderContent({
       setHasApplied(true);
       setApplicationStatus("pending");
       setShowModal(false);
-      alert("Your application to join the group has been submitted!");
+
+      const newApp = {
+        applicantId: { _id: user._id, avatar: user.avatar, name: user.name },
+        groupStatus: "available",
+        applicationStatus: "pending",
+        message: applicationMessage,
+      };
+      onAddApplication(newApp);
+      updateAuth();
     } catch (error) {
       alert(
         "Failed to apply to the group: " +
-          (error.response?.data?.message || error.message)
+        (error.response?.data?.message || error.message)
       );
     }
   };
@@ -170,14 +184,16 @@ function HeaderContent({
 
     try {
       const response = await axios.post(
-        `${apiBaseUrl}/api/groups/quit/${groupId}`,
+        `${API_BASE_URL}/api/groups/quit/${groupId}`,
         { userId: user._id }
       );
-      alert("You have successfully left the group.");
+      onMemberHandler(user._id, "remove");
+      updateAuth();
+
     } catch (error) {
       alert(
         "Failed to leave the group: " +
-          (error.response?.data?.message || error.message)
+        (error.response?.data?.message || error.message)
       );
     }
   };
@@ -191,7 +207,8 @@ function HeaderContent({
     ) {
       try {
         const response = await axios.patch(
-          `${apiBaseUrl}/api/groups/dismiss/${groupId}`,
+          `${API_BASE_URL}/api/groups/dismiss/${groupId}`,
+
           {
             groupStatus: "dismissed",
           }
@@ -202,7 +219,7 @@ function HeaderContent({
       } catch (error) {
         alert(
           "Failed to dismiss the group: " +
-            (error.response?.data?.message || error.message)
+          (error.response?.data?.message || error.message)
         );
       }
     }
@@ -218,7 +235,7 @@ function HeaderContent({
     ) {
       try {
         const response = await axios.patch(
-          `${apiBaseUrl}/api/groups/update/${groupId}`,
+          `${API_BASE_URL}/api/groups/close/${groupId}`,
           {
             groupStatus: "closed",
           }
@@ -229,7 +246,7 @@ function HeaderContent({
       } catch (error) {
         alert(
           "Failed to close the group: " +
-            (error.response?.data?.message || error.message)
+          (error.response?.data?.message || error.message)
         );
       }
     }
@@ -240,9 +257,17 @@ function HeaderContent({
       <div className="header-content flex justify-between items-start mb-4">
         <div className="header-title">
           <div className="text-4xl font-bold mb-2">{groupName}</div>
-          <Link to="/" className="text-primary">
-            Activity
-          </Link>
+          <div>
+            {groupType === "group" ? (
+              <Link to="/" className="text-primary">
+                Group
+              </Link>
+            ) : (
+              <Link to="/" className="text-primary">
+                Activity
+              </Link>
+            )}
+          </div>
           <div className="activity-detail py-6 mt-1">
             <p className="mb-2 flex items-center text-1xl">{groupTags}</p>
             <p className="mb-2 -mt-6 text-sm text-gray-500">
@@ -262,7 +287,7 @@ function HeaderContent({
           {isHost && (
             <>
               <Button
-                className="py-3 px-16"
+                className="px-4 py-1.5 sm:px-3 sm:py-1 md:px-4 md:py-1.5 lg:px-6 lg:py-2"
                 style_type="border"
                 onClick={handleEditGroup}
               >
@@ -272,7 +297,7 @@ function HeaderContent({
                 <>
                   {!isPastDeadline && (
                     <Button
-                      className="py-3 px-16"
+                      className="px-4 py-1.5 sm:px-3 sm:py-1 md:px-4 md:py-1.5 lg:px-6 lg:py-2"
                       style_type="border"
                       onClick={handleDismissGroup}
                     >
@@ -281,7 +306,7 @@ function HeaderContent({
                   )}
                   {isPastDeadline && (
                     <Button
-                      className="py-3 px-16"
+                      className="px-4 py-1.5 sm:px-3 sm:py-1 md:px-4 md:py-1.5 lg:px-6 lg:py-2"
                       style_type="border"
                       onClick={handleCloseGroup}
                     >
@@ -293,14 +318,15 @@ function HeaderContent({
               {(groupStatus === "closed" ||
                 groupStatus === "dismissed" ||
                 groupStatus === "full") && (
-                <div className="py-3 px-16" style_type="border">
-                  {groupStatus === "closed"
-                    ? "This group is closed"
-                    : groupStatus === "dismissed"
-                    ? "This group is dismissed"
-                    : "This group is full"}
-                </div>
-              )}
+                  <div className="py-2 px-4 bg-gray-200 rounded-full" style_type="border">
+                    {groupStatus === "closed"
+                      ? "This group is closed"
+                      : groupStatus === "dismissed"
+                        ? "This group is dismissed"
+                        : "This group is full"}
+                  </div>
+                )}
+
             </>
           )}
           {!isHost && (
@@ -309,20 +335,21 @@ function HeaderContent({
                 <div className="flex flex-col items-center py-3 px-16">
                   {isGroupMember && (
                     <Button
-                      className="mb-4 py-3 px-16"
+                      className="px-4 py-1.5 sm:px-3 sm:py-1 md:px-4 md:py-1.5 lg:px-6 lg:py-2"
                       style_type="border"
                       onClick={handleQuitGroup}
                     >
                       Quit Group
                     </Button>
                   )}
-                  <div>This group is full</div>
+                  <div className="py-2 px-4 mt-2 bg-gray-200 rounded-full">This group is full</div>
                 </div>
               ) : groupStatus === "available" ? (
                 <>
-                  {hasApplied ? (
+                  {!isGroupMember && (hasApplied ? (
                     <Button
-                      className="py-3 px-16"
+                      className="px-4 py-1.5 sm:px-3 sm:py-1 md:px-4 md:py-1.5 lg:px-6 lg:py-2"
+
                       style_type="border"
                       onClick={handleCancelApplication}
                     >
@@ -330,15 +357,15 @@ function HeaderContent({
                     </Button>
                   ) : (
                     <Button
-                      className="py-3 px-16"
+                      className="px-4 py-1.5 sm:px-3 sm:py-1 md:px-4 md:py-1.5 lg:px-6 lg:py-2"
                       style_type="fill"
                       onClick={handleJoinButtonClick}
                     >
                       Join
                     </Button>
-                  )}
+                  ))}
                   <Button
-                    className="py-3 px-16 flex items-center"
+                    className="px-4 py-1.5 sm:px-3 sm:py-1 md:px-4 md:py-1.5 lg:px-6 lg:py-2 flex items-center"
                     style_type="border"
                     onClick={toggleLike}
                   >
@@ -351,7 +378,7 @@ function HeaderContent({
                   </Button>
                   {isGroupMember && (
                     <Button
-                      className="py-3 px-16"
+                      className="px-4 py-1.5 sm:px-3 sm:py-1 md:px-4 md:py-1.5 lg:px-6 lg:py-2"
                       style_type="border"
                       onClick={handleQuitGroup}
                     >
@@ -360,7 +387,7 @@ function HeaderContent({
                   )}
                 </>
               ) : (
-                <div className="py-3 px-16" style_type="border">
+                <div className="py-2 px-4 bg-gray-200 rounded-full" style_type="border">
                   This group is {groupStatus}
                 </div>
               )}
@@ -370,7 +397,7 @@ function HeaderContent({
       </div>
       {showModal && (
         <div
-          className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full"
+          className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50"
           id="my-modal"
         >
           <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
@@ -379,7 +406,7 @@ function HeaderContent({
                 Application Message
               </h3>
               <textarea
-                className="mt-2 px-7 py-3 w-full text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+                className="mt-2 p-2 min-h-24 w-full text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
                 rows="3"
                 placeholder="Enter your message"
                 value={applicationMessage}

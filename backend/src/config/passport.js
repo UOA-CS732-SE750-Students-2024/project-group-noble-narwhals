@@ -2,7 +2,7 @@ import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import { Strategy as LocalStrategy } from "passport-local";
 import User from "../models/userModel.js";
 import bcrypt from "bcrypt";
-import mongoose from "mongoose";
+
 
 export default function passportSetup(passport) {
   passport.use(
@@ -17,7 +17,7 @@ export default function passportSetup(passport) {
         if (req.user) {
           // check if the user has a googleId
           if (!req.user.googleId) {
-            console.log("No googleId found, linking Google account...");
+
             // if no googleId, link the account with Google
             req.user.googleId = profile.id;
             req.user.isVerification = true;

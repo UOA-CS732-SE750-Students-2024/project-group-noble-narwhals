@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Button from "./Button";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { useAuth } from "../store/AuthContext";
 
 function Applicant({
   username,
@@ -11,8 +12,10 @@ function Applicant({
   applicationId,
   userId,
   onApplicationHandled,
+  onMemberHandler,
 }) {
   const [hover, setHover] = useState(false);
+  const { updateAuth } = useAuth();
   const isLongMessage = message.length > 50;
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
@@ -24,8 +27,9 @@ function Applicant({
           applicationStatus: "accepted",
         }
       );
-      alert("Application accepted successfully!");
-      onApplicationHandled(applicationId, "accepted");
+      onApplicationHandled(applicationId);
+      onMemberHandler(applicationId, "add");
+      updateAuth();
     } catch (error) {
       alert(
         "Failed to accept application: " +
@@ -42,8 +46,8 @@ function Applicant({
           applicationStatus: "rejected",
         }
       );
-      alert("Application rejected successfully!");
-      onApplicationHandled(applicationId, "rejected");
+      onApplicationHandled(applicationId);
+      updateAuth();
     } catch (error) {
       console.log("Error caught:", error);
       alert(
@@ -56,7 +60,7 @@ function Applicant({
   return (
     <div
       className="flex flex-col items-center justify-between py-6 px-4 bg-gradient-to-br from-bg1 to-bg2 rounded-lg overflow-hidden mb-14 transition-all duration-500 ease-in-out relative"
-      style={{ width: "240px", height: "300px" }}
+      style={{ minWidth: "240px", minHeight: "300px" }}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
     >
@@ -86,7 +90,7 @@ function Applicant({
           </Link>
         </div>
         <div
-          className={`h-full my-2 text-center overflow-auto cursor-pointer ${
+          className={`h-full my-2 text-center overflow-auto ${
             hover && isLongMessage
               ? "overflow-auto  hide-scrollbar"
               : " overflow-hidden"

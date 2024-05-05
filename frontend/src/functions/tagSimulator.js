@@ -25,7 +25,7 @@ function tagSimulator(tags, tagList, setTagRecommendation) {
     try {
       const response = await axios.post(url, data);
       if (response.data.success) {
-        setTagRecommendation(response.data.tags);
+        setTagRecommendation(response.data);
       }
     } catch (error) {
       console.error("Failed to fetch data:", error);

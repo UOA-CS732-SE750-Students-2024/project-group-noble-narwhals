@@ -36,7 +36,6 @@ function extractTopTagsFlatList(tagData) {
     if (!data.tag) {
       return [];
     }
-
     // Push the main tag and the top two similar tags into flatList
     if (allTagsWithScore[0].name === data.tag) {
       flatList.push(

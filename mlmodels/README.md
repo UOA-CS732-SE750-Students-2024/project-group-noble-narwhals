@@ -32,7 +32,7 @@ pip install -r requirements.txt
 
 Note: If you are using MacOS M series chip, you may need to install the comments in the requirements.txt file manually.
 
-````sh
+
 ## Run HTTP Server
 Change directory to scripts.
 ```sh
@@ -43,10 +43,6 @@ Run the server
 
 ```sh
 flask run
-
-or
-
-flask run -h localhost -p 5050
 ```
 
 The server will be running on 5000 port

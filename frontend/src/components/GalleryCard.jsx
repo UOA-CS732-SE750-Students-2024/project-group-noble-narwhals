@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { MdFavorite } from "react-icons/md";
 import { MdFavoriteBorder } from "react-icons/md";
 import AvatarGroup from "./AvatarGroup";
@@ -17,12 +17,39 @@ const GalleryCard = ({
   description,
 }) => {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-  const { isLoggedIn, user } = useAuth();
+  const { isLoggedIn, user, updateAuth } = useAuth();
   const [hasApplied, setHasApplied] = useState(false);
   const [applicationStatus, setApplicationStatus] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [liked, setLiked] = useState(isFavorite);
   const [applicationMessage, setApplicationMessage] = useState("");
+  const [textLength, setTextLength] = useState(90);
+  const cardRef = useRef(null);
+
+  useEffect(() => {
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (let entry of entries) {
+        const crWidth = entry.contentRect.width;
+        if (crWidth < 210) {
+          setTextLength(65);
+        } else if (crWidth < 260) {
+          setTextLength(100);
+        } else {
+          setTextLength(120);
+        }
+      }
+    });
+
+    if (cardRef.current) {
+      resizeObserver.observe(cardRef.current);
+    }
+
+    return () => {
+      if (cardRef.current) {
+        resizeObserver.unobserve(cardRef.current);
+      }
+    };
+  }, []);
   useEffect(() => {
     setLiked(isFavorite);
   }, [isFavorite]);
@@ -73,6 +100,7 @@ const GalleryCard = ({
       await axios.post(`${API_BASE_URL}/api/user/${endpoint}`, {
         userId: user._id,
       });
+      updateAuth();
     } catch (error) {
       console.error("Failed to toggle like:", error);
       setLiked(!newLikedStatus);
@@ -111,6 +139,7 @@ const GalleryCard = ({
           setApplicationStatus("");
           alert("Your application has been cancelled.");
           setShowModal(false);
+          updateAuth();
         } catch (error) {
           alert(
             "Failed to cancel the application: " +
@@ -139,6 +168,7 @@ const GalleryCard = ({
       setApplicationStatus("pending");
       setShowModal(false);
       alert("Your application to join the group has been submitted!");
+      updateAuth();
     } catch (error) {
       alert(
         "Failed to apply to the group: " +
@@ -186,11 +216,16 @@ const GalleryCard = ({
           </button>
         </div>
       </div>
-      <div className="text-base text-sky-700 font-thin m-2 h-24 min-w-24">
-        <p className="max-w-full overflow-wrap break-words">
+
+      <div
+        className="text-base text-sky-700 font-thin m-2 h-24 min-w-24 "
+        ref={cardRef}
+      >
+        <p className="max-w-full overflow-wrap break-words min-h-24">
+
           {description.length > 150 ? (
             <>
-              {description.substring(0, 150)}
+              {description.substring(0, textLength)}
               <Link to={`/group/${id}`} className="ml-2">
                 ...
               </Link>
@@ -203,7 +238,7 @@ const GalleryCard = ({
       <div className="flex justify-between items-center">
         <AvatarGroup imageSources={groupImage} num={num} numLimit={numLimit} />
         <button
-          className={`flex justify-center items-center text-sky-800 font-bold border-solid border-2 border-sky-800 rounded-xl w-min h-6 ${
+          className={`flex justify-center items-center text-sky-800  border-solid border-2 border-sky-800 rounded-xl w-min h-6 ${
             isLoggedIn ? "hover:scale-110" : "opacity-50 cursor-not-allowed"
           }`}
           onClick={() => {
@@ -229,7 +264,7 @@ const GalleryCard = ({
                 Application Message
               </h3>
               <textarea
-                className="mt-2 px-7 py-3 w-full text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+                className="mt-2 p-2 w-full text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
                 rows="3"
                 placeholder="Enter your message"
                 value={applicationMessage}

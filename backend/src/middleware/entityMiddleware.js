@@ -14,7 +14,6 @@ export const getTag = getEntityMiddleware(Tag, "Tag");
 export const getUser = getEntityMiddleware(User, "User");
 
 function getEntityMiddleware(Model, entityName) {
-
   return async function (req, res, next) {
     let entity;
     try {
@@ -33,7 +32,6 @@ function getEntityMiddleware(Model, entityName) {
     res[entityName.toLowerCase()] = entity;
     next();
   };
-
 }
 
 export default getEntityMiddleware;

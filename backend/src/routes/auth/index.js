@@ -3,6 +3,7 @@ import passport from "passport";
 import isLoggedIn from "../../middleware/authMiddleware.js";
 import bcrypt from "bcrypt";
 import User from "../../models/userModel.js";
+import Notification from "../../models/notificationModel.js";
 import { avatarStyles } from "../api/user.js";
 const router = express.Router();
 
@@ -29,14 +30,13 @@ router.post("/login", (req, res, next) => {
       }
       res.json({ isLoggedIn: true, user: user });
     });
-  })(req,res,next);
+  })(req, res, next);
 });
 
 router.post("/signup", async (req, res) => {
   const email = req.body.email;
 
   try {
-    
     let checkUser = await User.findOne({ email });
     if (checkUser) {
       return res
@@ -60,7 +60,6 @@ router.post("/signup", async (req, res) => {
     const avatarUrl = `https://api.dicebear.com/8.x/${selectedStyle}/svg?seed=${user._id}`;
     user.avatar = avatarUrl;
 
-    console.log("1", user);
     await user.save();
     res
       .status(201)
@@ -79,7 +78,6 @@ router.get(
   passport.authenticate("google", { scope: ["profile", "email"] })
 );
 
-
 router.get(
   "/google/callback",
   passport.authenticate("google", {
@@ -88,7 +86,11 @@ router.get(
   }),
   (req, res) => {
     if (req.user) {
-      res.redirect(`${process.env.CLIENT_URL}/user/settings/${req.user._id}`);
+      if (req.user.accountType === "google") {
+        res.redirect(`${process.env.CLIENT_URL}/`);
+      } else {
+        res.redirect(`${process.env.CLIENT_URL}/user/settings/${req.user._id}`);
+      }
     } else {
       res.status(500).redirect(`${process.env.CLIENT_URL}/signup`).json({
         success: false,
@@ -98,8 +100,15 @@ router.get(
   }
 );
 
-router.get("/check-session", isLoggedIn, (req, res) => {
-  res.json({ isLoggedIn: true, user: req.user });
+router.get("/check-session", isLoggedIn, async (req, res) => {
+  //get unread messages number
+  const messages = await Notification.find({
+    receiverId: req.user._id,
+    isRead: false,
+  });
+  const newUser = { ...req.user._doc, unreadMessages: messages.length };
+
+  res.json({ isLoggedIn: true, user: newUser });
 });
 
 router.get("/logout", isLoggedIn, (req, res) => {
