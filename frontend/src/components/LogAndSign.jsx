@@ -108,12 +108,15 @@ function LogAndSign({ loginType, switchHandler }) {
         </div>
         <div className="flex flex-col items-center gap-3">
           <div className="font-bungee text-xl ">OR</div>
-          <Button
-            className="flex flex-row bg-white items-center gap-4 p-4 h-11 mb-10 rounded-full w-64 "
-            onClick={googleAuth}
-          >
-            <FcGoogle className="w-8 h-8 " /> {type} with Google
-          </Button>
+          <div className="mb-9">
+            <Button
+              className="flex flex-row bg-white items-center gap-4 p-4 h-11 mb-2 rounded-full w-64 "
+              onClick={googleAuth}
+            >
+              <FcGoogle className="w-8 h-8 " /> {type} with Google
+            </Button>
+            We only support UOA google account
+          </div>
         </div>
         <div className="flex flex-col items-center">
           {contentBlow}
