@@ -39,9 +39,20 @@ function ApplyInProgressPage() {
   let appliedGroups = user.appliedGroups;
   // sort the groups by time
   if (appliedGroups && appliedGroups.length > 0) {
-    appliedGroups.sort((a, b) => {
+    // appliedGroups.sort((a, b) => {
+    //   return new Date(b.createDate) - new Date(a.createDate);
+    // });
+    user.appliedGroups.sort((a, b) => {
+      if (a.groupStatus === "available" && b.groupStatus !== "available") {
+        return -1;
+      }
+      if (b.groupStatus === "available" && a.groupStatus !== "available") {
+        return 1;
+      }
+
       return new Date(b.createDate) - new Date(a.createDate);
     });
+
   }
 
   return (
