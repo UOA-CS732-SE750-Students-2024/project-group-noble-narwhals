@@ -2,3 +2,5 @@
 .venv
 __pycache__
 python -m venv .venv
+
+.DS_Store
