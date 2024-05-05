@@ -17,6 +17,7 @@ const PublicProfilePage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     const fetchUserData = async () => {
       // Fetch user data from API, if the user is not logged in or viewing another user's profile
       try {
