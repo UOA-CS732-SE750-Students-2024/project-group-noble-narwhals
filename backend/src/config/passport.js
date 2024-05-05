@@ -3,6 +3,7 @@ import { Strategy as LocalStrategy } from "passport-local";
 import User from "../models/userModel.js";
 import bcrypt from "bcrypt";
 
+
 export default function passportSetup(passport) {
   passport.use(
     new GoogleStrategy(
@@ -16,6 +17,7 @@ export default function passportSetup(passport) {
         if (req.user) {
           // check if the user has a googleId
           if (!req.user.googleId) {
+
             // if no googleId, link the account with Google
             req.user.googleId = profile.id;
             req.user.isVerification = true;

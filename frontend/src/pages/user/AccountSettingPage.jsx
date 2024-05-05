@@ -103,7 +103,6 @@ function AccountSettingsPage() {
       const data = await response.json();
 
       setAvatar(data.avatar);
-
       setUser((prevUser) => ({ ...prevUser, avatar: data.avatar }));
     } catch (error) {
       console.error("Failed to change avatar:", error);
@@ -155,7 +154,6 @@ function AccountSettingsPage() {
 
       const newTag = await response.json();
       setTags((prevTags) => [...prevTags, newTag]);
-
       setNewTag("");
     } catch (error) {
       console.error("Failed to add tag:", error);
@@ -179,13 +177,13 @@ function AccountSettingsPage() {
     if (gender !== "Not specified") {
       updatedUserData.gender = gender;
     }
-
     if (isPasswordChanged) {
       if (password.length < 8) {
         alert("Password must be at least 8 characters long.");
         return;
       }
       updatedUserData.password = password;
+
     }
 
     setIsEditing(false); // Disable editing mode after submitting the form
@@ -244,7 +242,6 @@ function AccountSettingsPage() {
 
   const deleteAccount = async () => {
     // Confirm the user's intention to delete the account
-
     if (
       window.confirm(
         "Are you sure you want to delete your account? This action cannot be undone."
