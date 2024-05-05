@@ -180,15 +180,15 @@ const GalleryCard = ({
   const groupImage = imageLink;
   return (
     <div className="bg-white p-4 rounded-lg shadow-basic hover:bg-slate-100 min-w-40">
-      <div className="flex justify-between min-w-36">
-        <div className="flex flex-row justify-between">
+      <div className="flex justify-between min-w-40">
+        <div className="flex flex-row justify-between min-w-32">
           <img
             key={1}
             className="inline-block h-10 w-10 rounded-full ring-2 ring-white bg-gray-500 items-center"
             src={hostAvatar}
             alt={`Host Avatar`}
           />
-          <div className="flex flex-col justify-center ml-3 w-full max-w-24">
+          <div className="flex flex-col justify-center ml-3 w-full min-w-24">
             <Link
               to={`/group/${id}`}
               className="text-base font-bold text-sky-800 hover:underline"
@@ -199,7 +199,7 @@ const GalleryCard = ({
           </div>
         </div>
 
-        <div className="flex items-center">
+        <div className="flex items-center w-6">
           {/* favarite button */}
           <button
             className={`flex justify-center items-center rounded-full p-0 h-6 w-6 ${
@@ -218,12 +218,11 @@ const GalleryCard = ({
       </div>
 
       <div
-        className="text-base text-sky-700 font-thin m-2 h-24 min-w-24 "
+        className="text-base text-sky-700 font-thin m-2 h-28 min-w-24 "
         ref={cardRef}
       >
-        <p className="max-w-full overflow-wrap break-words min-h-24">
-
-          {description.length > 150 ? (
+        <p className="max-w-full overflow-wrap break-words max-h-28">
+          {description.length > 90 ? (
             <>
               {description.substring(0, textLength)}
               <Link to={`/group/${id}`} className="ml-2">
