@@ -24,6 +24,7 @@ const GalleryCard = ({
   const [liked, setLiked] = useState(isFavorite);
   const [applicationMessage, setApplicationMessage] = useState("");
   const [textLength, setTextLength] = useState(90);
+  const [isMember, setIsMember] = useState(false);
   const cardRef = useRef(null);
 
   useEffect(() => {
@@ -68,13 +69,20 @@ const GalleryCard = ({
           params: { userId: user._id },
         }
       );
-      setHasApplied(response.data.hasApplied);
-      setApplicationStatus(response.data.status);
+      if (response.status === 200) {
+        setHasApplied(response.data.hasApplied);
+        setApplicationStatus(response.data.status);
+      }
+      const res = await axios.get(`${API_BASE_URL}/api/groups/${id}/detail`);
+      if (res.status === 200) {
+        setIsMember(
+          res.data.groupMembers.some((member) => member._id === user._id)
+        );
+      }
     } catch (error) {
       console.error("Error checking application status:", error);
     }
   };
-
   const checkLikeStatus = async () => {
     if (isLoggedIn && id && user._id) {
       try {
@@ -238,18 +246,18 @@ const GalleryCard = ({
         <AvatarGroup imageSources={groupImage} num={num} numLimit={numLimit} />
         <button
           className={`flex justify-center items-center text-sky-800  border-solid border-2 border-sky-800 rounded-xl w-min h-6 ${
-            isLoggedIn ? "hover:scale-110" : "opacity-50 cursor-not-allowed"
+            isLoggedIn && !isMember
+              ? "hover:scale-110"
+              : "opacity-50 cursor-not-allowed"
           }`}
           onClick={() => {
-            if (isLoggedIn) {
+            if (isLoggedIn && !isMember) {
               hasApplied ? handleCancelApplication() : handleJoinButtonClick();
-            } else {
-              null;
             }
           }}
-          disabled={!isLoggedIn}
+          disabled={!isLoggedIn || isMember}
         >
-          {hasApplied ? "Cancel" : "Join"}
+          {isMember ? "Applied" : hasApplied ? "Cancel" : "Join"}
         </button>
       </div>
       {showModal && (
