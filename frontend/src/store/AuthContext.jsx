@@ -38,8 +38,6 @@ export const AuthProvider = ({ children }) => {
       });
   }, [haveChange, isLoggedIn]);
 
-  useEffect(() => {}, [isLoggedIn, user, haveChange]);
-
   return (
     <AuthContext.Provider
       value={{

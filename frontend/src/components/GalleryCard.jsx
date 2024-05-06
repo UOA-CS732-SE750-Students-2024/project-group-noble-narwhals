@@ -17,13 +17,14 @@ const GalleryCard = ({
   description,
 }) => {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-  const { isLoggedIn, user, updateAuth } = useAuth();
+  const { isLoggedIn, user } = useAuth();
   const [hasApplied, setHasApplied] = useState(false);
   const [applicationStatus, setApplicationStatus] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [liked, setLiked] = useState(isFavorite);
   const [applicationMessage, setApplicationMessage] = useState("");
   const [textLength, setTextLength] = useState(90);
+  const [isMember, setIsMember] = useState(false);
   const cardRef = useRef(null);
 
   useEffect(() => {
@@ -62,14 +63,21 @@ const GalleryCard = ({
 
   const fetchApplicationStatus = async () => {
     try {
-      const response = await axios.get(
-        `${API_BASE_URL}/api/groups/${id}/has-applied`,
-        {
-          params: { userId: user._id },
+      const res = await axios.get(`${API_BASE_URL}/api/groups/${id}/detail`);
+      if (res.status === 200) {
+        setIsMember(
+          res.data.groupMembers.some((member) => member._id === user._id)
+        );
+
+        const applied = res.data.application.find(
+          (application) => application.applicantId._id === user._id
+        );
+        if (applied) {
+          setHasApplied(true);
+          setApplicationStatus(applied.applicationStatus);
         }
-      );
-      setHasApplied(response.data.hasApplied);
-      setApplicationStatus(response.data.status);
+
+      }
     } catch (error) {
       console.error("Error checking application status:", error);
     }
@@ -100,7 +108,6 @@ const GalleryCard = ({
       await axios.post(`${API_BASE_URL}/api/user/${endpoint}`, {
         userId: user._id,
       });
-      updateAuth();
     } catch (error) {
       console.error("Failed to toggle like:", error);
       setLiked(!newLikedStatus);
@@ -137,9 +144,7 @@ const GalleryCard = ({
           );
           setHasApplied(false);
           setApplicationStatus("");
-          alert("Your application has been cancelled.");
           setShowModal(false);
-          updateAuth();
         } catch (error) {
           alert(
             "Failed to cancel the application: " +
@@ -167,8 +172,6 @@ const GalleryCard = ({
       setHasApplied(true);
       setApplicationStatus("pending");
       setShowModal(false);
-      alert("Your application to join the group has been submitted!");
-      updateAuth();
     } catch (error) {
       alert(
         "Failed to apply to the group: " +
@@ -180,15 +183,15 @@ const GalleryCard = ({
   const groupImage = imageLink;
   return (
     <div className="bg-white p-4 rounded-lg shadow-basic hover:bg-slate-100 min-w-40">
-      <div className="flex justify-between min-w-36">
-        <div className="flex flex-row justify-between">
+      <div className="flex justify-between min-w-40">
+        <div className="flex flex-row justify-between min-w-32">
           <img
             key={1}
             className="inline-block h-10 w-10 rounded-full ring-2 ring-white bg-gray-500 items-center"
             src={hostAvatar}
             alt={`Host Avatar`}
           />
-          <div className="flex flex-col justify-center ml-3 w-full max-w-24">
+          <div className="flex flex-col justify-center ml-3 w-full min-w-24">
             <Link
               to={`/group/${id}`}
               className="text-base font-bold text-sky-800 hover:underline"
@@ -199,7 +202,7 @@ const GalleryCard = ({
           </div>
         </div>
 
-        <div className="flex items-center">
+        <div className="flex items-center w-6">
           {/* favarite button */}
           <button
             className={`flex justify-center items-center rounded-full p-0 h-6 w-6 ${
@@ -218,12 +221,11 @@ const GalleryCard = ({
       </div>
 
       <div
-        className="text-base text-sky-700 font-thin m-2 h-24 min-w-24 "
+        className="text-base text-sky-700 font-thin m-2 h-28 min-w-24 "
         ref={cardRef}
       >
-        <p className="max-w-full overflow-wrap break-words min-h-24">
-
-          {description.length > 150 ? (
+        <p className="max-w-full overflow-wrap break-words max-h-28">
+          {description.length > 90 ? (
             <>
               {description.substring(0, textLength)}
               <Link to={`/group/${id}`} className="ml-2">
@@ -239,18 +241,18 @@ const GalleryCard = ({
         <AvatarGroup imageSources={groupImage} num={num} numLimit={numLimit} />
         <button
           className={`flex justify-center items-center text-sky-800  border-solid border-2 border-sky-800 rounded-xl w-min h-6 ${
-            isLoggedIn ? "hover:scale-110" : "opacity-50 cursor-not-allowed"
+            isLoggedIn && !isMember
+              ? "hover:scale-110"
+              : "opacity-50 cursor-not-allowed"
           }`}
           onClick={() => {
-            if (isLoggedIn) {
+            if (isLoggedIn && !isMember) {
               hasApplied ? handleCancelApplication() : handleJoinButtonClick();
-            } else {
-              null;
             }
           }}
-          disabled={!isLoggedIn}
+          disabled={!isLoggedIn || isMember}
         >
-          {hasApplied ? "Cancel" : "Join"}
+          {isMember ? "Applied" : hasApplied ? "Cancel" : "Join"}
         </button>
       </div>
       {showModal && (

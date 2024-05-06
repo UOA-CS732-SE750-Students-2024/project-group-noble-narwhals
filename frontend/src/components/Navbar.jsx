@@ -83,7 +83,7 @@ function Navbar() {
               <img
                 src="/image/logo.png"
                 alt="logo"
-                className="h-11 rounded-lg w-full"
+                className="h-11 rounded-lg w-11"
               />
               {darkMode ? (
                 <img
