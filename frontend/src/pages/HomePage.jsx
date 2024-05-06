@@ -11,7 +11,7 @@ import handleGroupData from "../functions/hanldeGroupData";
 import { useNavigate } from "react-router-dom";
 
 function HomePage() {
-  const { isLoggedIn, user } = useAuth();
+  const { isLoggedIn, user, updateAuth } = useAuth();
   const [groupData, setGroupData] = useState([]);
   const [allTags, setAllTags] = useState([]);
   const [userTags, setUserTags] = useState([]);
@@ -102,6 +102,12 @@ function HomePage() {
       tagSimulator(userTags, allTags, setTagRecommendation);
     }
   }, [userTags, allTags]);
+
+  useEffect(() => {
+    return () => {
+      updateAuth();
+    };
+  }, []);
 
   // Take the top three tags of each group's tagRecommendation, put all tags into an array
   const flatTagList = extractTopTagsFlatList(tagRecommendation);

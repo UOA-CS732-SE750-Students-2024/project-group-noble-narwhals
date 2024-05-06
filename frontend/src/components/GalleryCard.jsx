@@ -17,7 +17,7 @@ const GalleryCard = ({
   description,
 }) => {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-  const { isLoggedIn, user, updateAuth } = useAuth();
+  const { isLoggedIn, user } = useAuth();
   const [hasApplied, setHasApplied] = useState(false);
   const [applicationStatus, setApplicationStatus] = useState("");
   const [showModal, setShowModal] = useState(false);
@@ -108,7 +108,6 @@ const GalleryCard = ({
       await axios.post(`${API_BASE_URL}/api/user/${endpoint}`, {
         userId: user._id,
       });
-      updateAuth();
     } catch (error) {
       console.error("Failed to toggle like:", error);
       setLiked(!newLikedStatus);
@@ -147,7 +146,6 @@ const GalleryCard = ({
           setApplicationStatus("");
           alert("Your application has been cancelled.");
           setShowModal(false);
-          updateAuth();
         } catch (error) {
           alert(
             "Failed to cancel the application: " +
@@ -176,7 +174,6 @@ const GalleryCard = ({
       setApplicationStatus("pending");
       setShowModal(false);
       alert("Your application to join the group has been submitted!");
-      updateAuth();
     } catch (error) {
       alert(
         "Failed to apply to the group: " +
