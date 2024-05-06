@@ -63,26 +63,26 @@ const GalleryCard = ({
 
   const fetchApplicationStatus = async () => {
     try {
-      const response = await axios.get(
-        `${API_BASE_URL}/api/groups/${id}/has-applied`,
-        {
-          params: { userId: user._id },
-        }
-      );
-      if (response.status === 200) {
-        setHasApplied(response.data.hasApplied);
-        setApplicationStatus(response.data.status);
-      }
       const res = await axios.get(`${API_BASE_URL}/api/groups/${id}/detail`);
       if (res.status === 200) {
         setIsMember(
           res.data.groupMembers.some((member) => member._id === user._id)
         );
+
+        const applied = res.data.application.find(
+          (application) => application.applicantId._id === user._id
+        );
+        if (applied) {
+          setHasApplied(true);
+          setApplicationStatus(applied.applicationStatus);
+        }
+
       }
     } catch (error) {
       console.error("Error checking application status:", error);
     }
   };
+
   const checkLikeStatus = async () => {
     if (isLoggedIn && id && user._id) {
       try {
@@ -144,7 +144,6 @@ const GalleryCard = ({
           );
           setHasApplied(false);
           setApplicationStatus("");
-          alert("Your application has been cancelled.");
           setShowModal(false);
         } catch (error) {
           alert(
@@ -173,7 +172,6 @@ const GalleryCard = ({
       setHasApplied(true);
       setApplicationStatus("pending");
       setShowModal(false);
-      alert("Your application to join the group has been submitted!");
     } catch (error) {
       alert(
         "Failed to apply to the group: " +
