@@ -169,7 +169,7 @@ Option 1 is our link above. If you want to test on your local machine, follow th
 4. Please install all the dependencies by `npm install` in both frontend and backend folder.
     
     ```jsx
-    cd /fronend
+    cd /frontend
     npm install
     ```
     
