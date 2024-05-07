@@ -1,4 +1,4 @@
-# Project introdution
+# HeyMate
 
 Hi, welcome to HeyMate! This is a website aimed at helping students from the University of Auckland find teammates for their courses or organizing activities for other students to participate in, strengthening interaction and cooperation on campus.
 This project contains several pages and various components; please feel free to try them.
