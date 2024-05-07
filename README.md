@@ -64,24 +64,8 @@ function Question() {
 ````
 ---
 
-# COMPSCI 732 / SOFTENG 750 project - Team Noble Narwhals
-
-Welcome to the project! I look forward to seeing your progress and your final results this semester!
-
-Your team members are:
-- Xinran Wang
-- Tianle Pan
-- Ryan Wu
-- Chelsea Huang
-- Zhaohua Li
-- Luming Jin
-
-![](./group-image/Noble%20Narwhals.webp)
-
-
-
-
 # Setup the project:
 - Cd /frontend and run `npm run dev` to start the frontend server
 - Cd /backend and run `npm run dev` to start the backend server(not setup yet).
 ````
+
