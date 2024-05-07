@@ -124,6 +124,7 @@ Notion link:
 During the initial stages of the project, we utilized Figma to conceptualize and design the user interface and experience. Figma's cloud-based design platform enables real-time collaboration, allowing multiple team members to work on designs simultaneously and provide feedback in a visually rich environment.
 
 Figma link:
+
 https://www.figma.com/file/KSlK8CWejPgMDMaLSnUKHT/732-project?type=design&node-id=0-1&mode=design&t=TwzwHA0tjhxQ7Mtm-0
 
 ## Framework
@@ -172,7 +173,7 @@ Option 1 is our link above. If you want to test on your local machine, follow th
     npm install
     ```
     
-5. To activate Python scripts, please refer to the [README.md](http://README.md) under `mlmodel` folder. 
+5. To activate Python scripts, please refer to the README.md under `mlmodel` folder. 
 6. Run frontend React in 1 terminal
     
     ```jsx
