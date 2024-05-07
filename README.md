@@ -63,3 +63,9 @@ function Question() {
 }
 ````
 ---
+
+# Setup the project:
+- Cd /frontend and run `npm run dev` to start the frontend server
+- Cd /backend and run `npm run dev` to start the backend server(not setup yet).
+````
+
