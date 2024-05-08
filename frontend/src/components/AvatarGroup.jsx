@@ -3,7 +3,7 @@ import React from "react";
 const AvatarGroup = ({ imageSources, num, numLimit }) => {
   const linkNum = imageSources.length;
   const imagesToShow =
-    typeof num === "number" ? imageSources.slice(0, linkNum) : imageSources;
+    typeof num === "number" ? imageSources.slice(0, num) : imageSources;
 
   return (
     <div className="flex justify-between items-center">

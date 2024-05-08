@@ -1,5 +1,4 @@
 import React from "react";
-import "../../index.css";
 import Button from "../../components/Button";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
@@ -24,12 +23,11 @@ function AccountSettingsPage() {
   const [newTag, setNewTag] = useState("");
   const [isPasswordChanged, setIsPasswordChanged] = useState(false);
 
-
   useEffect(() => {
     if (!isLoading && (!isLoggedIn || user._id !== userId)) {
       // if the user is not logged in, or logged in but not the user ID to be viewed
       // then he/she should be redirected to the home page
-      navigate('/');
+      navigate("/");
     }
     if (!isLoading) {
       setUsername(user.name);
@@ -38,21 +36,23 @@ function AccountSettingsPage() {
       setEmail(user.email);
       setPassword(user.password || "");
       setTags(user.profileTags);
-
     }
   }, [user, isLoading, isLoggedIn]);
 
-
   if (isLoading) {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
         <img src="/image/Spinner.svg" alt="Loading..." />
       </div>
     );
-  } 
-  // else {
-  //   console.log("user from accountsetting: ", user);
-  // }
+  }
 
   // if user is not found (is null)
   if (!user) {
@@ -62,7 +62,6 @@ function AccountSettingsPage() {
   /* if the user's account type is "google", then the password field should be hidden,
    because google account doesn't need password */
   const isGoogleAccount = user.accountType === "google";
-
 
   const handleEditClick = () => {
     setIsEditing(!isEditing); // toggle isEditing state
@@ -77,86 +76,95 @@ function AccountSettingsPage() {
   };
 
   const handlePasswordChange = (event) => {
+    if (!isPasswordChanged) {
+      // clear the password field first if it is not changed before
+      setPassword("");
+      setIsPasswordChanged(true);
+    }
     setPassword(event.target.value);
-    setIsPasswordChanged(true);
-    // User has modified the password field
-    // this is a flag to check if the user has changed the password field to prevent user submitting mistakenly
-    // but now I have added a restriction to the password length, so this flag is not necessary
-    // it remains because it hard to find all the places where it is used
   };
-
 
   const handleChangeAvatar = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/user/regenerate-avatar/${userId}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' }
-      });
+      const response = await fetch(
+        `${
+          import.meta.env.VITE_API_BASE_URL
+        }/api/user/regenerate-avatar/${userId}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+        }
+      );
       if (!response.ok) {
-        throw new Error(`HTTP error when avatar changes! Status: ${response.status}`);
+        throw new Error(
+          `HTTP error when avatar changes! Status: ${response.status}`
+        );
       }
       const data = await response.json();
 
       setAvatar(data.avatar);
-   
-      setUser(prevUser => ({ ...prevUser, avatar: data.avatar }));
-
-  
+      setUser((prevUser) => ({ ...prevUser, avatar: data.avatar }));
     } catch (error) {
-      console.error('Failed to change avatar:', error);
+      console.error("Failed to change avatar:", error);
     }
   };
 
   const handleAddNewTag = async (newTagName) => {
     if (!newTagName.trim()) {
-      console.error('Tag name is required.');
+      console.error("Tag name is required.");
       return;
     }
     // Format input: trim whitespace, replace spaces with hyphens, convert to lower case
-    const formattedTag = newTagName.trim().replace(/\s+/g, '-').toLowerCase();
+    const formattedTag = newTagName.trim().replace(/\s+/g, "-").toLowerCase();
     if (tags.length >= 6) {
-      alert('You can only have 6 tags maximum.');
+      alert("You can only have 6 tags maximum.");
       return;
     }
 
     // Check tag length constraint
     if (formattedTag.length > 20) {
-      alert('The tag length should be within 20 characters.');
+      alert("The tag length should be within 20 characters.");
       return;
     }
 
     // Check if the formatted tag is already in the profileTags
-    if (tags.some(tag => tag.name.toLowerCase() === formattedTag)) {
-      alert('Please add a unique tag.');
+    if (tags.some((tag) => tag.name.toLowerCase() === formattedTag)) {
+      alert("Please add a unique tag.");
       return;
     }
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/tag`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: formattedTag, isProfileTag: true, isGroupTag: false })
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/api/tag`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: formattedTag,
+            isProfileTag: true,
+            isGroupTag: false,
+          }),
+        }
+      );
 
       if (!response.ok) {
         const errorData = await response.json();
-        console.error('Failed to add tag:', errorData.errors);
+        console.error("Failed to add tag:", errorData.errors);
         return;
       }
 
       const newTag = await response.json();
-      setTags(prevTags => [...prevTags, newTag]);
-
-      setNewTag('');
+      setTags((prevTags) => [...prevTags, newTag]);
+      setNewTag("");
     } catch (error) {
-      console.error('Failed to add tag:', error);
+      console.error("Failed to add tag:", error);
     }
   };
 
   const handleDeleteTag = async (tagId) => {
     try {
-      setTags(prevTags => prevTags.filter(tag => tag._id !== tagId));
+      setTags((prevTags) => prevTags.filter((tag) => tag._id !== tagId));
     } catch (error) {
-      console.error('Failed to delete tag:', error.message);
+      console.error("Failed to delete tag:", error.message);
     }
   };
 
@@ -166,54 +174,57 @@ function AccountSettingsPage() {
       profileTags: tags,
     };
 
-
-    if (gender !== 'Not specified') {
+    if (gender !== "Not specified") {
       updatedUserData.gender = gender;
     }
-
-    if (isPasswordChanged && password.length < 8) {
-      alert('Password must be at least 8 characters long.');
-      return;
-    }else{
+    if (isPasswordChanged) {
+      if (password.length < 8) {
+        alert("Password must be at least 8 characters long.");
+        return;
+      }
       updatedUserData.password = password;
+
     }
-  
 
     setIsEditing(false); // Disable editing mode after submitting the form
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/user/update/${user._id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updatedUserData)
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/api/user/update/${user._id}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(updatedUserData),
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       if (isPasswordChanged) {
-        setPassword(''); // Reset password field after successful update
+        setPassword(""); // Reset password field after successful update
         setIsPasswordChanged(false); // Reset password changed state
       }
 
-      alert('Profile updated successfully!')
+      alert("Profile updated successfully!");
       // Fetch user data from the server (in case of unable to get user data from AuthContext)
       await fetchUserData();
     } catch (error) {
-      console.error('Update failed:', error);
+      console.error("Update failed:", error);
     }
   };
 
-
   const fetchUserData = async () => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/user/userData/${user._id}`);
+      const res = await axios.get(
+        `${import.meta.env.VITE_API_BASE_URL}/api/user/userData/${user._id}`
+      );
       setUser(res.data);
     } catch (error) {
-      console.error('Failed to fetch user data:', error);
+      console.error("Failed to fetch user data:", error);
     } finally {
       setIsLoading(false);
     }
@@ -223,74 +234,77 @@ function AccountSettingsPage() {
     setIsEditing(false);
     setUsername(user.name);
     setAvatar(user.avatar);
-    setGender(user.gender || 'Not specified');
+    setGender(user.gender || "Not specified");
     setPassword(user.password); // Reset password field
     setTags(user.profileTags || []);
     setIsPasswordChanged(false);
   };
 
-
   const deleteAccount = async () => {
     // Confirm the user's intention to delete the account
-
-    if (window.confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+    if (
+      window.confirm(
+        "Are you sure you want to delete your account? This action cannot be undone."
+      )
+    ) {
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/user/delete/${userId}`, {
-          method: 'DELETE',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json',
-            // 'Authorization': 'Bearer your-auth-token', if we need to authenticate
+        const response = await fetch(
+          `${import.meta.env.VITE_API_BASE_URL}/api/user/delete/${userId}`,
+          {
+            method: "DELETE",
+            credentials: "include",
+            headers: {
+              "Content-Type": "application/json",
+              // 'Authorization': 'Bearer your-auth-token', if we need to authenticate
+            },
           }
-        });
+        );
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-
         // Redirect to the login page or home page
-        alert('Account deleted successfully. Redirecting to the login page.');
-        navigate('/login');
-
+        alert("Account deleted successfully. Redirecting to the login page.");
+        navigate("/login");
       } catch (error) {
-        console.error('Failed to delete account:', error);
+        console.error("Failed to delete account:", error);
       }
     } else {
-      
     }
   };
 
   const handleVerifyAccount = async () => {
-
     window.location.href = `${import.meta.env.VITE_API_BASE_URL}/auth/google`;
   };
 
-
   return (
     <div className="w-4/5 m-4 p-4">
-      <div className="text-3xl mb-5">Account Settings</div>
+      <div className="text-3xl font-bold mb-5">Account Settings</div>
       {user.isVerification ? (
         <p className="text-gray-400 mb-2">Your account has been verified</p>
       ) : (
         <div className="flex flex-row mb-2 gap-2">
-          <Button className="" onClick={handleVerifyAccount}>Verify Account</Button>
-          <p className="ml-2 w-32 text-gray-400 text-xs">Verifying your account with your UoA google account can allow you create groups at HeyMate.</p>
+          <Button className="" onClick={handleVerifyAccount}>
+            Verify Account
+          </Button>
+          <p className="ml-2 w-32 text-gray-400 text-xs">
+            Verifying your account with your UoA google account can allow you
+            create groups at HeyMate.
+          </p>
         </div>
       )}
       <div>
         <div>
-          {" "}
           {/* Avatar*/}
           <p className="font-bold text-xl mb-3">Avatar</p>
           <div className="flex flex-row">
-            <img
-              className="w-24 h-24 rounded-full mb-2"
-              src={avatar}
-            />
+            <img className="w-24 h-24 rounded-full mb-2" src={avatar} />
 
-            <Button className="mt-6 ml-6" onClick={handleChangeAvatar}> Change Avatar</Button>
-
+            <Button className="mt-6 ml-6" onClick={handleChangeAvatar}>
+              {" "}
+              Change Avatar
+            </Button>
           </div>
         </div>
         <div>
@@ -303,10 +317,11 @@ function AccountSettingsPage() {
               value={username}
               onChange={handleUsernameChange}
               disabled={!isEditing}
-              className={`border rounded px-2 py-1 ${isEditing
-                ? "border-black text-black"
-                : "border-transparent text-gray-500"
-                }`}
+              className={`border rounded px-2 py-1 ${
+                isEditing
+                  ? "border-black text-black"
+                  : "border-transparent text-gray-500"
+              }`}
             />
           </div>
         </div>
@@ -363,8 +378,9 @@ function AccountSettingsPage() {
           {/**Email - not allowed to change*/}
           <p className="font-bold text-xl mb-3">Email</p>
           <div className="flex flex-row mb-3 items-center">
-            <p className="px-2 py-1 border-transparent text-gray-500 cursor-not-allowed"
-            >{email}</p>
+            <p className="px-2 py-1 border-transparent text-gray-500 cursor-not-allowed">
+              {email}
+            </p>
           </div>
         </div>
 
@@ -374,12 +390,14 @@ function AccountSettingsPage() {
         {!isGoogleAccount && (
           <div className="mb-3">
             <p className="font-bold text-xl">Password</p>
-            <input type="password"
+            <input
+              type="password"
               value={password}
               onChange={handlePasswordChange}
               disabled={!isEditing}
               minLength="8"
-              className="border rounded px-2 py-1" />
+              className="border rounded px-2 py-1"
+            />
           </div>
         )}
 
@@ -399,13 +417,17 @@ function AccountSettingsPage() {
                   value={newTag}
                   onChange={(e) => setNewTag(e.target.value)}
                   disabled={!isEditing}
-                  className={`border-black border-2 rounded w-1/3 px-2 py-1 ${isEditing
-                    ? "border-black text-black"
-                    : "border-transparent text-gray-500"
-                    }`}
+                  className={`border-black border-2 rounded w-1/3 px-2 py-1 ${
+                    isEditing
+                      ? "border-black text-black"
+                      : "border-transparent text-gray-500"
+                  }`}
                 />
 
-                <Button className="ml-6" onClick={() => handleAddNewTag(newTag)}>
+                <Button
+                  className="ml-6"
+                  onClick={() => handleAddNewTag(newTag)}
+                >
                   Add
                 </Button>
               </div>
@@ -415,24 +437,26 @@ function AccountSettingsPage() {
           <div className="mr-4 flex flex-row flex-wrap">
             {" "}
             {/**user's tags list */}
-            {tags && tags.map((tag, index) => (
-              <div
-                key={index}
-                className={`mt-2 mr-2 pr-1 pl-1 rounded-3xl border-2 ${isEditing
-                  ? "text-black border-black"
-                  : "border-gray-500 text-gray-500"
+            {tags &&
+              tags.map((tag, index) => (
+                <div
+                  key={index}
+                  className={`mt-2 mr-2 pr-1 pl-1 rounded-3xl border-2 ${
+                    isEditing
+                      ? "text-black border-black"
+                      : "border-gray-500 text-gray-500"
                   } text-sm flex flex-row`}
-              >
-                <div>{tag.name}</div>
-                {isEditing && (
-                  <IoClose
-                    onClick={() => handleDeleteTag(tag._id)}
-                    size={20}
-                    className="cursor-pointer"
-                  />
-                )}
-              </div>
-            ))}
+                >
+                  <div>{tag.name}</div>
+                  {isEditing && (
+                    <IoClose
+                      onClick={() => handleDeleteTag(tag._id)}
+                      size={20}
+                      className="cursor-pointer"
+                    />
+                  )}
+                </div>
+              ))}
           </div>
         </div>
         <Button

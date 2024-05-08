@@ -7,22 +7,21 @@ import Navbar from "../../components/Navbar.jsx";
 import { AuthProvider } from "../../store/AuthContext.jsx";
 
 export default function LayoutUserPages() {
-
   return (
     <>
       {/* <AuthProvider> */}
-        <Navbar />
-        {/* <UserProvider> */}
-        <div className="overflow-y-auto">
-          <div className="flex overflow-y-auto min-h-[calc(100vh-theme(spacing.navHeight))]">
-            {" "}
-            {/**May delete the "pt-10" after adding a placeholder to the nav bar */}
-            <UserPageSideBar />
-            <div className="flex-grow">
-              <Outlet />
-            </div>
+      <Navbar />
+      {/* <UserProvider> */}
+      <div className="">
+        <div className="flex">
+          {" "}
+          {/**May delete the "pt-10" after adding a placeholder to the nav bar */}
+          <UserPageSideBar />
+          <div className="flex-grow md:px-10">
+            <Outlet />
           </div>
-        </div >
+        </div>
+      </div>
       {/* </AuthProvider> */}
       {/* </UserProvider> */}
     </>

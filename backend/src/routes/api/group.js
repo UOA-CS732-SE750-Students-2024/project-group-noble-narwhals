@@ -7,7 +7,7 @@ import Notification from "../../models/notificationModel.js";
 import { body, validationResult } from "express-validator";
 import { getGroup } from "../../middleware/entityMiddleware.js";
 import { addGroupTag, checkTagExist } from "../../middleware/tagDAO.js";
-import isLoggedIn, { isVerifiedUser } from "../../middleware/authMiddleware.js";
+import { isVerifiedUser } from "../../middleware/authMiddleware.js";
 const router = express.Router();
 
 // get all groups
@@ -25,7 +25,9 @@ router.get("/", async (req, res) => {
 // get all groups for seach page
 router.get("/search", async (req, res) => {
   try {
-    const groups = await Group.find().populate("groupTags", "name");
+    const groups = await Group.find()
+      .populate("groupTags", "name")
+      .populate("groupMembers");
     return res.json(groups);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -48,6 +50,7 @@ router.get("/search/:keywords", async (req, res) => {
 
     await Group.find()
       .populate("groupTags", "name")
+      .populate("groupMembers", ["avatar", "name"])
       .then((groups) => {
         const filteredGroups = groups.filter((group) => {
           return (
@@ -62,7 +65,6 @@ router.get("/search/:keywords", async (req, res) => {
   }
 });
 
-
 // create a new group
 router.post(
   "/creategroup",
@@ -76,7 +78,6 @@ router.post(
   ],
   isVerifiedUser,
   async (req, res) => {
-
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
@@ -127,7 +128,6 @@ router.post(
 
 // update group by id
 router.patch("/update/:id", isVerifiedUser, getGroup, async (req, res) => {
-
   // add new tag
   const modifiedTags = await Promise.all(
     req.body.tags.map(async (tag) => {
@@ -147,7 +147,7 @@ router.patch("/update/:id", isVerifiedUser, getGroup, async (req, res) => {
   res.group.groupDescription = req.body.description;
   res.group.groupTags = modifiedTags;
   res.group.groupType = req.body.type;
-  res.group.groupStatus = 'available';
+  res.group.groupStatus = "available";
 
   try {
     const updatedGroup = await res.group.save();
@@ -169,7 +169,18 @@ router.patch("/update/:id", isVerifiedUser, getGroup, async (req, res) => {
     });
 
     await Promise.all(notificationPromises);
-    
+
+    res.json(updatedGroup);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
+//close the group by id
+router.patch("/close/:id", getGroup, async (req, res) => {
+  res.group.groupStatus = "closed";
+  try {
+    const updatedGroup = await res.group.save();
     res.json(updatedGroup);
   } catch (err) {
     res.status(400).json({ message: err.message });
@@ -216,7 +227,6 @@ router.patch("/remove-member/:id", getGroup, async (req, res) => {
       groupId: group._id,
     });
 
-
     await group.save();
     await member.save();
     await newNotification.save();
@@ -243,10 +253,8 @@ router.post("/join/:id", getGroup, async (req, res) => {
   //check if group is full
 
   if (res.group.groupMembers.length >= res.group.maxNumber) {
-
-    res.group.groupStatus = 'full';
+    res.group.groupStatus = "full";
   }
-
 
   try {
     await res.group.save();
@@ -258,7 +266,6 @@ router.post("/join/:id", getGroup, async (req, res) => {
 
 // quit group by id
 router.post("/quit/:groupId", async (req, res) => {
-
   const { groupId } = req.params;
   const userId = req.user._id; // User ID from authentication/session
   const user = await User.findById(userId);
@@ -307,13 +314,11 @@ router.post("/join/:id/group", getGroup, async (req, res) => {
 
   // Check if the user is already a member of the group
   if (res.group.groupMembers.includes(userId)) {
-
     return res.status(400).json({ message: "User already in the group" });
   }
 
   // Check if the group is already full
   if (res.group.groupMembers.length >= res.group.maxNumber) {
-
     return res.status(400).json({ message: "Group is already full" });
   }
 
@@ -324,7 +329,7 @@ router.post("/join/:id/group", getGroup, async (req, res) => {
       groupId: req.params.id,
       message: req.body.message,
       applicationStatus: "pending",
-      applicationDate: new Date()
+      applicationDate: new Date(),
     });
     await newApplication.save();
 
@@ -343,18 +348,15 @@ router.post("/join/:id/group", getGroup, async (req, res) => {
     res.group.groupApplicants.push(userId);
     res.group.application.push(newApplication._id);
 
-
     // add group to user's applied in progress group list.
     user.appliedGroups.push(res.group._id);
 
     // Check if adding this member has filled the group
     if (res.group.groupMembers.length >= res.group.maxNumber) {
-      res.group.groupStatus = 'full';
-
+      res.group.groupStatus = "full";
     }
 
     await res.group.save();
-
 
     await user.save(); // Save the user with the updated applied group list
     await newNotification.save(); // Save the notification
@@ -362,7 +364,7 @@ router.post("/join/:id/group", getGroup, async (req, res) => {
     res.json({
       message: "User added to the group successfully",
       groupStatus: res.group.groupStatus,
-      applicationId: newApplication._id
+      applicationId: newApplication._id,
     });
   } catch (err) {
     console.error("Failed to join group:", err);
@@ -402,12 +404,12 @@ router.get("/:id/detail", getGroup, async (req, res) => {
 
     // Check and update the group status based on the number of members
     const isFull = group.groupMembers.length >= group.maxNumber;
-    if (isFull && group.groupStatus !== 'full') {
-      group.groupStatus = 'full';
-      await group.save();  
-    } else if (!isFull && group.groupStatus === 'full') {
-      group.groupStatus = 'available';
-      await group.save();  // Update status if no longer full
+    if (isFull && group.groupStatus !== "full") {
+      group.groupStatus = "full";
+      await group.save();
+    } else if (!isFull && group.groupStatus === "full") {
+      group.groupStatus = "available";
+      await group.save(); // Update status if no longer full
     }
 
     res.json(group);
@@ -417,8 +419,6 @@ router.get("/:id/detail", getGroup, async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
-
-
 
 // check if user has applied to a group
 router.get("/:groupId/has-applied", async (req, res) => {
@@ -508,13 +508,15 @@ router.patch("/dismiss/:groupId", async (req, res) => {
       return res.status(404).json({ message: "Group not found." });
     }
 
-
     // Check if the user is the host and the group isn't full
     if (
-      group.ownerId.toString() === userId.toString() && group.groupMembers.length < group.maxNumber
+      group.ownerId.toString() === userId.toString() &&
+      group.groupMembers.length < group.maxNumber
     ) {
-      const memberIds = group.groupMembers.map(member => member.toString());
-      const applicantIds = group.groupApplicants.map(applicant => applicant.toString());
+      const memberIds = group.groupMembers.map((member) => member.toString());
+      const applicantIds = group.groupApplicants.map((applicant) =>
+        applicant.toString()
+      );
       const userIds = [...new Set([...memberIds, ...applicantIds])]; // Combine and remove duplicates
 
       // Remove the groupId from participatingGroups and appliedGroups
@@ -528,7 +530,6 @@ router.patch("/dismiss/:groupId", async (req, res) => {
         { likedGroups: groupId },
         { $pull: { likedGroups: groupId } }
       );
-
 
       // Create a new notification for each user in the group
       const notificationContent = `Group ${group.groupName} has been dismissed by the host.`;
@@ -550,7 +551,7 @@ router.patch("/dismiss/:groupId", async (req, res) => {
       // Wait for all notifications to be saved
       await Promise.all(notificationPromises);
 
-      // Setting group status to 'closed' and clearing members and applicants
+      // Setting group status to 'dismissed' and clearing members and applicants
       group.groupStatus = "dismissed";
       group.groupMembers = []; // Clear all members
       group.groupApplicants = []; // Clear all applicants
