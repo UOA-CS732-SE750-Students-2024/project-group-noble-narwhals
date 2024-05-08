@@ -76,7 +76,6 @@ const GalleryCard = ({
           setHasApplied(true);
           setApplicationStatus(applied.applicationStatus);
         }
-
       }
     } catch (error) {
       console.error("Error checking application status:", error);
@@ -205,6 +204,7 @@ const GalleryCard = ({
         <div className="flex items-center w-6">
           {/* favarite button */}
           <button
+            aria-label="Favorite"
             className={`flex justify-center items-center rounded-full p-0 h-6 w-6 ${
               isLoggedIn ? "hover:scale-110" : "opacity-50 cursor-not-allowed"
             }`}

@@ -204,6 +204,3 @@ Your team members are:
 
 ![](./group-image/Noble%20Narwhals.webp)
 
-
-
-
