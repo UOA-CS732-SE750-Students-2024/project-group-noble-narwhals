@@ -189,7 +189,7 @@ Option 1 is our link above. If you want to test on your local machine, follow th
 
 
 
-
+---
 # COMPSCI 732 / SOFTENG 750 project - Team Noble Narwhals
 
 Welcome to the project! I look forward to seeing your progress and your final results this semester!
