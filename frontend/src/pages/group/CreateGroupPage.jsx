@@ -269,6 +269,7 @@ function CreatGroupPage() {
               Due Date
             </label>
             <input
+              data-testid="dueDate"
               min={new Date().toISOString().split("T")[0]}
               type="date"
               className="border-2 border-primary w-3/5 sm:w-2/5 rounded-full h-9 px-4"
