@@ -68,7 +68,6 @@ router.post("/", async (req, res) => {
 
     res.json(result.choices);
   } catch (err) {
-    console.error("Error in chat-completions API:", err);
     res.status(500).send(err.message);
   }
 });
