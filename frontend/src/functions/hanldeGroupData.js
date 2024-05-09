@@ -44,7 +44,7 @@ import { getGroup } from "../../../backend/src/middleware/entityMiddleware";
  */
 import getGroupImageLink from "./getGroupImageLink";
 function handleGroupData(groupData, isLoggedIn, user) {
-  if (!Array.isArray(groupData)) {
+  if (!groupData || !Array.isArray(groupData)) {
     console.error("Invalid groupData: ", groupData);
     return []; // Return an empty array or handle the error as appropriate
   }
