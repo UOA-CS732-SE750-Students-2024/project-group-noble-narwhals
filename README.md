@@ -17,7 +17,7 @@ Group member:
 
 If you want to see what our website looks like, follow this link :
 
-[http://ec2-3-105-229-98.ap-southeast-2.compute.amazonaws.com](http://ec2-3-105-229-98.ap-southeast-2.compute.amazonaws.com/)
+http://heymate.australiaeast.cloudapp.azure.com/
 
 # Main Feature
 
@@ -153,9 +153,9 @@ By combining Jest for backend testing and Vitest for frontend testing, we adopt 
 
 ## Deployment
 
-Our project has deployed on Amazon Web Services (AWS) using the Elastic Compute Cloud (EC2). The application can be accessed via the following URL:
+Our project has deployed on Azure using the Virtual Machines. The application can be accessed via the following URL:
 
-[http://ec2-3-105-229-98.ap-southeast-2.compute.amazonaws.com](http://ec2-3-105-229-98.ap-southeast-2.compute.amazonaws.com/)
+http://heymate.australiaeast.cloudapp.azure.com/
 
 # How to run and test
 
@@ -182,6 +182,9 @@ Option 1 is our link above. If you want to test on your local machine, follow th
     
 7. Run backend Express in other terminal
 
+    ```jsx
+    npm run dev
+    ```
 
 
 
