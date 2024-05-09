@@ -22,7 +22,7 @@ const group2 = {
   _id: "000000000000000000000102",
   groupStatus: "available",
   groupName: "Group2",
-  groupTags: [{ name: "tag1" }, { name: "tag2" }],
+  groupTags: [{ name: "tag3" }, { name: "tag4" }],
   groupDescription: "This is group2",
   groupMembers: [{ name: "member1", avatar: "avatar1" }],
   maxNumber: 10,
@@ -32,11 +32,14 @@ const group2 = {
 const mockData = [group1, group2];
 
 const restHandlers = [
-  // http.get("http://localhost:3000/api/groups/search/", (req, res, ctx) => {
-  //   return res(ctx.json(mockData));
+  // http.get("http://localhost:3000/api/groups/search/", () => {
+  //   return HttpResponse.json(mockData);
   // }),
-  http.get(/^http:\/\/localhost:3000\/api\/group\/search.*$/, () => {
+  http.get(/^http:\/\/localhost:3000\/api\/group\/search\/$/, () => {
     return HttpResponse.json(mockData);
+  }),
+  http.get(/^http:\/\/localhost:3000\/api\/group\/search\/Group1$/, () => {
+    return HttpResponse.json([group1]);
   }),
 ];
 
@@ -65,14 +68,71 @@ describe("Search page", async () => {
     expect(searchBar).toBeInTheDocument();
     const groupTab = await screen.getByText("group");
     expect(groupTab).toHaveClass("bg-hmblue-700");
-    await waitFor(() => {
-      const group1 = screen.getByText("Group1");
-      expect(group1).toBeInTheDocument();
 
-      const actBtn = screen.getByText("activity");
-      fireEvent.click(actBtn);
-      const group2 = screen.getByText("Group2");
-      expect(group2).toBeInTheDocument();
+    await waitFor(() => {
+      let group1 = screen.queryByText("Group1");
+      expect(group1).toBeInTheDocument();
+    });
+
+    const actBtn = screen.getByText("activity");
+    await fireEvent.click(actBtn);
+    let group1 = screen.queryByText("Group1");
+    let group2 = screen.queryByText("Group2");
+    expect(group1).not.toBeInTheDocument();
+    expect(group2).toBeInTheDocument();
+  });
+
+  it("click search and activity", async () => {
+    render(
+      <MemoryRouter initialEntries={["/search"]}>
+        <Routes>
+          <Route path="/search" element={<SearchPage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    const searchBar = await screen.getByPlaceholderText("Search");
+    await fireEvent.change(searchBar, { target: { value: "Group2" } });
+    expect(searchBar).toHaveValue("Group2");
+    const searchBtn = screen.getByText("Search");
+    await fireEvent.click(searchBtn);
+
+    await waitFor(() => {
+      let group1 = screen.queryByText("Group1");
+      expect(group1).not.toBeInTheDocument();
+    });
+
+    const actBtn = screen.getByText("activity");
+    await fireEvent.click(actBtn);
+    let group2 = screen.queryByText("Group2");
+    expect(group2).toBeInTheDocument();
+  });
+
+  it("click search group1", async () => {
+    render(
+      <MemoryRouter initialEntries={["/search"]}>
+        <Routes>
+          <Route path="/search" element={<SearchPage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    const searchBar = await screen.getByPlaceholderText("Search");
+    await fireEvent.change(searchBar, { target: { value: "Group1" } });
+    expect(searchBar).toHaveValue("Group1");
+    const searchBtn = screen.getByText("Search");
+    await fireEvent.click(searchBtn);
+
+    await waitFor(() => {
+      let group1 = screen.queryByText("Group1");
+      expect(group1).toBeInTheDocument();
+    });
+
+    const actBtn = screen.getByText("activity");
+    await fireEvent.click(actBtn);
+    await waitFor(() => {
+      let group2 = screen.queryByText("Group2");
+      expect(group2).not.toBeInTheDocument();
     });
   });
 });
