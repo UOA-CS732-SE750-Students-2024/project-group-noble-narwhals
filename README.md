@@ -15,9 +15,9 @@ Group member:
 
 # Quick Link
 
-If you want to see what our website looks like, follow this link :
+If you want to see what our website looks like, follow this link （17-06-24 updated）:
 
-http://heymate.australiaeast.cloudapp.azure.com/
+http://heymate1.australiaeast.cloudapp.azure.com/
 
 # Main Feature
 
@@ -155,7 +155,7 @@ By combining Jest for backend testing and Vitest for frontend testing, we adopt 
 
 Our project has deployed on Azure using the Virtual Machines. The application can be accessed via the following URL:
 
-http://heymate.australiaeast.cloudapp.azure.com/
+http://heymate1.australiaeast.cloudapp.azure.com/
 
 # How to run and test
 
